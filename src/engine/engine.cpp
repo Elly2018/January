@@ -18,10 +18,10 @@ std::shared_ptr<AppContext> GenerateAppContext(){
 
 void EngineInit(){
     auto cli = GetCMD();
-    auto clis = cli.lock();
-    auto cliref = clis.get();
-    std::string path = cliref->get<std::string>("p");
-    std::printf("Path: %s\n", path.c_str());
+    //std::string path = cli.get<std::string>("p");
+    std::printf("params size: %ld\n", cli.params().size());
+    std::printf("flags size: %ld\n", cli.flags().size());
+    std::printf("pos size: %ld\n", cli.pos_args().size());
 }
 
 void EngineLoop(){

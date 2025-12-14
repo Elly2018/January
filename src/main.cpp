@@ -6,6 +6,4 @@ int main(int argc, char** argv){
     auto win = std::move(JInit());
     JMainloop(win);
     JDeInit(win);
-    win.reset();
-    DeInitCMD();
 }

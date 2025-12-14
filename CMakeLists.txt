@@ -23,7 +23,7 @@ set(IMGUI_DIR third-party/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends)
 
 # cmd
-set(CMD_DIR third-party/cmd-parser)
+set(CMD_DIR third-party/argh)
 include_directories(${CMD_DIR})
 
 # Libraries
