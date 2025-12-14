@@ -2,6 +2,8 @@
 #include <format>
 #include <memory>
 #include <stdexcept>
+#include <imgui_notify.h>
+#include <tahoma.h>
 #include "../engine/engine.h"
 
 #pragma region Private Vulkan Functions
@@ -406,6 +408,14 @@ std::shared_ptr<JWindow> JInit() {
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
     //IM_ASSERT(font != nullptr);
+
+    ImFontConfig font_cfg;
+    font_cfg.FontDataOwnedByAtlas = false;
+    io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
+    // Initialize notify
+    ImGui::MergeIconsWithLatestFont(16.f, false);
+    ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
+
     return std::make_shared<JWindow>(win);
 }
 
@@ -480,6 +490,14 @@ void JMainloop(std::weak_ptr<JWindow> w_win) {
         ImGui::NewFrame();
 
         EngineDraw(winref);
+
+        // Render toasts on top of everything, at the end of your code!
+        // You should push style vars here
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.f); // Round borders
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(43.f / 255.f, 43.f / 255.f, 43.f / 255.f, 100.f / 255.f)); // Background color
+        ImGui::RenderNotifications(); // <-- Here we render all notifications
+        ImGui::PopStyleVar(1); // Don't forget to Pop()
+        ImGui::PopStyleColor(1);
 
         // Rendering
         ImGui::Render();

@@ -38,6 +38,10 @@ include_directories(${LOG_DIR}/include)
 set(Math_DIR third-party/glm)
 include_directories(${Math_DIR})
 
+# notify
+set(Notify_DIR third-party/notify/include)
+include_directories(${Notify_DIR})
+
 # Libraries
 find_package(Vulkan REQUIRED)
 #find_library(VULKAN_LIBRARY

@@ -1,8 +1,8 @@
 #include "engine.h"
-#include "../system/cli.h"
-#include "gui/mainframe.h"
 #include <filesystem>
 #include <memory>
+#include "../system/cli.h"
+#include "gui/mainframe.h"
 
 // Helping find the home path
 #ifndef _WIN32
