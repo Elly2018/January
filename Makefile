@@ -153,6 +153,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/system/window.o: src/system/window.cpp.o
+.PHONY : src/system/window.o
+
+# target to build an object file
+src/system/window.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/window.cpp.o
+.PHONY : src/system/window.cpp.o
+
+src/system/window.i: src/system/window.cpp.i
+.PHONY : src/system/window.i
+
+# target to preprocess a source file
+src/system/window.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/window.cpp.i
+.PHONY : src/system/window.cpp.i
+
+src/system/window.s: src/system/window.cpp.s
+.PHONY : src/system/window.s
+
+# target to generate assembly for a file
+src/system/window.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/window.cpp.s
+.PHONY : src/system/window.cpp.s
+
 third-party/imgui/backends/imgui_impl_sdl3.o: third-party/imgui/backends/imgui_impl_sdl3.cpp.o
 .PHONY : third-party/imgui/backends/imgui_impl_sdl3.o
 
@@ -333,6 +357,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/system/window.o"
+	@echo "... src/system/window.i"
+	@echo "... src/system/window.s"
 	@echo "... third-party/imgui/backends/imgui_impl_sdl3.o"
 	@echo "... third-party/imgui/backends/imgui_impl_sdl3.i"
 	@echo "... third-party/imgui/backends/imgui_impl_sdl3.s"
