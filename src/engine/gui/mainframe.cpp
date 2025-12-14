@@ -57,13 +57,22 @@ void status_bar(){
             ImGui::EndMenu();
         }
         if(ImGui::BeginMenu("View")){
-            if(ImGui::MenuItem("World")){
+            if(ImGui::MenuItem("RESOURCE")){
                 
             }
-            if(ImGui::MenuItem("Cut")){
+            if(ImGui::MenuItem("Compositing")){
                 
             }
-            if(ImGui::MenuItem("Cut")){
+            if(ImGui::MenuItem("Scene")){
+                
+            }
+            if(ImGui::MenuItem("Material")){
+                
+            }
+            if(ImGui::MenuItem("Audio")){
+                
+            }
+            if(ImGui::MenuItem("Logic")){
                 
             }
             ImGui::EndMenu();
@@ -77,5 +86,25 @@ void status_bar(){
 }
 
 void UIDraw(JWindow& win, JEngine& engine){
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
     status_bar();
+
+    int32_t padding_top = 50;
+    ImVec2 wsize = io.DisplaySize;
+    wsize.y - padding_top;
+    ImGuiWindowFlags frame_flag = 
+        ImGuiWindowFlags_NoMove | 
+        ImGuiWindowFlags_NoNav | 
+        ImGuiWindowFlags_NoBackground |
+        ImGuiWindowFlags_NoDecoration | 
+        ImGuiWindowFlags_NoTitleBar | 
+        ImGuiWindowFlags_NoResize | 
+        ImGuiWindowFlags_NoScrollbar | 
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_NoCollapse;
+    ImGui::SetNextWindowPos(ImVec2(0, padding_top));
+    ImGui::SetNextWindowSize(wsize);
+    if(ImGui::Begin("MainFrame", nullptr, frame_flag)){
+        ImGui::End();
+    }
 }
