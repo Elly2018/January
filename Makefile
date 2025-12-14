@@ -129,6 +129,78 @@ january/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/build
 .PHONY : january/fast
 
+src/engine/engine.o: src/engine/engine.cpp.o
+.PHONY : src/engine/engine.o
+
+# target to build an object file
+src/engine/engine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/engine.cpp.o
+.PHONY : src/engine/engine.cpp.o
+
+src/engine/engine.i: src/engine/engine.cpp.i
+.PHONY : src/engine/engine.i
+
+# target to preprocess a source file
+src/engine/engine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/engine.cpp.i
+.PHONY : src/engine/engine.cpp.i
+
+src/engine/engine.s: src/engine/engine.cpp.s
+.PHONY : src/engine/engine.s
+
+# target to generate assembly for a file
+src/engine/engine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/engine.cpp.s
+.PHONY : src/engine/engine.cpp.s
+
+src/engine/gui/blueprint.o: src/engine/gui/blueprint.cpp.o
+.PHONY : src/engine/gui/blueprint.o
+
+# target to build an object file
+src/engine/gui/blueprint.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/blueprint.cpp.o
+.PHONY : src/engine/gui/blueprint.cpp.o
+
+src/engine/gui/blueprint.i: src/engine/gui/blueprint.cpp.i
+.PHONY : src/engine/gui/blueprint.i
+
+# target to preprocess a source file
+src/engine/gui/blueprint.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/blueprint.cpp.i
+.PHONY : src/engine/gui/blueprint.cpp.i
+
+src/engine/gui/blueprint.s: src/engine/gui/blueprint.cpp.s
+.PHONY : src/engine/gui/blueprint.s
+
+# target to generate assembly for a file
+src/engine/gui/blueprint.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/blueprint.cpp.s
+.PHONY : src/engine/gui/blueprint.cpp.s
+
+src/engine/gui/mainframe.o: src/engine/gui/mainframe.cpp.o
+.PHONY : src/engine/gui/mainframe.o
+
+# target to build an object file
+src/engine/gui/mainframe.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/mainframe.cpp.o
+.PHONY : src/engine/gui/mainframe.cpp.o
+
+src/engine/gui/mainframe.i: src/engine/gui/mainframe.cpp.i
+.PHONY : src/engine/gui/mainframe.i
+
+# target to preprocess a source file
+src/engine/gui/mainframe.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/mainframe.cpp.i
+.PHONY : src/engine/gui/mainframe.cpp.i
+
+src/engine/gui/mainframe.s: src/engine/gui/mainframe.cpp.s
+.PHONY : src/engine/gui/mainframe.s
+
+# target to generate assembly for a file
+src/engine/gui/mainframe.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/mainframe.cpp.s
+.PHONY : src/engine/gui/mainframe.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -152,6 +224,30 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+src/system/cli.o: src/system/cli.cpp.o
+.PHONY : src/system/cli.o
+
+# target to build an object file
+src/system/cli.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/cli.cpp.o
+.PHONY : src/system/cli.cpp.o
+
+src/system/cli.i: src/system/cli.cpp.i
+.PHONY : src/system/cli.i
+
+# target to preprocess a source file
+src/system/cli.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/cli.cpp.i
+.PHONY : src/system/cli.cpp.i
+
+src/system/cli.s: src/system/cli.cpp.s
+.PHONY : src/system/cli.s
+
+# target to generate assembly for a file
+src/system/cli.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/cli.cpp.s
+.PHONY : src/system/cli.cpp.s
 
 src/system/window.o: src/system/window.cpp.o
 .PHONY : src/system/window.o
@@ -354,9 +450,21 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... january"
+	@echo "... src/engine/engine.o"
+	@echo "... src/engine/engine.i"
+	@echo "... src/engine/engine.s"
+	@echo "... src/engine/gui/blueprint.o"
+	@echo "... src/engine/gui/blueprint.i"
+	@echo "... src/engine/gui/blueprint.s"
+	@echo "... src/engine/gui/mainframe.o"
+	@echo "... src/engine/gui/mainframe.i"
+	@echo "... src/engine/gui/mainframe.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/system/cli.o"
+	@echo "... src/system/cli.i"
+	@echo "... src/system/cli.s"
 	@echo "... src/system/window.o"
 	@echo "... src/system/window.i"
 	@echo "... src/system/window.s"

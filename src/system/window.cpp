@@ -2,6 +2,7 @@
 #include <format>
 #include <memory>
 #include <stdexcept>
+#include "../engine/engine.h"
 
 #pragma region Private Vulkan Functions
 static void check_vk_result(VkResult err)
@@ -434,10 +435,10 @@ void JDemo(std::weak_ptr<JWindow> w_win) {
     JWindow& winref = *win.get();
 
     // Our state
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
     bool show_demo_window = true;
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     bool done = false;
     while (!done)
@@ -517,6 +518,82 @@ void JDemo(std::weak_ptr<JWindow> w_win) {
                 show_another_window = false;
             ImGui::End();
         }
+
+        // Rendering
+        ImGui::Render();
+        ImDrawData* main_draw_data = ImGui::GetDrawData();
+        const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
+        winref.g_MainWindowData.ClearValue.color.float32[0] = clear_color.x * clear_color.w;
+        winref.g_MainWindowData.ClearValue.color.float32[1] = clear_color.y * clear_color.w;
+        winref.g_MainWindowData.ClearValue.color.float32[2] = clear_color.z * clear_color.w;
+        winref.g_MainWindowData.ClearValue.color.float32[3] = clear_color.w;
+        if (!main_is_minimized)
+            FrameRender(winref, main_draw_data);
+
+        // Update and Render additional Platform Windows
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+        }
+
+        // Present Main Platform Window
+        if (!main_is_minimized)
+            FramePresent(winref);
+    }
+}
+
+void JMainloop(std::weak_ptr<JWindow> w_win) {
+    auto win = w_win.lock();
+    if(win.get() == nullptr) return;
+    JWindow& winref = *win.get();
+
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    EngineInit();
+
+    bool done = false;
+    while (!done){
+        // Poll and handle events (inputs, window resize, etc.)
+        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        // [If using SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your SDL_AppEvent() function]
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            ImGui_ImplSDL3_ProcessEvent(&event);
+            if (event.type == SDL_EVENT_QUIT)
+                done = true;
+            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(winref.g_window))
+                done = true;
+        }
+
+        // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
+        if (SDL_GetWindowFlags(winref.g_window) & SDL_WINDOW_MINIMIZED)
+        {
+            SDL_Delay(10);
+            continue;
+        }
+
+        // Resize swap chain?
+        int fb_width, fb_height;
+        SDL_GetWindowSize(winref.g_window, &fb_width, &fb_height);
+        if (fb_width > 0 && fb_height > 0 && (winref.g_SwapChainRebuild || winref.g_MainWindowData.Width != fb_width || winref.g_MainWindowData.Height != fb_height))
+        {
+            ImGui_ImplVulkan_SetMinImageCount(winref.g_MinImageCount);
+            ImGui_ImplVulkanH_CreateOrResizeWindow(winref.g_Instance, winref.g_PhysicalDevice, winref.g_Device, &winref.g_MainWindowData, winref.g_QueueFamily, winref.g_Allocator, fb_width, fb_height, winref.g_MinImageCount, 0);
+            winref.g_MainWindowData.FrameIndex = 0;
+            winref.g_SwapChainRebuild = false;
+        }
+
+        // Start the Dear ImGui frame
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        EngineDraw();
 
         // Rendering
         ImGui::Render();

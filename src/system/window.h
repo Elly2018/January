@@ -1,6 +1,7 @@
-#include "imgui.h"
-#include "imgui_impl_sdl3.h"
-#include "imgui_impl_vulkan.h"
+#pragma once
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_vulkan.h>
 #include <stdio.h>          // printf, fprintf
 #include <stdlib.h>         // abort
 #include <memory>
@@ -36,6 +37,11 @@ struct JWindow {
     bool                     g_SwapChainRebuild = false;
 };
 
+// Window context initialization
 std::shared_ptr<JWindow> JInit();
+// Escape the mainloop, release resource
 void JDeInit(std::weak_ptr<JWindow> w_win);
+// Imgui demo call
 void JDemo(std::weak_ptr<JWindow> w_win);
+// January application main loop
+void JMainloop(std::weak_ptr<JWindow> w_win);

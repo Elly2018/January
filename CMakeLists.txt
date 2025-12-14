@@ -20,7 +20,11 @@ find_package(SDL3 REQUIRED)
 
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
-include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
+include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends)
+
+# cmd
+set(CMD_DIR third-party/cmd-parser)
+include_directories(${CMD_DIR})
 
 # Libraries
 find_package(Vulkan REQUIRED)
