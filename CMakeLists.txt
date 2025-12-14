@@ -26,6 +26,18 @@ include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends)
 set(CMD_DIR third-party/argh)
 include_directories(${CMD_DIR})
 
+# json
+set(JSON_DIR third-party/json)
+include_directories(${JSON_DIR})
+
+# spdlog
+set(LOG_DIR third-party/spdlog)
+include_directories(${LOG_DIR}/include)
+
+# glm
+set(Math_DIR third-party/glm)
+include_directories(${Math_DIR})
+
 # Libraries
 find_package(Vulkan REQUIRED)
 #find_library(VULKAN_LIBRARY
@@ -49,4 +61,5 @@ add_executable(january
   ${IMGUI_DIR}/imgui_widgets.cpp)
 target_link_libraries(january PRIVATE glfw;Vulkan::Vulkan SDL3::SDL3)
 target_include_directories(january PUBLIC ${SDL3_INCLUDE_DIRS})
+target_include_directories(january PUBLIC ${LOG_DIR}/src)
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)

@@ -1,0 +1,29 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always
+ColumnLimit: 90
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterClass: true
+    AfterControlStatement: true
+    AfterEnum: false
+    AfterFunction: true
+    AfterNamespace: false
+    AfterObjCDeclaration: false
+    AfterStruct: true
+    AfterUnion: false
+    BeforeCatch: false
+    BeforeElse: false
+    IndentBraces: false
+# Disable bin-packing for parameters and arguments
+BinPackParameters: false
+BinPackArguments: false
+
+# Encourage fewer line breaks for function parameters
+PenaltyBreakBeforeFirstCallParameter: 50
+PenaltyExcessCharacter: 50
+
+# Let short functions stay on one line if they fit
+AllowShortFunctionsOnASingleLine: All

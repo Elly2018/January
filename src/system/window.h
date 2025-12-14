@@ -41,7 +41,5 @@ struct JWindow {
 std::shared_ptr<JWindow> JInit();
 // Escape the mainloop, release resource
 void JDeInit(std::weak_ptr<JWindow> w_win);
-// Imgui demo call
-void JDemo(std::weak_ptr<JWindow> w_win);
 // January application main loop
 void JMainloop(std::weak_ptr<JWindow> w_win);

@@ -8,7 +8,6 @@ namespace fs = std::filesystem;
 static argh::parser cmd;
 
 void configure_parser() {
-    fs::path currentPath = fs::current_path();
     cmd.add_params({ "-p", "--path" });
     if(cmd[{ "-h", "--help" }]){
         std::printf("Show all the command.\n");

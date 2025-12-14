@@ -1,0 +1,55 @@
+name: Format Code on Main
+
+on:
+  workflow_dispatch:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          fetch-depth: 0  # Ensure full history is available
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+
+      - name: Run formatting script
+        run: |
+          # Define colors
+          BLUE='\033[0;34m'
+          GREEN='\033[0;32m'
+          NC='\033[0m'
+
+          echo -e "${BLUE}📝 Starting code formatting...${NC}"
+
+          # Count and format files
+          count=$(find . \
+            \( -name "*.cpp" -o -name "*.h" \) \
+            -not -path "./lib/*" \
+            -not -path "./fonts/*" \
+            -not -path "./icons/*" \
+            -not -path "./.build/*" \
+            -not -path "./build/*" \
+            -exec clang-format -i {} \; \
+            -exec echo "." \; | wc -l)
+
+          echo -e "${GREEN}✨ Formatted ${count} files ${NC}"
+
+
+      - name: Commit formatting changes if any
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add .
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "Apply automatic code formatting"
+            git push
+          else
+            echo "No formatting changes detected."
+          fi
