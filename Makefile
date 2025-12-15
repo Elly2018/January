@@ -153,30 +153,6 @@ src/engine/engine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/engine.cpp.s
 .PHONY : src/engine/engine.cpp.s
 
-src/engine/gui/blueprint.o: src/engine/gui/blueprint.cpp.o
-.PHONY : src/engine/gui/blueprint.o
-
-# target to build an object file
-src/engine/gui/blueprint.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/blueprint.cpp.o
-.PHONY : src/engine/gui/blueprint.cpp.o
-
-src/engine/gui/blueprint.i: src/engine/gui/blueprint.cpp.i
-.PHONY : src/engine/gui/blueprint.i
-
-# target to preprocess a source file
-src/engine/gui/blueprint.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/blueprint.cpp.i
-.PHONY : src/engine/gui/blueprint.cpp.i
-
-src/engine/gui/blueprint.s: src/engine/gui/blueprint.cpp.s
-.PHONY : src/engine/gui/blueprint.s
-
-# target to generate assembly for a file
-src/engine/gui/blueprint.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/blueprint.cpp.s
-.PHONY : src/engine/gui/blueprint.cpp.s
-
 src/engine/gui/mainframe.o: src/engine/gui/mainframe.cpp.o
 .PHONY : src/engine/gui/mainframe.o
 
@@ -200,6 +176,174 @@ src/engine/gui/mainframe.s: src/engine/gui/mainframe.cpp.s
 src/engine/gui/mainframe.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/mainframe.cpp.s
 .PHONY : src/engine/gui/mainframe.cpp.s
+
+src/engine/gui/view/blueprint.o: src/engine/gui/view/blueprint.cpp.o
+.PHONY : src/engine/gui/view/blueprint.o
+
+# target to build an object file
+src/engine/gui/view/blueprint.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/blueprint.cpp.o
+.PHONY : src/engine/gui/view/blueprint.cpp.o
+
+src/engine/gui/view/blueprint.i: src/engine/gui/view/blueprint.cpp.i
+.PHONY : src/engine/gui/view/blueprint.i
+
+# target to preprocess a source file
+src/engine/gui/view/blueprint.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/blueprint.cpp.i
+.PHONY : src/engine/gui/view/blueprint.cpp.i
+
+src/engine/gui/view/blueprint.s: src/engine/gui/view/blueprint.cpp.s
+.PHONY : src/engine/gui/view/blueprint.s
+
+# target to generate assembly for a file
+src/engine/gui/view/blueprint.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/blueprint.cpp.s
+.PHONY : src/engine/gui/view/blueprint.cpp.s
+
+src/engine/gui/view/explorer.o: src/engine/gui/view/explorer.cpp.o
+.PHONY : src/engine/gui/view/explorer.o
+
+# target to build an object file
+src/engine/gui/view/explorer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/explorer.cpp.o
+.PHONY : src/engine/gui/view/explorer.cpp.o
+
+src/engine/gui/view/explorer.i: src/engine/gui/view/explorer.cpp.i
+.PHONY : src/engine/gui/view/explorer.i
+
+# target to preprocess a source file
+src/engine/gui/view/explorer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/explorer.cpp.i
+.PHONY : src/engine/gui/view/explorer.cpp.i
+
+src/engine/gui/view/explorer.s: src/engine/gui/view/explorer.cpp.s
+.PHONY : src/engine/gui/view/explorer.s
+
+# target to generate assembly for a file
+src/engine/gui/view/explorer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/explorer.cpp.s
+.PHONY : src/engine/gui/view/explorer.cpp.s
+
+src/engine/gui/view/inspector.o: src/engine/gui/view/inspector.cpp.o
+.PHONY : src/engine/gui/view/inspector.o
+
+# target to build an object file
+src/engine/gui/view/inspector.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/inspector.cpp.o
+.PHONY : src/engine/gui/view/inspector.cpp.o
+
+src/engine/gui/view/inspector.i: src/engine/gui/view/inspector.cpp.i
+.PHONY : src/engine/gui/view/inspector.i
+
+# target to preprocess a source file
+src/engine/gui/view/inspector.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/inspector.cpp.i
+.PHONY : src/engine/gui/view/inspector.cpp.i
+
+src/engine/gui/view/inspector.s: src/engine/gui/view/inspector.cpp.s
+.PHONY : src/engine/gui/view/inspector.s
+
+# target to generate assembly for a file
+src/engine/gui/view/inspector.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/inspector.cpp.s
+.PHONY : src/engine/gui/view/inspector.cpp.s
+
+src/engine/gui/view/preview.o: src/engine/gui/view/preview.cpp.o
+.PHONY : src/engine/gui/view/preview.o
+
+# target to build an object file
+src/engine/gui/view/preview.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/preview.cpp.o
+.PHONY : src/engine/gui/view/preview.cpp.o
+
+src/engine/gui/view/preview.i: src/engine/gui/view/preview.cpp.i
+.PHONY : src/engine/gui/view/preview.i
+
+# target to preprocess a source file
+src/engine/gui/view/preview.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/preview.cpp.i
+.PHONY : src/engine/gui/view/preview.cpp.i
+
+src/engine/gui/view/preview.s: src/engine/gui/view/preview.cpp.s
+.PHONY : src/engine/gui/view/preview.s
+
+# target to generate assembly for a file
+src/engine/gui/view/preview.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/preview.cpp.s
+.PHONY : src/engine/gui/view/preview.cpp.s
+
+src/engine/gui/view/script.o: src/engine/gui/view/script.cpp.o
+.PHONY : src/engine/gui/view/script.o
+
+# target to build an object file
+src/engine/gui/view/script.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/script.cpp.o
+.PHONY : src/engine/gui/view/script.cpp.o
+
+src/engine/gui/view/script.i: src/engine/gui/view/script.cpp.i
+.PHONY : src/engine/gui/view/script.i
+
+# target to preprocess a source file
+src/engine/gui/view/script.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/script.cpp.i
+.PHONY : src/engine/gui/view/script.cpp.i
+
+src/engine/gui/view/script.s: src/engine/gui/view/script.cpp.s
+.PHONY : src/engine/gui/view/script.s
+
+# target to generate assembly for a file
+src/engine/gui/view/script.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/script.cpp.s
+.PHONY : src/engine/gui/view/script.cpp.s
+
+src/engine/gui/view/timeline.o: src/engine/gui/view/timeline.cpp.o
+.PHONY : src/engine/gui/view/timeline.o
+
+# target to build an object file
+src/engine/gui/view/timeline.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/timeline.cpp.o
+.PHONY : src/engine/gui/view/timeline.cpp.o
+
+src/engine/gui/view/timeline.i: src/engine/gui/view/timeline.cpp.i
+.PHONY : src/engine/gui/view/timeline.i
+
+# target to preprocess a source file
+src/engine/gui/view/timeline.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/timeline.cpp.i
+.PHONY : src/engine/gui/view/timeline.cpp.i
+
+src/engine/gui/view/timeline.s: src/engine/gui/view/timeline.cpp.s
+.PHONY : src/engine/gui/view/timeline.s
+
+# target to generate assembly for a file
+src/engine/gui/view/timeline.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/timeline.cpp.s
+.PHONY : src/engine/gui/view/timeline.cpp.s
+
+src/engine/gui/view/volumn.o: src/engine/gui/view/volumn.cpp.o
+.PHONY : src/engine/gui/view/volumn.o
+
+# target to build an object file
+src/engine/gui/view/volumn.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/volumn.cpp.o
+.PHONY : src/engine/gui/view/volumn.cpp.o
+
+src/engine/gui/view/volumn.i: src/engine/gui/view/volumn.cpp.i
+.PHONY : src/engine/gui/view/volumn.i
+
+# target to preprocess a source file
+src/engine/gui/view/volumn.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/volumn.cpp.i
+.PHONY : src/engine/gui/view/volumn.cpp.i
+
+src/engine/gui/view/volumn.s: src/engine/gui/view/volumn.cpp.s
+.PHONY : src/engine/gui/view/volumn.s
+
+# target to generate assembly for a file
+src/engine/gui/view/volumn.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/volumn.cpp.s
+.PHONY : src/engine/gui/view/volumn.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -453,12 +597,30 @@ help:
 	@echo "... src/engine/engine.o"
 	@echo "... src/engine/engine.i"
 	@echo "... src/engine/engine.s"
-	@echo "... src/engine/gui/blueprint.o"
-	@echo "... src/engine/gui/blueprint.i"
-	@echo "... src/engine/gui/blueprint.s"
 	@echo "... src/engine/gui/mainframe.o"
 	@echo "... src/engine/gui/mainframe.i"
 	@echo "... src/engine/gui/mainframe.s"
+	@echo "... src/engine/gui/view/blueprint.o"
+	@echo "... src/engine/gui/view/blueprint.i"
+	@echo "... src/engine/gui/view/blueprint.s"
+	@echo "... src/engine/gui/view/explorer.o"
+	@echo "... src/engine/gui/view/explorer.i"
+	@echo "... src/engine/gui/view/explorer.s"
+	@echo "... src/engine/gui/view/inspector.o"
+	@echo "... src/engine/gui/view/inspector.i"
+	@echo "... src/engine/gui/view/inspector.s"
+	@echo "... src/engine/gui/view/preview.o"
+	@echo "... src/engine/gui/view/preview.i"
+	@echo "... src/engine/gui/view/preview.s"
+	@echo "... src/engine/gui/view/script.o"
+	@echo "... src/engine/gui/view/script.i"
+	@echo "... src/engine/gui/view/script.s"
+	@echo "... src/engine/gui/view/timeline.o"
+	@echo "... src/engine/gui/view/timeline.i"
+	@echo "... src/engine/gui/view/timeline.s"
+	@echo "... src/engine/gui/view/volumn.o"
+	@echo "... src/engine/gui/view/volumn.i"
+	@echo "... src/engine/gui/view/volumn.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

@@ -1,7 +1,8 @@
 #include "mainframe.h"
 #include <imgui.h>
+#include "../utility.h"
 
-void status_bar(){
+void status_bar(JWindow& win, JEngine& engine){
     if(ImGui::BeginMainMenuBar()){
         if(ImGui::BeginMenu("File")){
             if(ImGui::MenuItem("New Project")){
@@ -57,7 +58,7 @@ void status_bar(){
             ImGui::EndMenu();
         }
         if(ImGui::BeginMenu("Page")){
-            if(ImGui::MenuItem("RESOURCE")){
+            if(ImGui::MenuItem("Resource")){
                 
             }
             if(ImGui::MenuItem("Compositing")){
@@ -78,6 +79,39 @@ void status_bar(){
             ImGui::EndMenu();
         }
         if(ImGui::BeginMenu("View")){
+            if(ImGui::BeginMenu("Audio")){
+                if(ImGui::MenuItem("Volumn")){
+                
+                }
+                if(ImGui::MenuItem("Audio Mixer")){
+                
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("3D")){
+                if(ImGui::MenuItem("Material")){
+                
+                }
+                if(ImGui::MenuItem("Hierarchy")){
+                
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Logic")){
+                if(ImGui::MenuItem("Blueprint")){
+                
+                }
+                if(ImGui::MenuItem("Script")){
+                    
+                }
+                if(ImGui::MenuItem("Console")){
+                    
+                }
+                if(ImGui::MenuItem("Debugger")){
+                    
+                }
+                ImGui::EndMenu();
+            }
             if(ImGui::MenuItem("Explorer")){
                 
             }
@@ -87,25 +121,28 @@ void status_bar(){
             if(ImGui::MenuItem("Timeline")){
                 
             }
-            if(ImGui::MenuItem("Blueprint")){
-                
-            }
-            if(ImGui::MenuItem("Script")){
-                
-            }
             ImGui::EndMenu();
         }
         if(ImGui::BeginMenu("Help")){
+            if(ImGui::MenuItem("Release Note")){
+                
+            }
+            if(ImGui::MenuItem("Documentation")){
+                
+            }
+            ImGui::Separator();
+            if(ImGui::MenuItem("About Us")){
+                
+            }
             ImGui::EndMenu();
         }
-
         ImGui::EndMainMenuBar();
     }
 }
 
 void UIDraw(JWindow& win, JEngine& engine){
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    status_bar();
+    status_bar(win, engine);
 
     int32_t padding_top = 50;
     ImVec2 wsize = io.DisplaySize;
@@ -125,4 +162,46 @@ void UIDraw(JWindow& win, JEngine& engine){
     if(ImGui::Begin("MainFrame", nullptr, frame_flag)){
         ImGui::End();
     }
+
+    AppContext* appcontext = engine.context.get();
+    if(appcontext == nullptr) return;
+
+    for(auto view : appcontext->views){
+        JViewBase* vbase = view.get();
+        if(vbase == nullptr) continue;
+        vbase->Draw();
+    }
+}
+
+void UIUpdate(JWindow& win, JEngine& engine){
+    
+}
+
+bool UIPageFirstTimeFire(JEngine& engine, JPageType page){
+    if(page == JPageType::Custom) return false;
+    fs::path home = get_home_directory();
+    home = home.append("january");
+    if(!fs::exists(home)){
+        fs::create_directory(home);
+    }
+    home = home.append(GetPageTypeString(page) + ".json");
+    return !fs::exists(home);
+}
+
+void UIGenerateViews(std::vector<JViewType> views){
+    for(JViewType type : views){
+        switch(type){
+
+        }
+    }
+}
+
+void UILoadPageFromDisk(std::string name){
+    fs::path home = get_home_directory();
+    home = home.append("january");
+    if(!fs::exists(home)){
+        fs::create_directory(home);
+    }
+    home = home.append(name + ".json");
+    ImGui::LoadIniSettingsFromDisk(home.c_str());
 }

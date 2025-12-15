@@ -1,12 +1,13 @@
 #include "window.h"
 #include <format>
 #include <memory>
+#include <thread>
 #include <stdexcept>
 #include <imgui_notify.h>
 #include <tahoma.h>
 #include "../engine/engine.h"
 
-#pragma region Private Vulkan Functions
+#pragma region Vulkan Functions
 static void check_vk_result(VkResult err)
 {
     if (err == VK_SUCCESS)
@@ -296,6 +297,101 @@ static void FramePresent(JWindow& win)
 }
 #pragma endregion
 
+#pragma region MainLoop
+void DrawLoop(std::weak_ptr<JWindow> w_win){
+    auto win = w_win.lock();
+    if(win.get() == nullptr) return;
+    JWindow& winref = *win.get();
+
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    EngineInit();
+    
+    while (!winref.g_done){
+        // Poll and handle events (inputs, window resize, etc.)
+        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        // [If using SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your SDL_AppEvent() function]
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            ImGui_ImplSDL3_ProcessEvent(&event);
+            if (event.type == SDL_EVENT_QUIT)
+                winref.g_done = true;
+            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(winref.g_window))
+                winref.g_done = true;
+        }
+
+        // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
+        if (SDL_GetWindowFlags(winref.g_window) & SDL_WINDOW_MINIMIZED)
+        {
+            SDL_Delay(10);
+            continue;
+        }
+
+        // Resize swap chain?
+        int fb_width, fb_height;
+        SDL_GetWindowSize(winref.g_window, &fb_width, &fb_height);
+        if (fb_width > 0 && fb_height > 0 && (winref.g_SwapChainRebuild || winref.g_MainWindowData.Width != fb_width || winref.g_MainWindowData.Height != fb_height))
+        {
+            ImGui_ImplVulkan_SetMinImageCount(winref.g_MinImageCount);
+            ImGui_ImplVulkanH_CreateOrResizeWindow(winref.g_Instance, winref.g_PhysicalDevice, winref.g_Device, &winref.g_MainWindowData, winref.g_QueueFamily, winref.g_Allocator, fb_width, fb_height, winref.g_MinImageCount, 0);
+            winref.g_MainWindowData.FrameIndex = 0;
+            winref.g_SwapChainRebuild = false;
+        }
+
+        // Start the Dear ImGui frame
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        EngineDraw(winref);
+
+        // Render toasts on top of everything, at the end of your code!
+        // You should push style vars here
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.f); // Round borders
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(43.f / 255.f, 43.f / 255.f, 43.f / 255.f, 100.f / 255.f)); // Background color
+        ImGui::RenderNotifications(); // <-- Here we render all notifications
+        ImGui::PopStyleVar(1); // Don't forget to Pop()
+        ImGui::PopStyleColor(1);
+
+        // Rendering
+        ImGui::Render();
+        ImDrawData* main_draw_data = ImGui::GetDrawData();
+        const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
+        winref.g_MainWindowData.ClearValue.color.float32[0] = clear_color.x * clear_color.w;
+        winref.g_MainWindowData.ClearValue.color.float32[1] = clear_color.y * clear_color.w;
+        winref.g_MainWindowData.ClearValue.color.float32[2] = clear_color.z * clear_color.w;
+        winref.g_MainWindowData.ClearValue.color.float32[3] = clear_color.w;
+        if (!main_is_minimized)
+            FrameRender(winref, main_draw_data);
+
+        // Update and Render additional Platform Windows
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+        }
+
+        // Present Main Platform Window
+        if (!main_is_minimized)
+            FramePresent(winref);
+    }
+}
+
+void UpdateLoop(std::weak_ptr<JWindow> w_win){
+    auto win = w_win.lock();
+    if(win.get() == nullptr) return;
+    JWindow& winref = *win.get();
+
+    while(!winref.g_done){
+        EngineUpdate(winref);
+    }
+}
+#pragma endregion
+
 std::shared_ptr<JWindow> JInit() {
     JWindow win = JWindow();
 
@@ -401,7 +497,7 @@ std::shared_ptr<JWindow> JInit() {
     // - Read 'docs/FONTS.md' for more instructions and details. If you like the default font but want it to scale better, consider using the 'ProggyVector' from the same author!
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     style.FontSizeBase = 20.0f;
-    io.Fonts->AddFontDefault();
+    //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
@@ -440,85 +536,8 @@ void JDeInit(std::weak_ptr<JWindow> w_win){
 }
 
 void JMainloop(std::weak_ptr<JWindow> w_win) {
-    auto win = w_win.lock();
-    if(win.get() == nullptr) return;
-    JWindow& winref = *win.get();
-
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    EngineInit();
-
-    bool done = false;
-    while (!done){
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-        // [If using SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your SDL_AppEvent() function]
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            ImGui_ImplSDL3_ProcessEvent(&event);
-            if (event.type == SDL_EVENT_QUIT)
-                done = true;
-            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(winref.g_window))
-                done = true;
-        }
-
-        // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
-        if (SDL_GetWindowFlags(winref.g_window) & SDL_WINDOW_MINIMIZED)
-        {
-            SDL_Delay(10);
-            continue;
-        }
-
-        // Resize swap chain?
-        int fb_width, fb_height;
-        SDL_GetWindowSize(winref.g_window, &fb_width, &fb_height);
-        if (fb_width > 0 && fb_height > 0 && (winref.g_SwapChainRebuild || winref.g_MainWindowData.Width != fb_width || winref.g_MainWindowData.Height != fb_height))
-        {
-            ImGui_ImplVulkan_SetMinImageCount(winref.g_MinImageCount);
-            ImGui_ImplVulkanH_CreateOrResizeWindow(winref.g_Instance, winref.g_PhysicalDevice, winref.g_Device, &winref.g_MainWindowData, winref.g_QueueFamily, winref.g_Allocator, fb_width, fb_height, winref.g_MinImageCount, 0);
-            winref.g_MainWindowData.FrameIndex = 0;
-            winref.g_SwapChainRebuild = false;
-        }
-
-        // Start the Dear ImGui frame
-        ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplSDL3_NewFrame();
-        ImGui::NewFrame();
-
-        EngineDraw(winref);
-
-        // Render toasts on top of everything, at the end of your code!
-        // You should push style vars here
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.f); // Round borders
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(43.f / 255.f, 43.f / 255.f, 43.f / 255.f, 100.f / 255.f)); // Background color
-        ImGui::RenderNotifications(); // <-- Here we render all notifications
-        ImGui::PopStyleVar(1); // Don't forget to Pop()
-        ImGui::PopStyleColor(1);
-
-        // Rendering
-        ImGui::Render();
-        ImDrawData* main_draw_data = ImGui::GetDrawData();
-        const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
-        winref.g_MainWindowData.ClearValue.color.float32[0] = clear_color.x * clear_color.w;
-        winref.g_MainWindowData.ClearValue.color.float32[1] = clear_color.y * clear_color.w;
-        winref.g_MainWindowData.ClearValue.color.float32[2] = clear_color.z * clear_color.w;
-        winref.g_MainWindowData.ClearValue.color.float32[3] = clear_color.w;
-        if (!main_is_minimized)
-            FrameRender(winref, main_draw_data);
-
-        // Update and Render additional Platform Windows
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-        }
-
-        // Present Main Platform Window
-        if (!main_is_minimized)
-            FramePresent(winref);
-    }
+    std::thread draw_thread(DrawLoop, w_win);
+    std::thread update_thread(UpdateLoop, w_win);
+    if(draw_thread.joinable()) draw_thread.join();
+    if(update_thread.joinable()) update_thread.join();
 }

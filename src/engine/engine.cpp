@@ -1,52 +1,13 @@
 #include "engine.h"
-#include <filesystem>
 #include <memory>
+#include "utility.h"
 #include "../system/cli.h"
 #include "gui/mainframe.h"
-
-// Helping find the home path
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
-#endif
-
-namespace fs = std::filesystem;
 
 static JEngine jengine = JEngine();
 
 #pragma region Private Utility
-fs::path get_home_directory() {
-    const char* homedir = nullptr;
 
-#ifdef _WIN32
-    homedir = std::getenv("USERPROFILE"); // Primary variable on Windows
-    if (!homedir) {
-        // Fallback for older Windows systems or unusual configurations
-        const char* drive = std::getenv("HOMEDRIVE");
-        const char* path = std::getenv("HOMEPATH");
-        if (drive && path) {
-            std::string fullpath = std::string(drive) + path;
-            return fs::path(fullpath);
-        }
-    }
-#else
-    homedir = std::getenv("HOME"); // Common on Unix-like systems (Linux, macOS)
-    if (!homedir) {
-        // Fallback for cases where HOME environment variable is not set (e.g., some GUI apps on macOS, or specific system configurations)
-        struct passwd *pw = getpwuid(getuid());
-        if (pw) {
-            homedir = pw->pw_dir;
-        }
-    }
-#endif
-
-    if (homedir) {
-        return fs::path(homedir);
-    }
-
-    throw std::runtime_error("Could not determine home directory");
-}
 #pragma endregion
 
 void SaveAppConfig(std::weak_ptr<AppConfig> target){
@@ -82,14 +43,29 @@ std::shared_ptr<AppContext> GenerateAppContext(){
 void EngineInit(){
     jengine.config = LoadAppConfig();
     jengine.context = GenerateAppContext();
+
+    // We check if page is first time fire
+    JPageType page = jengine.config.get()->j_last_open;
+    bool firstFire = UIPageFirstTimeFire(jengine, page);
+    if(firstFire){
+        std::vector<JViewType> views = GetDefaultViewByPage(page);
+        UIGenerateViews(views);
+    }else{
+        std::string pageName = jengine.config.get()->j_page_name;
+        UILoadPageFromDisk(pageName);
+    }
 }
 
 void EngineDeInit(){
     jengine.config.reset();
+    for(auto view : jengine.context.get()->views){
+        view.reset();
+    }
+    jengine.context.get()->views.clear();
     jengine.context.reset();
 }
 
-void EngineLoop(){
+void EngineUpdate(){
 
 }
 

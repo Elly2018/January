@@ -16,7 +16,11 @@ struct JEngine {
     std::shared_ptr<AppContext> context;
 };
 
+// Engine init
 void EngineInit();
+// Engine release memory
 void EngineDeInit();
-void EngineLoop();
+// Update engine logic and stuff
+void EngineUpdate(JWindow& win);
+// Render engine GUI and scene
 void EngineDraw(JWindow& win);

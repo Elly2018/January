@@ -35,6 +35,7 @@ struct JWindow {
     ImGui_ImplVulkanH_Window g_MainWindowData;
     uint32_t                 g_MinImageCount = 2;
     bool                     g_SwapChainRebuild = false;
+    bool                     g_done = false;
 };
 
 // Window context initialization
