@@ -1,38 +1,39 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include "../gui/view/viewbase.h"
 
-enum class JPageType {
-    Custom = 0,
-    Resource = 1,
-    Compositing = 2,
-    Scene = 3,
-    Material = 4,
-    Audio = 5,
-    Logic = 6,
+enum JPageType {
+    JPAGETYPE_CUSTOM = 0,
+    JPAGETYPE_RESOURCE = 1,
+    JPAGETYPE_COMPOSITING = 2,
+    JPAGETYPE_SCENE = 3,
+    JPAGETYPE_MATERIAL = 4,
+    JPAGETYPE_AUDIO = 5,
+    JPAGETYPE_LOGIC = 6,
 };
 
-enum class JViewType {
-    Custom = 0,
+enum JViewType {
+    JVIEWTYPE_CUSTOM = 0,
     // Audio 1 - 99
-    Volumn = 1,
-    AudioMixer = 2,
+    JVIEWTYPE_VOLUMN = 1,
+    JVIEWTYPE_AUDIOMIXER = 2,
     // 3D 100 - 199
-    Material = 100,
-    Hierarchy = 101,
+    JVIEWTYPE_MATERIAL = 100,
+    JVIEWTYPE_HIERARCHY = 101,
     // Logic 200 - 299
-    Blueprint =- 200,
-    Script =- 201,
-    Console =- 202,
-    Debugger =- 203,
+    JVIEWTYPE_BLUEPRINT =- 200,
+    JVIEWTYPE_SCRIPT =- 201,
+    JVIEWTYPE_CONSOLE =- 202,
+    JVIEWTYPE_DEBUGGER =- 203,
     // Other >= 1000
-    Explorer = 1000,
-    Preview = 1001,
-    Render = 1002,
-    Timeline = 1003,
-    MaterialPreview = 1004,
-    Inspector = 1005,
+    JVIEWTYPE_EXPLORER = 1000,
+    JVIEWTYPE_PREVIEW = 1001,
+    JVIEWTYPE_RENDER = 1002,
+    JVIEWTYPE_TIMELINE = 1003,
+    JVIEWTYPE_MATERIALPREVIEW = 1004,
+    JVIEWTYPE_INSPECTOR = 1005,
 };
 
 // Current application context
@@ -40,7 +41,7 @@ enum class JViewType {
 struct AppContext {
     std::string project_path                      = "";
     // Current page type
-    JPageType page_type                           = JPageType::Resource;
+    JPageType page_type                           = JPageType::JPAGETYPE_RESOURCE;
     // Current live view instance
     std::vector<std::shared_ptr<JViewBase>> views = std::vector<std::shared_ptr<JViewBase>>();
 };
@@ -49,39 +50,39 @@ inline std::vector<JViewType> GetDefaultViewByPage(JPageType page) {
     std::vector<JViewType> r = std::vector<JViewType>();
     switch(page){
         default:
-        case JPageType::Custom:
-            r.push_back(JViewType::Preview);
+        case JPageType::JPAGETYPE_CUSTOM:
+            r.push_back(JViewType::JVIEWTYPE_PREVIEW);
             return r;
-        case JPageType::Resource:
-            r.push_back(JViewType::Explorer);
+        case JPageType::JPAGETYPE_RESOURCE:
+            r.push_back(JViewType::JVIEWTYPE_EXPLORER);
             return r;
-        case JPageType::Compositing:
-            r.push_back(JViewType::Blueprint);
-            r.push_back(JViewType::Console);
-            r.push_back(JViewType::Render);
-            r.push_back(JViewType::Timeline);
+        case JPageType::JPAGETYPE_COMPOSITING:
+            r.push_back(JViewType::JVIEWTYPE_BLUEPRINT);
+            r.push_back(JViewType::JVIEWTYPE_CONSOLE);
+            r.push_back(JViewType::JVIEWTYPE_RENDER);
+            r.push_back(JViewType::JVIEWTYPE_TIMELINE);
             return r;
-        case JPageType::Scene:
-            r.push_back(JViewType::Hierarchy);
-            r.push_back(JViewType::Inspector);
-            r.push_back(JViewType::Timeline);
-            r.push_back(JViewType::Preview);
-            r.push_back(JViewType::Render);
+        case JPageType::JPAGETYPE_SCENE:
+            r.push_back(JViewType::JVIEWTYPE_HIERARCHY);
+            r.push_back(JViewType::JVIEWTYPE_INSPECTOR);
+            r.push_back(JViewType::JVIEWTYPE_TIMELINE);
+            r.push_back(JViewType::JVIEWTYPE_PREVIEW);
+            r.push_back(JViewType::JVIEWTYPE_RENDER);
             return r;
-        case JPageType::Material:
-            r.push_back(JViewType::Explorer);
-            r.push_back(JViewType::Console);
-            r.push_back(JViewType::Blueprint);
-            r.push_back(JViewType::MaterialPreview);
+        case JPageType::JPAGETYPE_MATERIAL:
+            r.push_back(JViewType::JVIEWTYPE_EXPLORER);
+            r.push_back(JViewType::JVIEWTYPE_CONSOLE);
+            r.push_back(JViewType::JVIEWTYPE_BLUEPRINT);
+            r.push_back(JViewType::JVIEWTYPE_MATERIALPREVIEW);
             return r;
-        case JPageType::Audio:
-            r.push_back(JViewType::Volumn);
-            r.push_back(JViewType::AudioMixer);
+        case JPageType::JPAGETYPE_AUDIO:
+            r.push_back(JViewType::JVIEWTYPE_VOLUMN);
+            r.push_back(JViewType::JVIEWTYPE_AUDIOMIXER);
             return r;
-        case JPageType::Logic:
-            r.push_back(JViewType::Script);
-            r.push_back(JViewType::Console);
-            r.push_back(JViewType::Debugger);
+        case JPageType::JPAGETYPE_LOGIC:
+            r.push_back(JViewType::JVIEWTYPE_SCRIPT);
+            r.push_back(JViewType::JVIEWTYPE_CONSOLE);
+            r.push_back(JViewType::JVIEWTYPE_DEBUGGER);
             return r;
     }
 }
@@ -89,17 +90,17 @@ inline std::vector<JViewType> GetDefaultViewByPage(JPageType page) {
 inline std::string GetPageTypeString(JPageType page){
     switch(page){
         default:
-        case JPageType::Resource:
+        case JPageType::JPAGETYPE_RESOURCE:
             return "Resource";
-        case JPageType::Compositing:
+        case JPageType::JPAGETYPE_COMPOSITING:
             return "Compositing";
-        case JPageType::Scene:
+        case JPageType::JPAGETYPE_SCENE:
             return "Scene";
-        case JPageType::Material:
+        case JPageType::JPAGETYPE_MATERIAL:
             return "Material";
-        case JPageType::Audio:
+        case JPageType::JPAGETYPE_AUDIO:
             return "Audio";
-        case JPageType::Logic:
+        case JPageType::JPAGETYPE_LOGIC:
             return "Logic";
     }
 }

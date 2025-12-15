@@ -49,10 +49,10 @@ void EngineInit(){
     bool firstFire = UIPageFirstTimeFire(jengine, page);
     if(firstFire){
         std::vector<JViewType> views = GetDefaultViewByPage(page);
-        UIGenerateViews(views);
+        UIGenerateViews(jengine, views);
     }else{
         std::string pageName = jengine.config.get()->j_page_name;
-        UILoadPageFromDisk(pageName);
+        UILoadPageFromDisk(jengine, pageName);
     }
 }
 
@@ -65,7 +65,7 @@ void EngineDeInit(){
     jengine.context.reset();
 }
 
-void EngineUpdate(){
+void EngineUpdate(JWindow& win){
 
 }
 

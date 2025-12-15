@@ -1,6 +1,7 @@
 #include "mainframe.h"
 #include <imgui.h>
 #include "../utility.h"
+#include "view/explorer.h"
 
 void status_bar(JWindow& win, JEngine& engine){
     if(ImGui::BeginMainMenuBar()){
@@ -174,11 +175,13 @@ void UIDraw(JWindow& win, JEngine& engine){
 }
 
 void UIUpdate(JWindow& win, JEngine& engine){
-    
+    for(auto view : engine.context.get()->views){
+        view.get()->Update();
+    }
 }
 
 bool UIPageFirstTimeFire(JEngine& engine, JPageType page){
-    if(page == JPageType::Custom) return false;
+    if(page == JPageType::JPAGETYPE_CUSTOM) return false;
     fs::path home = get_home_directory();
     home = home.append("january");
     if(!fs::exists(home)){
@@ -188,15 +191,35 @@ bool UIPageFirstTimeFire(JEngine& engine, JPageType page){
     return !fs::exists(home);
 }
 
-void UIGenerateViews(std::vector<JViewType> views){
+template<Derived<JViewBase> T>
+bool UITryAdd(JEngine& engine, const char* title, JViewType type) {
+    bool find = false;
+    for(auto inst : engine.context.get()->views){
+        if(inst.get()->type == type){
+            find = true;
+            break;
+        }
+    }
+    if(!find){
+        std::shared_ptr<T> exp = std::make_shared<T>(title, type);
+        exp.get()->Init();
+        engine.context.get()->views.push_back(exp);
+        return true;
+    }
+    return false;
+}
+
+void UIGenerateViews(JEngine& engine, std::vector<JViewType> views){
     for(JViewType type : views){
         switch(type){
-
+            case JViewType::JVIEWTYPE_EXPLORER:
+                UITryAdd<JViewExplorer>(engine, "Explorer", type);
+                break;
         }
     }
 }
 
-void UILoadPageFromDisk(std::string name){
+void UILoadPageFromDisk(JEngine& engine, std::string name){
     fs::path home = get_home_directory();
     home = home.append("january");
     if(!fs::exists(home)){

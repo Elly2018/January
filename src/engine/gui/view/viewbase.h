@@ -3,7 +3,7 @@
 
 class JViewBase {
 public:
-    JViewBase(const char* _title) : title(_title) {
+    JViewBase(const char* _title, int32_t _type) : title(_title), type(_type) {
         
     }
     virtual ~JViewBase() {}
@@ -12,6 +12,7 @@ public:
     virtual void Draw() {}
     virtual void DeInit() {}
 
-private:
+public:
     const char* title;
+    int32_t type;
 };

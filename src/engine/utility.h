@@ -10,7 +10,7 @@
 
 namespace fs = std::filesystem;
 
-fs::path get_home_directory() {
+inline fs::path get_home_directory() {
     const char* homedir = nullptr;
 
 #ifdef _WIN32
