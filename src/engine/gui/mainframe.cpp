@@ -56,7 +56,7 @@ void status_bar(){
             }
             ImGui::EndMenu();
         }
-        if(ImGui::BeginMenu("View")){
+        if(ImGui::BeginMenu("Page")){
             if(ImGui::MenuItem("RESOURCE")){
                 
             }
@@ -73,6 +73,24 @@ void status_bar(){
                 
             }
             if(ImGui::MenuItem("Logic")){
+                
+            }
+            ImGui::EndMenu();
+        }
+        if(ImGui::BeginMenu("View")){
+            if(ImGui::MenuItem("Explorer")){
+                
+            }
+            if(ImGui::MenuItem("Preview")){
+                
+            }
+            if(ImGui::MenuItem("Timeline")){
+                
+            }
+            if(ImGui::MenuItem("Blueprint")){
+                
+            }
+            if(ImGui::MenuItem("Script")){
                 
             }
             ImGui::EndMenu();
