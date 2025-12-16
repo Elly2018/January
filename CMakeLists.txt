@@ -22,6 +22,18 @@ find_package(SDL3 REQUIRED)
 set(IMGUI_DIR third-party/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends)
 
+# asio
+set(ASIO_DIR third-party/asio)
+include_directories(${ASIO_DIR}/include)
+
+# uuid
+set(UUID_DIR third-party/uuid_v4)
+include_directories(${UUID_DIR})
+
+# file watch
+set(FileWatch_DIR third-party/filewatch)
+include_directories(${FileWatch_DIR})
+
 # cmd
 set(CMD_DIR third-party/argh)
 include_directories(${CMD_DIR})

@@ -408,6 +408,7 @@ void JInit() {
         SDL_WINDOW_HIDDEN | 
         SDL_WINDOW_HIGH_PIXEL_DENSITY;
     jwindow.g_window = SDL_CreateWindow("Dear ImGui SDL3+Vulkan example", (int)(1280 * main_scale), (int)(800 * main_scale), jwindow.g_windowFlags);
+    SDL_SetWindowMinimumSize(jwindow.g_window, 800, 600);
     if (jwindow.g_window == nullptr)
     {
         throw std::runtime_error(std::format("Error: SDL_CreateWindow(): {}\n", SDL_GetError()));
