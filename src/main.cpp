@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv){
     InitCMD(argc, argv);
-    auto win = std::move(JInit());
-    JMainloop(win);
-    JDeInit(win);
+    JInit();
+    JMainloop();
+    JDeInit();
 }

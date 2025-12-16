@@ -21,6 +21,6 @@ void EngineInit();
 // Engine release memory
 void EngineDeInit();
 // Update engine logic and stuff
-void EngineUpdate(JWindow& win);
+void EngineUpdate();
 // Render engine GUI and scene
-void EngineDraw(JWindow& win);
+void EngineDraw();

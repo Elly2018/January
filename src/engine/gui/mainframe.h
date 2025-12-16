@@ -8,7 +8,7 @@ template<class T, class U>
 concept Derived = std::is_base_of<U, T>::value;
 
 // Drawing imgui context on screen
-void UIDraw(JWindow& win, JEngine& engine);
+void UIDraw(const JWindow& win, JEngine& engine);
 // Update Imgui context
 void UIUpdate(JWindow& win, JEngine& engine);
 

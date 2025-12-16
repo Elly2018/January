@@ -36,11 +36,12 @@ struct JWindow {
     uint32_t                 g_MinImageCount = 2;
     bool                     g_SwapChainRebuild = false;
     bool                     g_done = false;
+    ImGuiID                  g_dockerspace = 0;
 };
 
 // Window context initialization
-std::shared_ptr<JWindow> JInit();
+void JInit();
 // Escape the mainloop, release resource
-void JDeInit(std::weak_ptr<JWindow> w_win);
+void JDeInit();
 // January application main loop
-void JMainloop(std::weak_ptr<JWindow> w_win);
+void JMainloop();

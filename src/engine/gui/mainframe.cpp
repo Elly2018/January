@@ -1,9 +1,9 @@
 #include "mainframe.h"
 #include <imgui.h>
-#include "../utility.h"
+#include "../utility/path.h"
 #include "view/explorer.h"
 
-void status_bar(JWindow& win, JEngine& engine){
+void status_bar(const JWindow& win, JEngine& engine){
     if(ImGui::BeginMainMenuBar()){
         if(ImGui::BeginMenu("File")){
             if(ImGui::MenuItem("New Project")){
@@ -141,28 +141,9 @@ void status_bar(JWindow& win, JEngine& engine){
     }
 }
 
-void UIDraw(JWindow& win, JEngine& engine){
+void UIDraw(const JWindow& win, JEngine& engine){
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     status_bar(win, engine);
-
-    int32_t padding_top = 50;
-    ImVec2 wsize = io.DisplaySize;
-    wsize.y - padding_top;
-    ImGuiWindowFlags frame_flag = 
-        ImGuiWindowFlags_NoMove | 
-        ImGuiWindowFlags_NoNav | 
-        ImGuiWindowFlags_NoBackground |
-        ImGuiWindowFlags_NoDecoration | 
-        ImGuiWindowFlags_NoTitleBar | 
-        ImGuiWindowFlags_NoResize | 
-        ImGuiWindowFlags_NoScrollbar | 
-        ImGuiWindowFlags_NoNavFocus |
-        ImGuiWindowFlags_NoCollapse;
-    ImGui::SetNextWindowPos(ImVec2(0, padding_top));
-    ImGui::SetNextWindowSize(wsize);
-    if(ImGui::Begin("MainFrame", nullptr, frame_flag)){
-        ImGui::End();
-    }
 
     AppContext* appcontext = engine.context.get();
     if(appcontext == nullptr) return;

@@ -44,6 +44,10 @@ struct AppContext {
     JPageType page_type                           = JPageType::JPAGETYPE_RESOURCE;
     // Current live view instance
     std::vector<std::shared_ptr<JViewBase>> views = std::vector<std::shared_ptr<JViewBase>>();
+    // Application global time
+    double time                                   = 0;
+    // Application delta time
+    double delta                                  = 0;
 };
 
 inline std::vector<JViewType> GetDefaultViewByPage(JPageType page) {

@@ -1,5 +1,4 @@
-#pragma once
-#include <filesystem>
+#include "path.h"
 
 // Helping find the home path
 #ifndef _WIN32
@@ -8,9 +7,7 @@
 #include <pwd.h>
 #endif
 
-namespace fs = std::filesystem;
-
-inline fs::path get_home_directory() {
+fs::path get_home_directory() {
     const char* homedir = nullptr;
 
 #ifdef _WIN32

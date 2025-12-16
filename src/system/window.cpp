@@ -5,7 +5,11 @@
 #include <stdexcept>
 #include <imgui_notify.h>
 #include <tahoma.h>
+#include <spdlog/spdlog.h>
 #include "../engine/engine.h"
+
+// Global window access point
+JWindow jwindow;
 
 #pragma region Vulkan Functions
 static void check_vk_result(VkResult err)
@@ -298,16 +302,12 @@ static void FramePresent(JWindow& win)
 #pragma endregion
 
 #pragma region MainLoop
-void DrawLoop(std::weak_ptr<JWindow> w_win){
-    auto win = w_win.lock();
-    if(win.get() == nullptr) return;
-    JWindow& winref = *win.get();
+void DrawLoop(){
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    EngineInit();
     
-    while (!winref.g_done){
+    while (!jwindow.g_done){
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
@@ -319,13 +319,13 @@ void DrawLoop(std::weak_ptr<JWindow> w_win){
         {
             ImGui_ImplSDL3_ProcessEvent(&event);
             if (event.type == SDL_EVENT_QUIT)
-                winref.g_done = true;
-            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(winref.g_window))
-                winref.g_done = true;
+                jwindow.g_done = true;
+            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(jwindow.g_window))
+                jwindow.g_done = true;
         }
 
         // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
-        if (SDL_GetWindowFlags(winref.g_window) & SDL_WINDOW_MINIMIZED)
+        if (SDL_GetWindowFlags(jwindow.g_window) & SDL_WINDOW_MINIMIZED)
         {
             SDL_Delay(10);
             continue;
@@ -333,13 +333,13 @@ void DrawLoop(std::weak_ptr<JWindow> w_win){
 
         // Resize swap chain?
         int fb_width, fb_height;
-        SDL_GetWindowSize(winref.g_window, &fb_width, &fb_height);
-        if (fb_width > 0 && fb_height > 0 && (winref.g_SwapChainRebuild || winref.g_MainWindowData.Width != fb_width || winref.g_MainWindowData.Height != fb_height))
+        SDL_GetWindowSize(jwindow.g_window, &fb_width, &fb_height);
+        if (fb_width > 0 && fb_height > 0 && (jwindow.g_SwapChainRebuild || jwindow.g_MainWindowData.Width != fb_width || jwindow.g_MainWindowData.Height != fb_height))
         {
-            ImGui_ImplVulkan_SetMinImageCount(winref.g_MinImageCount);
-            ImGui_ImplVulkanH_CreateOrResizeWindow(winref.g_Instance, winref.g_PhysicalDevice, winref.g_Device, &winref.g_MainWindowData, winref.g_QueueFamily, winref.g_Allocator, fb_width, fb_height, winref.g_MinImageCount, 0);
-            winref.g_MainWindowData.FrameIndex = 0;
-            winref.g_SwapChainRebuild = false;
+            ImGui_ImplVulkan_SetMinImageCount(jwindow.g_MinImageCount);
+            ImGui_ImplVulkanH_CreateOrResizeWindow(jwindow.g_Instance, jwindow.g_PhysicalDevice, jwindow.g_Device, &jwindow.g_MainWindowData, jwindow.g_QueueFamily, jwindow.g_Allocator, fb_width, fb_height, jwindow.g_MinImageCount, 0);
+            jwindow.g_MainWindowData.FrameIndex = 0;
+            jwindow.g_SwapChainRebuild = false;
         }
 
         // Start the Dear ImGui frame
@@ -347,7 +347,8 @@ void DrawLoop(std::weak_ptr<JWindow> w_win){
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
-        EngineDraw(winref);
+        jwindow.g_dockerspace = ImGui::DockSpaceOverViewport();
+        EngineDraw();
 
         // Render toasts on top of everything, at the end of your code!
         // You should push style vars here
@@ -361,12 +362,12 @@ void DrawLoop(std::weak_ptr<JWindow> w_win){
         ImGui::Render();
         ImDrawData* main_draw_data = ImGui::GetDrawData();
         const bool main_is_minimized = (main_draw_data->DisplaySize.x <= 0.0f || main_draw_data->DisplaySize.y <= 0.0f);
-        winref.g_MainWindowData.ClearValue.color.float32[0] = clear_color.x * clear_color.w;
-        winref.g_MainWindowData.ClearValue.color.float32[1] = clear_color.y * clear_color.w;
-        winref.g_MainWindowData.ClearValue.color.float32[2] = clear_color.z * clear_color.w;
-        winref.g_MainWindowData.ClearValue.color.float32[3] = clear_color.w;
+        jwindow.g_MainWindowData.ClearValue.color.float32[0] = clear_color.x * clear_color.w;
+        jwindow.g_MainWindowData.ClearValue.color.float32[1] = clear_color.y * clear_color.w;
+        jwindow.g_MainWindowData.ClearValue.color.float32[2] = clear_color.z * clear_color.w;
+        jwindow.g_MainWindowData.ClearValue.color.float32[3] = clear_color.w;
         if (!main_is_minimized)
-            FrameRender(winref, main_draw_data);
+            FrameRender(jwindow, main_draw_data);
 
         // Update and Render additional Platform Windows
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -377,23 +378,20 @@ void DrawLoop(std::weak_ptr<JWindow> w_win){
 
         // Present Main Platform Window
         if (!main_is_minimized)
-            FramePresent(winref);
+            FramePresent(jwindow);
     }
 }
 
-void UpdateLoop(std::weak_ptr<JWindow> w_win){
-    auto win = w_win.lock();
-    if(win.get() == nullptr) return;
-    JWindow& winref = *win.get();
-
-    while(!winref.g_done){
-        EngineUpdate(winref);
+void UpdateLoop(){
+    while(!jwindow.g_done){
+        EngineUpdate();
     }
 }
 #pragma endregion
 
-std::shared_ptr<JWindow> JInit() {
-    JWindow win = JWindow();
+void JInit() {
+    spdlog::debug("Application Initialization");
+    jwindow = JWindow();
 
     // Setup SDL
     // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
@@ -405,12 +403,12 @@ std::shared_ptr<JWindow> JInit() {
 
     // Create window with Vulkan graphics context
     float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
-    win.g_windowFlags = SDL_WINDOW_VULKAN | 
+    jwindow.g_windowFlags = SDL_WINDOW_VULKAN | 
         SDL_WINDOW_RESIZABLE | 
         SDL_WINDOW_HIDDEN | 
         SDL_WINDOW_HIGH_PIXEL_DENSITY;
-    win.g_window = SDL_CreateWindow("Dear ImGui SDL3+Vulkan example", (int)(1280 * main_scale), (int)(800 * main_scale), win.g_windowFlags);
-    if (win.g_window == nullptr)
+    jwindow.g_window = SDL_CreateWindow("Dear ImGui SDL3+Vulkan example", (int)(1280 * main_scale), (int)(800 * main_scale), jwindow.g_windowFlags);
+    if (jwindow.g_window == nullptr)
     {
         throw std::runtime_error(std::format("Error: SDL_CreateWindow(): {}\n", SDL_GetError()));
     }
@@ -422,23 +420,23 @@ std::shared_ptr<JWindow> JInit() {
         for (uint32_t n = 0; n < sdl_extensions_count; n++)
             extensions.push_back(sdl_extensions[n]);
     }
-    SetupVulkan(win, extensions);
+    SetupVulkan(jwindow, extensions);
 
     // Create Window Surface
     VkSurfaceKHR surface;
     VkResult err;
-    if (SDL_Vulkan_CreateSurface(win.g_window, win.g_Instance, win.g_Allocator, &surface) == 0)
+    if (SDL_Vulkan_CreateSurface(jwindow.g_window, jwindow.g_Instance, jwindow.g_Allocator, &surface) == 0)
     {
         throw std::runtime_error("Failed to create Vulkan surface.\n");
     }
 
     // Create Framebuffers
     int w, h;
-    SDL_GetWindowSize(win.g_window, &w, &h);
-    ImGui_ImplVulkanH_Window* wd = &win.g_MainWindowData;
-    SetupVulkanWindow(win, wd, surface, w, h);
-    SDL_SetWindowPosition(win.g_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    SDL_ShowWindow(win.g_window);
+    SDL_GetWindowSize(jwindow.g_window, &w, &h);
+    ImGui_ImplVulkanH_Window* wd = &jwindow.g_MainWindowData;
+    SetupVulkanWindow(jwindow, wd, surface, w, h);
+    SDL_SetWindowPosition(jwindow.g_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    SDL_ShowWindow(jwindow.g_window);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -470,19 +468,19 @@ std::shared_ptr<JWindow> JInit() {
     }
 
     // Setup Platform/Renderer backends
-    ImGui_ImplSDL3_InitForVulkan(win.g_window);
+    ImGui_ImplSDL3_InitForVulkan(jwindow.g_window);
     ImGui_ImplVulkan_InitInfo init_info = {};
     //init_info.ApiVersion = VK_API_VERSION_1_3;              // Pass in your value of VkApplicationInfo::apiVersion, otherwise will default to header version.
-    init_info.Instance = win.g_Instance;
-    init_info.PhysicalDevice = win.g_PhysicalDevice;
-    init_info.Device = win.g_Device;
-    init_info.QueueFamily = win.g_QueueFamily;
-    init_info.Queue = win.g_Queue;
-    init_info.PipelineCache = win.g_PipelineCache;
-    init_info.DescriptorPool = win.g_DescriptorPool;
-    init_info.MinImageCount = win.g_MinImageCount;
+    init_info.Instance = jwindow.g_Instance;
+    init_info.PhysicalDevice = jwindow.g_PhysicalDevice;
+    init_info.Device = jwindow.g_Device;
+    init_info.QueueFamily = jwindow.g_QueueFamily;
+    init_info.Queue = jwindow.g_Queue;
+    init_info.PipelineCache = jwindow.g_PipelineCache;
+    init_info.DescriptorPool = jwindow.g_DescriptorPool;
+    init_info.MinImageCount = jwindow.g_MinImageCount;
     init_info.ImageCount = wd->ImageCount;
-    init_info.Allocator = win.g_Allocator;
+    init_info.Allocator = jwindow.g_Allocator;
     init_info.PipelineInfoMain.RenderPass = wd->RenderPass;
     init_info.PipelineInfoMain.Subpass = 0;
     init_info.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
@@ -512,32 +510,30 @@ std::shared_ptr<JWindow> JInit() {
     ImGui::MergeIconsWithLatestFont(16.f, false);
     ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
 
-    return std::make_shared<JWindow>(win);
+    EngineInit();
 }
 
-void JDeInit(std::weak_ptr<JWindow> w_win){
+void JDeInit(){
+    spdlog::debug("Release Application Resources");
     // Cleanup
     // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppQuit() function]
-    auto win = w_win.lock();
-    if(win.get() == nullptr) return;
-    JWindow& winref = *win.get();
-    VkResult err = vkDeviceWaitIdle(winref.g_Device);
+    VkResult err = vkDeviceWaitIdle(jwindow.g_Device);
     check_vk_result(err);
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 
-    CleanupVulkanWindow(winref);
-    CleanupVulkan(winref);
+    CleanupVulkanWindow(jwindow);
+    CleanupVulkan(jwindow);
 
-    SDL_DestroyWindow(winref.g_window);
+    SDL_DestroyWindow(jwindow.g_window);
     SDL_Quit();
-    win.reset();
 }
 
-void JMainloop(std::weak_ptr<JWindow> w_win) {
-    std::thread draw_thread(DrawLoop, w_win);
-    std::thread update_thread(UpdateLoop, w_win);
+void JMainloop() {
+    spdlog::debug("Enter Application Mainloop");
+    std::thread draw_thread(DrawLoop);
+    std::thread update_thread(UpdateLoop);
     if(draw_thread.joinable()) draw_thread.join();
     if(update_thread.joinable()) update_thread.join();
 }

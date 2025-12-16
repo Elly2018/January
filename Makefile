@@ -345,6 +345,30 @@ src/engine/gui/view/volumn.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/volumn.cpp.s
 .PHONY : src/engine/gui/view/volumn.cpp.s
 
+src/engine/utility/path.o: src/engine/utility/path.cpp.o
+.PHONY : src/engine/utility/path.o
+
+# target to build an object file
+src/engine/utility/path.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/path.cpp.o
+.PHONY : src/engine/utility/path.cpp.o
+
+src/engine/utility/path.i: src/engine/utility/path.cpp.i
+.PHONY : src/engine/utility/path.i
+
+# target to preprocess a source file
+src/engine/utility/path.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/path.cpp.i
+.PHONY : src/engine/utility/path.cpp.i
+
+src/engine/utility/path.s: src/engine/utility/path.cpp.s
+.PHONY : src/engine/utility/path.s
+
+# target to generate assembly for a file
+src/engine/utility/path.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/path.cpp.s
+.PHONY : src/engine/utility/path.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -621,6 +645,9 @@ help:
 	@echo "... src/engine/gui/view/volumn.o"
 	@echo "... src/engine/gui/view/volumn.i"
 	@echo "... src/engine/gui/view/volumn.s"
+	@echo "... src/engine/utility/path.o"
+	@echo "... src/engine/utility/path.i"
+	@echo "... src/engine/utility/path.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
