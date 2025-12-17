@@ -609,6 +609,102 @@ third-party/imgui/imgui_widgets.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/imgui/imgui_widgets.cpp.s
 .PHONY : third-party/imgui/imgui_widgets.cpp.s
 
+third-party/node-editor/crude_json.o: third-party/node-editor/crude_json.cpp.o
+.PHONY : third-party/node-editor/crude_json.o
+
+# target to build an object file
+third-party/node-editor/crude_json.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/crude_json.cpp.o
+.PHONY : third-party/node-editor/crude_json.cpp.o
+
+third-party/node-editor/crude_json.i: third-party/node-editor/crude_json.cpp.i
+.PHONY : third-party/node-editor/crude_json.i
+
+# target to preprocess a source file
+third-party/node-editor/crude_json.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/crude_json.cpp.i
+.PHONY : third-party/node-editor/crude_json.cpp.i
+
+third-party/node-editor/crude_json.s: third-party/node-editor/crude_json.cpp.s
+.PHONY : third-party/node-editor/crude_json.s
+
+# target to generate assembly for a file
+third-party/node-editor/crude_json.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/crude_json.cpp.s
+.PHONY : third-party/node-editor/crude_json.cpp.s
+
+third-party/node-editor/imgui_canvas.o: third-party/node-editor/imgui_canvas.cpp.o
+.PHONY : third-party/node-editor/imgui_canvas.o
+
+# target to build an object file
+third-party/node-editor/imgui_canvas.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_canvas.cpp.o
+.PHONY : third-party/node-editor/imgui_canvas.cpp.o
+
+third-party/node-editor/imgui_canvas.i: third-party/node-editor/imgui_canvas.cpp.i
+.PHONY : third-party/node-editor/imgui_canvas.i
+
+# target to preprocess a source file
+third-party/node-editor/imgui_canvas.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_canvas.cpp.i
+.PHONY : third-party/node-editor/imgui_canvas.cpp.i
+
+third-party/node-editor/imgui_canvas.s: third-party/node-editor/imgui_canvas.cpp.s
+.PHONY : third-party/node-editor/imgui_canvas.s
+
+# target to generate assembly for a file
+third-party/node-editor/imgui_canvas.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_canvas.cpp.s
+.PHONY : third-party/node-editor/imgui_canvas.cpp.s
+
+third-party/node-editor/imgui_node_editor.o: third-party/node-editor/imgui_node_editor.cpp.o
+.PHONY : third-party/node-editor/imgui_node_editor.o
+
+# target to build an object file
+third-party/node-editor/imgui_node_editor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_node_editor.cpp.o
+.PHONY : third-party/node-editor/imgui_node_editor.cpp.o
+
+third-party/node-editor/imgui_node_editor.i: third-party/node-editor/imgui_node_editor.cpp.i
+.PHONY : third-party/node-editor/imgui_node_editor.i
+
+# target to preprocess a source file
+third-party/node-editor/imgui_node_editor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_node_editor.cpp.i
+.PHONY : third-party/node-editor/imgui_node_editor.cpp.i
+
+third-party/node-editor/imgui_node_editor.s: third-party/node-editor/imgui_node_editor.cpp.s
+.PHONY : third-party/node-editor/imgui_node_editor.s
+
+# target to generate assembly for a file
+third-party/node-editor/imgui_node_editor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_node_editor.cpp.s
+.PHONY : third-party/node-editor/imgui_node_editor.cpp.s
+
+third-party/node-editor/imgui_node_editor_api.o: third-party/node-editor/imgui_node_editor_api.cpp.o
+.PHONY : third-party/node-editor/imgui_node_editor_api.o
+
+# target to build an object file
+third-party/node-editor/imgui_node_editor_api.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_node_editor_api.cpp.o
+.PHONY : third-party/node-editor/imgui_node_editor_api.cpp.o
+
+third-party/node-editor/imgui_node_editor_api.i: third-party/node-editor/imgui_node_editor_api.cpp.i
+.PHONY : third-party/node-editor/imgui_node_editor_api.i
+
+# target to preprocess a source file
+third-party/node-editor/imgui_node_editor_api.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_node_editor_api.cpp.i
+.PHONY : third-party/node-editor/imgui_node_editor_api.cpp.i
+
+third-party/node-editor/imgui_node_editor_api.s: third-party/node-editor/imgui_node_editor_api.cpp.s
+.PHONY : third-party/node-editor/imgui_node_editor_api.s
+
+# target to generate assembly for a file
+third-party/node-editor/imgui_node_editor_api.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/node-editor/imgui_node_editor_api.cpp.s
+.PHONY : third-party/node-editor/imgui_node_editor_api.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -678,6 +774,18 @@ help:
 	@echo "... third-party/imgui/imgui_widgets.o"
 	@echo "... third-party/imgui/imgui_widgets.i"
 	@echo "... third-party/imgui/imgui_widgets.s"
+	@echo "... third-party/node-editor/crude_json.o"
+	@echo "... third-party/node-editor/crude_json.i"
+	@echo "... third-party/node-editor/crude_json.s"
+	@echo "... third-party/node-editor/imgui_canvas.o"
+	@echo "... third-party/node-editor/imgui_canvas.i"
+	@echo "... third-party/node-editor/imgui_canvas.s"
+	@echo "... third-party/node-editor/imgui_node_editor.o"
+	@echo "... third-party/node-editor/imgui_node_editor.i"
+	@echo "... third-party/node-editor/imgui_node_editor.s"
+	@echo "... third-party/node-editor/imgui_node_editor_api.o"
+	@echo "... third-party/node-editor/imgui_node_editor_api.i"
+	@echo "... third-party/node-editor/imgui_node_editor_api.s"
 .PHONY : help
 
 

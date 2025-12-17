@@ -22,6 +22,10 @@ find_package(SDL3 REQUIRED)
 set(IMGUI_DIR third-party/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends)
 
+# Node editorc
+set(Node_DIR third-party/node-editor)
+include_directories(${Node_DIR})
+
 # asio
 set(ASIO_DIR third-party/asio)
 include_directories(${ASIO_DIR}/include)
@@ -74,7 +78,11 @@ add_executable(january
   ${IMGUI_DIR}/imgui_draw.cpp 
   ${IMGUI_DIR}/imgui_demo.cpp 
   ${IMGUI_DIR}/imgui_tables.cpp 
-  ${IMGUI_DIR}/imgui_widgets.cpp)
+  ${IMGUI_DIR}/imgui_widgets.cpp
+  ${Node_DIR}/crude_json.cpp
+  ${Node_DIR}/imgui_canvas.cpp
+  ${Node_DIR}/imgui_node_editor.cpp
+  ${Node_DIR}/imgui_node_editor_api.cpp)
 target_link_libraries(january PRIVATE glfw;Vulkan::Vulkan SDL3::SDL3)
 target_include_directories(january PUBLIC ${SDL3_INCLUDE_DIRS})
 target_include_directories(january PUBLIC ${LOG_DIR}/src)
