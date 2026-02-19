@@ -27,7 +27,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
 
-    enum class ViewFlag_ {
+    enum class JanuaryViewFlag {
         NONE = 0,
         EXPLORER = 0 << 1,
         BLUEPRINT = 0 << 1,
@@ -40,4 +40,9 @@ namespace January::Engine::View {
 
     void VInit(ViewManager& vm);
     void VDeInit(ViewManager& vm);
+    void VSetEnable(ViewManager& vm, JanuaryViewFlag flag);
+    // Drawing imgui context on screen
+    void VDraw(JWindow& win, JEngine& engine);
+    // Update Imgui context
+    void VUpdate(JWindow& win, JEngine& engine);
 }

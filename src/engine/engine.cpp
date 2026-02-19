@@ -34,13 +34,13 @@ SOFTWARE.
 using json = nlohmann::json;
 
 namespace January::Engine {
-    void January::Engine::SaveAppConfig(std::weak_ptr<January::Engine::AppConfig> target){
+    void SaveAppConfig(AppConfig& target){
         fs::path home = get_home_directory();
     }
 
-    std::shared_ptr<January::Engine::AppConfig> January::Engine::LoadAppConfig(){
+    void LoadAppConfig(AppConfig& config){
         spdlog::debug("Try Load AppConfig");
-        AppConfig config = AppConfig();
+        config = AppConfig();
         fs::path home = get_home_directory();
         home = home.append("january");
         if(!fs::exists(home)){
@@ -66,13 +66,11 @@ namespace January::Engine {
             config.j_last_open = data["j_last_open"];
             config.j_page_name = data["j_page_name"];
         }
-
-        return std::make_shared<January::Engine::AppConfig>(config);
     }
 
-    std::shared_ptr<January::Engine::AppContext> January::Engine::GenerateAppContext(){
+    void GenerateAppContext(AppContext& ctx){
         spdlog::debug("Try Generate AppContext");
-        AppContext ctx = AppContext();
+        ctx = AppContext();
 
         auto par_p = January::CLI::GetCMDParam("p", "path");
         if(par_p.has_value()){
@@ -81,14 +79,12 @@ namespace January::Engine {
         }else{
             spdlog::warn("App path not setup");
         }
-        return std::make_shared<AppContext>(ctx);
     }
 
     int32_t EngineInit(JEngine& jengine, JWindow& jwindow){
         spdlog::debug("Engine Init");
-        JEngine jengine = JEngine();
-        jengine.config = LoadAppConfig();
-        jengine.context = GenerateAppContext();
+        LoadAppConfig(jengine.config);
+        GenerateAppContext(jengine.context);
 
         // We check if page is first time fire
         JPageType page = jengine.config.j_last_open;
@@ -113,27 +109,27 @@ namespace January::Engine {
         return 0;
     }
 
-    void January::Engine::EngineDeInit(JEngine& jengine){
+    void EngineDeInit(JEngine& jengine){
         for(auto view : jengine.context.views){
             view.reset();
         }
         jengine.context.views.clear();
     }
 
-    void January::Engine::EngineUpdate(JEngine& jengine){
+    void EngineUpdate(JEngine& jengine){
         double current = ImGui::GetTime();
         jengine.context.delta = current - jengine.context.time;
         jengine.context.time = current;
 
         for(auto view : jengine.context.views){
-            January::Engine::View::JViewBase* v = view.get();
+            View::JViewBase* v = view.get();
             if(v != nullptr){
                 v->Update();
             }
         }
     }
 
-    void January::Engine::EngineDraw(JEngine& jengine, JWindow& jwindow){
+    void EngineDraw(JEngine& jengine, JWindow& jwindow){
         UIDraw(jwindow, jengine);
     }
 }

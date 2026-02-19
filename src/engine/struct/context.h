@@ -28,7 +28,7 @@ SOFTWARE.
 #include "../gui/view/viewbase.h"
 
 namespace January::Engine {
-    enum JPageType {
+    enum class JPageType {
         JPAGETYPE_CUSTOM = 0,
         JPAGETYPE_RESOURCE = 1,
         JPAGETYPE_COMPOSITING = 2,
@@ -38,7 +38,7 @@ namespace January::Engine {
         JPAGETYPE_LOGIC = 6,
     };
 
-    enum JViewType {
+    enum class JViewType {
         JVIEWTYPE_CUSTOM = 0,
         // Audio 1 - 99
         JVIEWTYPE_VOLUMN = 1,

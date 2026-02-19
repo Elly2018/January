@@ -34,9 +34,9 @@ namespace January::Engine {
     // Save app config to app preference location
     void SaveAppConfig(AppConfig& target);
     // Load app config from app preference location
-    AppConfig& LoadAppConfig();
+    void LoadAppConfig(AppConfig& config);
     // Generate a app context data struct
-    AppContext& GenerateAppContext();
+    void GenerateAppContext(AppContext& ctx);
 
     struct JEngine {
         AppConfig                   config;
