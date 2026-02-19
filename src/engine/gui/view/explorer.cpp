@@ -26,12 +26,10 @@ SOFTWARE.
 #include <thread>
 #include <spdlog/spdlog.h>
 #include <imgui.h>
+#include "variable.h"
 #include "../../engine.h"
 
 namespace fs = std::filesystem;
-
-// Global engine access point
-extern January::Engine::JEngine jengine;
 
 January::Engine::View::JViewExplorer::JViewExplorer(const char* _title, int32_t _type) : JViewBase(_title, _type) {
 

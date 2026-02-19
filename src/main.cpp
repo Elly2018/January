@@ -21,13 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include <spdlog.h>
 #include "system/cli.h"
-#include "system/window.h"
+#include "system/system.h"
+
+using namespace January::CLI;
+using namespace January::System;
 
 // Program entry point
 int main(int argc, char** argv){
-    January::CLI::InitCMD(argc, argv);
-    January::Editor::JInit();
-    January::Editor::JMainloop();
-    January::Editor::JDeInit();
+    InitCMD(argc, argv);
+    JSystem jsystem;
+    if(SInit(jsystem) == -1){
+        spdlog::trace("SInit failed");
+        return -1;
+    }
+    SRun(jsystem);
 }

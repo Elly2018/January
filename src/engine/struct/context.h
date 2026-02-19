@@ -67,10 +67,6 @@ namespace January::Engine {
      */
     struct AppContext {
         std::string project_path                      = "";
-        // Current page type
-        JPageType page_type                           = JPageType::JPAGETYPE_RESOURCE;
-        // Current live view instance
-        std::vector<std::shared_ptr<January::Engine::View::JViewBase>> views = std::vector<std::shared_ptr<January::Engine::View::JViewBase>>();
         // Application global time
         double time                                   = 0;
         // Application delta time

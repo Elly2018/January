@@ -21,34 +21,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "blueprint.h"
-#include <spdlog/spdlog.h>
-#include <imgui.h>
-#include "variable.h"
-#include "../../engine.h"
+#pragma once
+#include "window.h"
 
-// Global engine access point
-extern January::Engine::JEngine jengine;
+namespace January::System {
+    // System context
+    // Contain all window objects
+    struct JSystem {
+        JWindow                  window;
+        JWindowRender            windows[36];
+        JEngine                  engine;
+    };
 
-January::Engine::View::JViewBlueprint::JViewBlueprint(const char* _title, int32_t _type) : JViewBase(_title, _type) {
+    void UpdateLoop(JSystem& system);
 
-}
+    // System init
+    // This will create the editor context and return it
+    int32_t SInit(JSystem& system);
 
-January::Engine::View::JViewBlueprint::~JViewBlueprint(){
-
-}
-
-void January::Engine::View::JViewBlueprint::Init(){
-    spdlog::info("Loaded View: Blueprint");
-}
-void January::Engine::View::JViewBlueprint::Update(){
-
-}
-void January::Engine::View::JViewBlueprint::Draw(){
-    ImGui::Begin(title);
-    
-    ImGui::End();
-}
-void January::Engine::View::JViewBlueprint::DeInit(){
-
+    // January system running entry point
+    void SRun(JSystem& system);
 }

@@ -26,13 +26,11 @@ SOFTWARE.
 #include "../utility/path.h"
 #include "view/explorer.h"
 
-/**
- * @brief Basically drawing the main title bar out
- * 
- * @param win The windows instance struct ref
- * @param engine The engine instance struct ref
- */
-void status_bar(const January::Editor::JWindow& win, January::Engine::JEngine& engine){
+using namespace January::Engine;
+using namespace January::System;
+
+// Basically drawing the main title bar out
+void status_bar(const JWindow& win, January::Engine::JEngine& engine){
     if(ImGui::BeginMainMenuBar()){
         if(ImGui::BeginMenu("File")){
             if(ImGui::MenuItem("New Project")){
@@ -170,7 +168,7 @@ void status_bar(const January::Editor::JWindow& win, January::Engine::JEngine& e
     }
 }
 
-void January::Engine::UIDraw(const January::Editor::JWindow& win, January::Engine::JEngine& engine){
+void January::Engine::UIDraw(const JWindow& win, January::Engine::JEngine& engine){
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     status_bar(win, engine);
 
@@ -184,7 +182,7 @@ void January::Engine::UIDraw(const January::Editor::JWindow& win, January::Engin
     }
 }
 
-void January::Engine::UIUpdate(January::Editor::JWindow& win, January::Engine::JEngine& engine){
+void January::Engine::UIUpdate(JWindow& win, January::Engine::JEngine& engine){
     for(auto view : engine.context.get()->views){
         view.get()->Update();
     }

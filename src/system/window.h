@@ -43,10 +43,11 @@ SOFTWARE.
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
 
-namespace January::Editor {
-    // Main window reference
-    // This handles the editor window
-    struct JWindow {
+namespace January::System {
+
+    // Pure render window struct
+    // This should be generate by engine or editor
+    struct JWindowRender {
         SDL_WindowFlags          g_windowFlags;
         SDL_Window*              g_window = nullptr;
         VkAllocationCallbacks*   g_Allocator = nullptr;
@@ -58,17 +59,31 @@ namespace January::Editor {
         VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
         VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
 
-        ImGui_ImplVulkanH_Window g_MainWindowData;
+        bool                     g_done = false;
         uint32_t                 g_MinImageCount = 2;
         bool                     g_SwapChainRebuild = false;
-        bool                     g_done = false;
-        ImGuiID                  g_dockerspace = 0;
     };
 
-    // Window context initialization
-    void JInit();
+    // Main window struct
+    // This handles the editor window
+    struct JWindow : JWindowRender {
+        ImGui_ImplVulkanH_Window g_MainWindowData;
+        ImGuiID                  g_dockerspace = 0;
+    };
+    // The init config for the window
+    struct JRWindowInit {
+        SDL_WindowFlags          g_flags = 0;
+        int32_t                  g_width = 800;
+        int32_t                  g_height = 600;
+    };
+
+    // The editor window drawing function call
+    void DrawLoop(JWindow& jwindow);
+
+    // Editor window context initialization
+    int32_t JInit(JWindow& jwindow, JRWindowInit init);
     // Escape the mainloop, release resource
-    void JDeInit();
-    // January application main loop
-    void JMainloop();
+    void JDeInit(JWindow& jwindow);
+    int32_t JRInit(JWindowRender& jrwindow, JRWindowInit init);
+    void JRDeInit(JWindowRender& jwindow);
 }

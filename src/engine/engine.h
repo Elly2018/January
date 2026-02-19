@@ -23,29 +23,33 @@ SOFTWARE.
 */
 #pragma once
 #include <memory>
+#include "view/manager.h"
 #include "struct/config.h"
 #include "struct/context.h"
 #include "../system/window.h"
 
 namespace January::Engine {
+    using namespace View;
+
     // Save app config to app preference location
-    void SaveAppConfig(std::weak_ptr<AppConfig> target);
+    void SaveAppConfig(AppConfig& target);
     // Load app config from app preference location
-    std::shared_ptr<AppConfig> LoadAppConfig();
+    AppConfig& LoadAppConfig();
     // Generate a app context data struct
-    std::shared_ptr<AppContext> GenerateAppContext();
+    AppContext& GenerateAppContext();
 
     struct JEngine {
-        std::shared_ptr<AppConfig>  config;
-        std::shared_ptr<AppContext> context;
+        AppConfig                   config;
+        AppContext                  context;
+        ViewManager                 manager;
     };
 
     // Engine init
-    void EngineInit();
+    int32_t EngineInit(JEngine& jengine, JWindow& jwindow);
     // Engine release memory
-    void EngineDeInit();
+    void EngineDeInit(JEngine& jengine);
     // Update engine logic and stuff
-    void EngineUpdate();
+    void EngineUpdate(JEngine& jengine);
     // Render engine GUI and scene
-    void EngineDraw();
+    void EngineDraw(JEngine& jengine, JWindow& jwindow);
 }

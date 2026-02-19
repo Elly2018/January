@@ -22,23 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#include <memory>
 #include <string>
 
 namespace January::Engine::View {
     // The base class for editor view
     class JViewBase {
     public:
-        JViewBase(const char* _title, int32_t _type) : title(_title), type(_type) {
+        JViewBase(
+            const char* _title, 
+            int32_t _type) 
+            : 
+            title(_title), 
+            type(_type) {
             
         }
         virtual ~JViewBase() {}
+        virtual void OnEnable() {};
+        virtual void OnDisable() {};
         virtual void Init() {}
         virtual void Update() {}
         virtual void Draw() {}
         virtual void DeInit() {}
 
+        void SetEnable(bool value);
     public:
-        const char* title;
-        int32_t type;
+        const char*     title;
+        int32_t         type;
+
+    private:
+        bool            enable;
     };
 }

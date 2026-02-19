@@ -21,34 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "blueprint.h"
-#include <spdlog/spdlog.h>
-#include <imgui.h>
-#include "variable.h"
-#include "../../engine.h"
+#include "manager.h"
 
-// Global engine access point
-extern January::Engine::JEngine jengine;
+using namespace January::Engine::View;
 
-January::Engine::View::JViewBlueprint::JViewBlueprint(const char* _title, int32_t _type) : JViewBase(_title, _type) {
+void VInit(ViewManager& vm){
 
 }
 
-January::Engine::View::JViewBlueprint::~JViewBlueprint(){
-
-}
-
-void January::Engine::View::JViewBlueprint::Init(){
-    spdlog::info("Loaded View: Blueprint");
-}
-void January::Engine::View::JViewBlueprint::Update(){
-
-}
-void January::Engine::View::JViewBlueprint::Draw(){
-    ImGui::Begin(title);
-    
-    ImGui::End();
-}
-void January::Engine::View::JViewBlueprint::DeInit(){
+void VDeInit(ViewManager& vm){
 
 }

@@ -21,34 +21,35 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "blueprint.h"
-#include <spdlog/spdlog.h>
-#include <imgui.h>
-#include "variable.h"
-#include "../../engine.h"
+#include "system.h"
+#include <thread>
+#include <spdlog.h>
+#include "../engine/engine.h"
 
-// Global engine access point
-extern January::Engine::JEngine jengine;
+namespace January::System {
+    using namespace Engine;
 
-January::Engine::View::JViewBlueprint::JViewBlueprint(const char* _title, int32_t _type) : JViewBase(_title, _type) {
+    void UpdateLoop(JSystem& system){
+        while(!system.window.g_done){
+            EngineUpdate();
+        }
+    }
 
-}
+    int32_t SInit(JSystem& system){
+        int32_t err = JInit(system.window, JRWindowInit());
+        if(err != 0){
+            spdlog::error("Vulkan Init Error");
+            return err;
+        }
+        system.engine = EngineInit();
+        return 0;
+    }
 
-January::Engine::View::JViewBlueprint::~JViewBlueprint(){
-
-}
-
-void January::Engine::View::JViewBlueprint::Init(){
-    spdlog::info("Loaded View: Blueprint");
-}
-void January::Engine::View::JViewBlueprint::Update(){
-
-}
-void January::Engine::View::JViewBlueprint::Draw(){
-    ImGui::Begin(title);
-    
-    ImGui::End();
-}
-void January::Engine::View::JViewBlueprint::DeInit(){
-
+    void SRun(JSystem& system){
+        spdlog::debug("Enter Application Mainloop");
+        std::thread draw_thread(DrawLoop, system.window);
+        std::thread update_thread(UpdateLoop, system);
+        if(draw_thread.joinable()) draw_thread.join();
+        if(update_thread.joinable()) update_thread.join();
+    }
 }

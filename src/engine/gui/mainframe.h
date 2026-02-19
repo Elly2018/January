@@ -31,10 +31,13 @@ template<class T, class U>
 concept Derived = std::is_base_of<U, T>::value;
 
 namespace January::Engine {
+
+    using namespace System;
+
     // Drawing imgui context on screen
-    void UIDraw(const January::Editor::JWindow& win, JEngine& engine);
+    void UIDraw(const JWindow& win, JEngine& engine);
     // Update Imgui context
-    void UIUpdate(January::Editor::JWindow& win, JEngine& engine);
+    void UIUpdate(JWindow& win, JEngine& engine);
 
     bool UIPageFirstTimeFire(JEngine& engine, JPageType page);
 
