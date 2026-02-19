@@ -24,6 +24,7 @@ SOFTWARE.
 #include "system/cli.h"
 #include "system/window.h"
 
+// Program entry point
 int main(int argc, char** argv){
     InitCMD(argc, argv);
     JInit();

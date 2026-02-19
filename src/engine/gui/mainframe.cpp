@@ -26,6 +26,12 @@ SOFTWARE.
 #include "../utility/path.h"
 #include "view/explorer.h"
 
+/**
+ * @brief Basically drawing the main title bar out
+ * 
+ * @param win The windows instance struct ref
+ * @param engine The engine instance struct ref
+ */
 void status_bar(const JWindow& win, JEngine& engine){
     if(ImGui::BeginMainMenuBar()){
         if(ImGui::BeginMenu("File")){

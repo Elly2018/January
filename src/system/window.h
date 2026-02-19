@@ -43,6 +43,8 @@ SOFTWARE.
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
 
+// Main window reference
+// This handles the editor window
 struct JWindow {
     SDL_WindowFlags          g_windowFlags;
     SDL_Window*              g_window = nullptr;

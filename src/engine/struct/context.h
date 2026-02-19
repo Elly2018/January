@@ -59,8 +59,11 @@ enum JViewType {
     JVIEWTYPE_INSPECTOR = 1005,
 };
 
-// Current application context
-// This data cannot be store in disk, This is the memory only data
+/**
+ * @brief Current application context
+ * 
+ * This data cannot be store in disk, This is the memory only data
+ */
 struct AppContext {
     std::string project_path                      = "";
     // Current page type
