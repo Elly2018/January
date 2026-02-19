@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#ifndef SYSTEM_CLI_H
+#define SYSTEM_CLI_H
 #include <memory>
 #include <optional>
 #include <argh.h>
@@ -40,3 +42,4 @@ namespace January::CLI {
 
     std::optional<std::string> GetCMDParam(std::string title, std::string second);
 }
+#endif
