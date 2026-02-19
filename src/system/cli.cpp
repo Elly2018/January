@@ -35,7 +35,7 @@ void configure_parser() {
     cmd.add_params({"-p", "--path"});
     cmd.add_params({"-v", "--verbose"});
 
-    bool par_v = GetCMDFlag("v", "verbose");
+    bool par_v = January::CLI::GetCMDFlag("v", "verbose");
     if(par_v){
         spdlog::set_level(spdlog::level::debug);
     }
@@ -61,37 +61,37 @@ void configure_parser() {
     }
 }
 
-void InitCMD(int argc, char** argv){
+void January::CLI::InitCMD(int argc, char** argv){
     cmd = argh::parser(argc, argv, argh::parser::PREFER_PARAM_FOR_UNREG_OPTION);
     configure_parser();
 }
 
-argh::parser& GetCMD(){
+argh::parser& January::CLI::GetCMD(){
     return cmd;
 }
 
-bool GetCMDFlag(std::string title){
+bool January::CLI::GetCMDFlag(std::string title){
     for(auto flag : cmd.flags()){
         if(flag == title) return true;
     }
     return false;
 }
 
-bool GetCMDFlag(std::string title, std::string second){
+bool January::CLI::GetCMDFlag(std::string title, std::string second){
     for(auto flag : cmd.flags()){
         if(flag == title || flag == second) return true;
     }
     return false;
 }
 
-std::optional<std::string> GetCMDParam(std::string title){
+std::optional<std::string> January::CLI::GetCMDParam(std::string title){
     for(auto param : cmd.params()){
         if(param.first == title) return param.second;
     }
     return std::nullopt;
 }
 
-std::optional<std::string> GetCMDParam(std::string title, std::string second){
+std::optional<std::string> January::CLI::GetCMDParam(std::string title, std::string second){
     for(auto param : cmd.params()){
         if(param.first == title || param.first == second) return param.second;
     }

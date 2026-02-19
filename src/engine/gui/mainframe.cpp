@@ -32,7 +32,7 @@ SOFTWARE.
  * @param win The windows instance struct ref
  * @param engine The engine instance struct ref
  */
-void status_bar(const JWindow& win, JEngine& engine){
+void status_bar(const January::Editor::JWindow& win, January::Engine::JEngine& engine){
     if(ImGui::BeginMainMenuBar()){
         if(ImGui::BeginMenu("File")){
             if(ImGui::MenuItem("New Project")){
@@ -170,7 +170,7 @@ void status_bar(const JWindow& win, JEngine& engine){
     }
 }
 
-void UIDraw(const JWindow& win, JEngine& engine){
+void January::Engine::UIDraw(const January::Editor::JWindow& win, January::Engine::JEngine& engine){
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     status_bar(win, engine);
 
@@ -178,19 +178,19 @@ void UIDraw(const JWindow& win, JEngine& engine){
     if(appcontext == nullptr) return;
 
     for(auto view : appcontext->views){
-        JViewBase* vbase = view.get();
+        January::Engine::View::JViewBase* vbase = view.get();
         if(vbase == nullptr) continue;
         vbase->Draw();
     }
 }
 
-void UIUpdate(JWindow& win, JEngine& engine){
+void January::Engine::UIUpdate(January::Editor::JWindow& win, January::Engine::JEngine& engine){
     for(auto view : engine.context.get()->views){
         view.get()->Update();
     }
 }
 
-bool UIPageFirstTimeFire(JEngine& engine, JPageType page){
+bool January::Engine::UIPageFirstTimeFire(January::Engine::JEngine& engine, JPageType page){
     if(page == JPageType::JPAGETYPE_CUSTOM) return false;
     fs::path home = get_home_directory();
     home = home.append("january");
@@ -201,8 +201,8 @@ bool UIPageFirstTimeFire(JEngine& engine, JPageType page){
     return !fs::exists(home);
 }
 
-template<Derived<JViewBase> T>
-bool UITryAdd(JEngine& engine, const char* title, JViewType type) {
+template<Derived<January::Engine::View::JViewBase> T>
+bool January::Engine::UITryAdd(JEngine& engine, const char* title, JViewType type) {
     bool find = false;
     for(auto inst : engine.context.get()->views){
         if(inst.get()->type == type){
@@ -219,17 +219,17 @@ bool UITryAdd(JEngine& engine, const char* title, JViewType type) {
     return false;
 }
 
-void UIGenerateViews(JEngine& engine, std::vector<JViewType> views){
+void January::Engine::UIGenerateViews(JEngine& engine, std::vector<JViewType> views){
     for(JViewType type : views){
         switch(type){
             case JViewType::JVIEWTYPE_EXPLORER:
-                UITryAdd<JViewExplorer>(engine, "Explorer", type);
+                UITryAdd<January::Engine::View::JViewExplorer>(engine, "Explorer", type);
                 break;
         }
     }
 }
 
-void UILoadPageFromDisk(JEngine& engine, std::string name){
+void January::Engine::UILoadPageFromDisk(JEngine& engine, std::string name){
     fs::path home = get_home_directory();
     home = home.append("january");
     if(!fs::exists(home)){

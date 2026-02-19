@@ -32,7 +32,7 @@ SOFTWARE.
 #include "../engine/engine.h"
 
 // Global window access point
-JWindow jwindow;
+January::Editor::JWindow jwindow;
 
 #pragma region Vulkan Functions
 static void check_vk_result(VkResult err)
@@ -61,7 +61,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags, 
 }
 #endif // APP_USE_VULKAN_DEBUG_REPORT
 
-static void SetupVulkan(JWindow& win, ImVector<const char*> instance_extensions)
+static void SetupVulkan(January::Editor::JWindow& win, ImVector<const char*> instance_extensions)
 {
     VkResult err;
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
@@ -185,7 +185,7 @@ static void SetupVulkan(JWindow& win, ImVector<const char*> instance_extensions)
 }
 // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
 // Your real engine/app may not use them.
-static void SetupVulkanWindow(JWindow& win, ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int width, int height)
+static void SetupVulkanWindow(January::Editor::JWindow& win, ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int width, int height)
 {
     wd->Surface = surface;
 
@@ -217,7 +217,7 @@ static void SetupVulkanWindow(JWindow& win, ImGui_ImplVulkanH_Window* wd, VkSurf
     ImGui_ImplVulkanH_CreateOrResizeWindow(win.g_Instance, win.g_PhysicalDevice, win.g_Device, wd, win.g_QueueFamily, win.g_Allocator, width, height, win.g_MinImageCount, 0);
 }
 
-static void CleanupVulkan(JWindow& win)
+static void CleanupVulkan(January::Editor::JWindow& win)
 {
     vkDestroyDescriptorPool(win.g_Device, win.g_DescriptorPool, win.g_Allocator);
 
@@ -231,12 +231,12 @@ static void CleanupVulkan(JWindow& win)
     vkDestroyInstance(win.g_Instance, win.g_Allocator);
 }
 
-static void CleanupVulkanWindow(JWindow& win)
+static void CleanupVulkanWindow(January::Editor::JWindow& win)
 {
     ImGui_ImplVulkanH_DestroyWindow(win.g_Instance, win.g_Device, &win.g_MainWindowData, win.g_Allocator);
 }
 
-static void FrameRender(JWindow& win, ImDrawData* draw_data)
+static void FrameRender(January::Editor::JWindow& win, ImDrawData* draw_data)
 {
     VkSemaphore image_acquired_semaphore  = win.g_MainWindowData.FrameSemaphores[win.g_MainWindowData.SemaphoreIndex].ImageAcquiredSemaphore;
     VkSemaphore render_complete_semaphore = win.g_MainWindowData.FrameSemaphores[win.g_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore;
@@ -301,7 +301,7 @@ static void FrameRender(JWindow& win, ImDrawData* draw_data)
     }
 }
 
-static void FramePresent(JWindow& win)
+static void FramePresent(January::Editor::JWindow& win)
 {
     if (win.g_SwapChainRebuild)
         return;
@@ -371,7 +371,7 @@ void DrawLoop(){
         ImGui::NewFrame();
 
         jwindow.g_dockerspace = ImGui::DockSpaceOverViewport();
-        EngineDraw();
+        January::Engine::EngineDraw();
 
         // Render toasts on top of everything, at the end of your code!
         // You should push style vars here
@@ -400,12 +400,12 @@ void DrawLoop(){
 
 void UpdateLoop(){
     while(!jwindow.g_done){
-        EngineUpdate();
+        January::Engine::EngineUpdate();
     }
 }
 #pragma endregion
 
-void JInit() {
+void January::Editor::JInit() {
     spdlog::debug("Application Initialization");
     jwindow = JWindow();
 
@@ -523,7 +523,7 @@ void JInit() {
     EngineInit();
 }
 
-void JDeInit(){
+void January::Editor::JDeInit(){
     spdlog::debug("Release Application Resources");
     // Cleanup
     // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppQuit() function]
@@ -540,7 +540,7 @@ void JDeInit(){
     SDL_Quit();
 }
 
-void JMainloop() {
+void January::Editor::JMainloop() {
     spdlog::debug("Enter Application Mainloop");
     std::thread draw_thread(DrawLoop);
     std::thread update_thread(UpdateLoop);

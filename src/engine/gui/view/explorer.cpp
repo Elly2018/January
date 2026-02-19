@@ -31,21 +31,21 @@ SOFTWARE.
 namespace fs = std::filesystem;
 
 // Global engine access point
-extern JEngine jengine;
+extern January::Engine::JEngine jengine;
 
-JViewExplorer::JViewExplorer(const char* _title, int32_t _type) : JViewBase(_title, _type) {
+January::Engine::View::JViewExplorer::JViewExplorer(const char* _title, int32_t _type) : JViewBase(_title, _type) {
 
 }
 
-JViewExplorer::~JViewExplorer(){
+January::Engine::View::JViewExplorer::~JViewExplorer(){
     
 }
 
-void JViewExplorer::Init() {
+void January::Engine::View::JViewExplorer::Init() {
     spdlog::info("Loaded View: Explorer");
 }
 
-void JViewExplorer::Update() {
+void January::Engine::View::JViewExplorer::Update() {
     if(changed){
         spdlog::debug("Detect explorer update");
         fs::path pp(jengine.context.get()->project_path.c_str());
@@ -95,7 +95,7 @@ void JViewExplorer::Update() {
     }
 }
 
-void JViewExplorer::Draw() {
+void January::Engine::View::JViewExplorer::Draw() {
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::Begin(title);
         if(!init){
@@ -129,15 +129,15 @@ void JViewExplorer::Draw() {
     ImGui::End();
 }
 
-void JViewExplorer::DeInit() {
+void January::Engine::View::JViewExplorer::DeInit() {
 
 }
 
-void JViewExplorer::DrawLeftSide(){
+void January::Engine::View::JViewExplorer::DrawLeftSide(){
     ImGui::Text("Left");
 }
 
-void JViewExplorer::DrawRightSide(){
+void January::Engine::View::JViewExplorer::DrawRightSide(){
     if(imgSize == 0){
         ImGui::BeginListBox("Explorer_Right_Listbox", ImVec2(rightWidth, 0));
         int32_t c = 0;

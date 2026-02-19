@@ -34,19 +34,19 @@ SOFTWARE.
 using json = nlohmann::json;
 
 // Global window access point
-extern JWindow jwindow;
+extern January::Editor::JWindow jwindow;
 // Global engine access point
-JEngine jengine;
+January::Engine::JEngine jengine;
 
 #pragma region Private Utility
 
 #pragma endregion
 
-void SaveAppConfig(std::weak_ptr<AppConfig> target){
+void January::Engine::SaveAppConfig(std::weak_ptr<January::Engine::AppConfig> target){
     fs::path home = get_home_directory();
 }
 
-std::shared_ptr<AppConfig> LoadAppConfig(){
+std::shared_ptr<January::Engine::AppConfig> January::Engine::LoadAppConfig(){
     spdlog::debug("Try Load AppConfig");
     AppConfig config = AppConfig();
     fs::path home = get_home_directory();
@@ -75,14 +75,14 @@ std::shared_ptr<AppConfig> LoadAppConfig(){
         config.j_page_name = data["j_page_name"];
     }
 
-    return std::make_shared<AppConfig>(config);
+    return std::make_shared<January::Engine::AppConfig>(config);
 }
 
-std::shared_ptr<AppContext> GenerateAppContext(){
+std::shared_ptr<January::Engine::AppContext> January::Engine::GenerateAppContext(){
     spdlog::debug("Try Generate AppContext");
     AppContext ctx = AppContext();
 
-    auto par_p = GetCMDParam("p", "path");
+    auto par_p = January::CLI::GetCMDParam("p", "path");
     if(par_p.has_value()){
         ctx.project_path = par_p.value();
         spdlog::info("App path setup: {}", ctx.project_path);
@@ -92,7 +92,7 @@ std::shared_ptr<AppContext> GenerateAppContext(){
     return std::make_shared<AppContext>(ctx);
 }
 
-void EngineInit(){
+void January::Engine::EngineInit(){
     spdlog::debug("Engine Init");
     jengine = JEngine();
     jengine.config = LoadAppConfig();
@@ -120,7 +120,7 @@ void EngineInit(){
     }
 }
 
-void EngineDeInit(){
+void January::Engine::EngineDeInit(){
     jengine.config.reset();
     for(auto view : jengine.context.get()->views){
         view.reset();
@@ -129,7 +129,7 @@ void EngineDeInit(){
     jengine.context.reset();
 }
 
-void EngineUpdate(){
+void January::Engine::EngineUpdate(){
     double current = ImGui::GetTime();
     jengine.context.get()->delta = current - jengine.context.get()->time;
     jengine.context.get()->time = current;
@@ -142,6 +142,6 @@ void EngineUpdate(){
     }
 }
 
-void EngineDraw(){
+void January::Engine::EngineDraw(){
     UIDraw(jwindow, jengine);
 }

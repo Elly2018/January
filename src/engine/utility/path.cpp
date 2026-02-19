@@ -30,7 +30,7 @@ SOFTWARE.
 #include <pwd.h>
 #endif
 
-fs::path get_home_directory() {
+fs::path January::Engine::get_home_directory() {
     const char* homedir = nullptr;
 
 #ifdef _WIN32

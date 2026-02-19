@@ -25,11 +25,13 @@ SOFTWARE.
 #include <cinttypes>
 #include "context.h"
 
-// Engine Configuration
-// Store information which can be modify and affect the inner workflow.
-// Such as FPS
-struct AppConfig {
-    int32_t j_FPS           = 60;
-    JPageType j_last_open   = JPageType::JPAGETYPE_RESOURCE;
-    std::string j_page_name = "";
-};
+namespace January::Engine {
+    // Engine Configuration
+    // Store information which can be modify and affect the inner workflow.
+    // Such as FPS
+    struct AppConfig {
+        int32_t j_FPS           = 60;
+        JPageType j_last_open   = JPageType::JPAGETYPE_RESOURCE;
+        std::string j_page_name = "";
+    };
+}

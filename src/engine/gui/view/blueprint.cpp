@@ -27,27 +27,27 @@ SOFTWARE.
 #include "../../engine.h"
 
 // Global engine access point
-extern JEngine jengine;
+extern January::Engine::JEngine jengine;
 
-JViewBlueprint::JViewBlueprint(const char* _title, int32_t _type) : JViewBase(_title, _type) {
-
-}
-
-JViewBlueprint::~JViewBlueprint(){
+January::Engine::View::JViewBlueprint::JViewBlueprint(const char* _title, int32_t _type) : JViewBase(_title, _type) {
 
 }
 
-void JViewBlueprint::Init(){
+January::Engine::View::JViewBlueprint::~JViewBlueprint(){
+
+}
+
+void January::Engine::View::JViewBlueprint::Init(){
     spdlog::info("Loaded View: Blueprint");
 }
-void JViewBlueprint::Update(){
+void January::Engine::View::JViewBlueprint::Update(){
 
 }
-void JViewBlueprint::Draw(){
+void January::Engine::View::JViewBlueprint::Draw(){
     ImGui::Begin(title);
     
     ImGui::End();
 }
-void JViewBlueprint::DeInit(){
+void January::Engine::View::JViewBlueprint::DeInit(){
 
 }

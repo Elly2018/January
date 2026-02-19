@@ -32,39 +32,41 @@ SOFTWARE.
 
 namespace fs = std::filesystem;
 
-struct JFileContent {
-    UUIDv4::UUID uuid;
-    std::string title;
-    fs::path path;
-    bool is_dir;
-    uintmax_t filesize;
-};
+namespace January::Engine::View {
+    struct JFileContent {
+        UUIDv4::UUID uuid;
+        std::string title;
+        fs::path path;
+        bool is_dir;
+        uintmax_t filesize;
+    };
 
-class JViewExplorer : public JViewBase {
-public:
-    JViewExplorer(const char* _title, int32_t _type);
-    virtual ~JViewExplorer();
+    class JViewExplorer : public JViewBase {
+    public:
+        JViewExplorer(const char* _title, int32_t _type);
+        virtual ~JViewExplorer();
 
-    void Init() override;
-    void Update() override;
-    void Draw() override;
-    void DeInit() override;
+        void Init() override;
+        void Update() override;
+        void Draw() override;
+        void DeInit() override;
 
-protected:
-    void DrawLeftSide();
-    void DrawRightSide();
+    protected:
+        void DrawLeftSide();
+        void DrawRightSide();
 
-public:
-    std::string path = "";
+    public:
+        std::string path = "";
 
-private:
-    bool changed = false;
-    bool init = false;
-    float leftWidth = 0;
-    float rightWidth = 0;
-    float imgSize = 0.5f;
-    int32_t selection = 0;
-    filewatch::FileWatch<std::string>* watcher = nullptr;
-    std::mutex mtx;
-    std::vector<JFileContent> files = std::vector<JFileContent>();
-};
+    private:
+        bool changed = false;
+        bool init = false;
+        float leftWidth = 0;
+        float rightWidth = 0;
+        float imgSize = 0.5f;
+        int32_t selection = 0;
+        filewatch::FileWatch<std::string>* watcher = nullptr;
+        std::mutex mtx;
+        std::vector<JFileContent> files = std::vector<JFileContent>();
+    };
+}
