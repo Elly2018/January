@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef ENGINE_STRUCT_CONFIG_H
 #define ENGINE_STRUCT_CONFIG_H
 #include <cinttypes>
+#include <utility>
 #include <string>
 
 namespace January::Engine {
@@ -32,9 +33,10 @@ namespace January::Engine {
     // Store information which can be modify and affect the inner workflow.
     // Such as FPS
     struct AppConfig {
-        int32_t j_FPS           = 60;
-        int64_t j_last_open     = 0;
-        std::string j_page_name = "";
+        int32_t j_FPS                                            = 60;
+        std::string j_last_open                                  = "";
+        std::vector<std::string> j_recent                        = std::vector<std::string>();
+        std::vector<std::pair<int64_t, bool>> j_views_enable     = std::vector<std::pair<int64_t, bool>>();
     };
 }
 #endif

@@ -59,13 +59,19 @@ namespace January {
             std::vector<struct JViewBase*>  views;
         };
 
+        // View manager initialization
+        // This will create all the instance out
         void VInit(ViewManager& vm, struct System::JSystem& jsystem);
+        // View manager release resource
+        // Delete the instance
         void VDeInit(ViewManager& vm);
+        // Set the view instance enable variable
+        // By search its type and subtype
         void VSetEnable(ViewManager& vm, int32_t type, int32_t subtype, bool value);
-        // Drawing imgui context on screen
-        void VDraw(struct System::JWindow& win, struct JEngine& engine);
-        // Update Imgui context
-        void VUpdate(struct System::JWindow& win, struct JEngine& engine);
+        // Drawing imgui context on each views
+        void VDraw(ViewManager& vm, System::JWindow& jwindow, JEngine& jengine);
+        // Update call for each views
+        void VUpdate(ViewManager& vm);
     }
 }
 #endif

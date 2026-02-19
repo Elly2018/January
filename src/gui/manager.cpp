@@ -25,6 +25,8 @@ SOFTWARE.
 #include "view/blueprint.h"
 #include "view/explorer.h"
 #include "../engine/engine.h"
+#include "../engine/struct/config.h"
+#include "../engine/struct/context.h"
 #include "../system/system.h"
 #include "../system/window.h"
 
@@ -55,11 +57,62 @@ namespace January::Engine::View {
         }
     }
 
-    void VDraw(struct System::JWindow& win, struct JEngine& engine){
-
+    void VDraw(ViewManager& vm, System::JWindow& jwindow, JEngine& jengine){
+        if(ImGui::BeginMainMenuBar()){
+            // File bar
+            if(ImGui::BeginMenu("File##MainMenuBar")){
+                if(ImGui::MenuItem("New Project##MainMenuBar_File", "Ctrl+N")){
+                    jengine.context->commands.push("new_project");
+                }
+                if(ImGui::MenuItem("Open Project##MainMenuBar_File", "Ctrl+O")){
+                    jengine.context->commands.push("open_project");
+                }
+                ImGui::Separator();
+                if(ImGui::MenuItem("Save Project##MainMenuBar_File", "Ctrl+S")){
+                    jengine.context->commands.push("save_project");
+                }
+                if(ImGui::MenuItem("Save Project As##MainMenuBar_File", "Ctrl+Shift+S")){
+                    jengine.context->commands.push("save_project_as");
+                }
+                ImGui::Separator();
+                if(ImGui::MenuItem("Setting##MainMenuBar_File")){
+                    jengine.context->commands.push("open_setting");
+                }
+                if(ImGui::MenuItem("Preference##MainMenuBar_File")){
+                    jengine.context->commands.push("open_preference");
+                }
+                ImGui::Separator();
+                if(ImGui::MenuItem("Quit##MainMenuBar_File")){
+                    jwindow.g_done = true;
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("View##MainMenuBar")){
+                if(ImGui::BeginMenu("General##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Blueprint##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){
+                        vm.blueprint->SetEnable(!vm.blueprint->IsEnable());
+                    }
+                    if(ImGui::MenuItem("Explorer##MainMenuBar_View_General", NULL, vm.explorer->IsEnable())){
+                        vm.explorer->SetEnable(!vm.explorer->IsEnable());
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+        for(auto& view : vm.views){
+            if(view->IsEnable()){
+                view->Draw();
+            }
+        }
     }
 
-    void VUpdate(struct System::JWindow& win, struct JEngine& engine){
-
+    void VUpdate(ViewManager& vm){
+        for(auto& view : vm.views){
+            if(view->IsEnable()){
+                view->Update();
+            }
+        }
     }
 }

@@ -52,6 +52,7 @@ namespace January {
     }
 
     namespace System {
+        struct JSystem;
         // Pure render window struct
         // This should be generate by engine or editor
         struct JWindowRender {
@@ -85,7 +86,7 @@ namespace January {
         };
 
         // The editor window drawing function call
-        void DrawLoop(JWindow& jwindow);
+        void DrawLoop(struct JSystem& jsystem);
 
         // Editor window context initialization
         int32_t JInit(JWindow& jwindow, JRWindowInit init);

@@ -31,6 +31,7 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include "system.h"
 #include "../engine/engine.h"
+#include "../gui/manager.h"
 
 namespace January::System {
     
@@ -325,7 +326,8 @@ namespace January::System {
 #pragma endregion
 
 #pragma region MainLoop
-    void DrawLoop(JWindow& jwindow){
+    void DrawLoop(struct JSystem& jsystem){
+        JWindow& jwindow = *jsystem.window;
         ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         
@@ -369,6 +371,7 @@ namespace January::System {
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
+            VDraw(*jsystem.engine->manager, *jsystem.window, *jsystem.engine);
             jwindow.g_dockerspace = ImGui::DockSpaceOverViewport();
 
             // Render toasts on top of everything, at the end of your code!
@@ -399,7 +402,6 @@ namespace January::System {
 
     int32_t JInit(JWindow& jwindow, JRWindowInit init) {
         spdlog::debug("Application Initialization: Editor");
-        jwindow = JWindow();
 
         // Setup SDL
         // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]

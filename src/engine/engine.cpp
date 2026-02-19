@@ -36,37 +36,80 @@ SOFTWARE.
 using json = nlohmann::json;
 
 namespace January::Engine {
+
+    fs::path get_config_path(){
+        fs::path p = get_home_directory();
+        p = p.append("january");
+        spdlog::debug("Try Load AppConfig: %s", p.string());
+        if(!fs::exists(p)){
+            spdlog::warn("[home]/january not exist, create one right now");
+            fs::create_directory(p);
+        }
+        p = p.append("config.json");
+        return p;
+    }
+
     void SaveAppConfig(struct AppConfig& target){
-        fs::path home = get_home_directory();
+        fs::path p = get_config_path();
+        json data = json::object();
+        data["j_FPS"] = target.j_FPS;
+        data["j_last_open"] = target.j_last_open;
+        data["j_recent"] = json::array();
+        for(auto& v : target.j_recent){
+            data["j_recent"].push_back(v);
+        }
+        data["j_views_enable"] = json::array();
+        for(auto& v : target.j_views_enable){
+            json buffer = json::object();
+            buffer["id"] = v.first;
+            buffer["enable"] = v.second;
+            data["j_views_enable"].push_back(buffer);
+        }
+        std::string dataString = data.dump(4) + "\n";
+        std::ofstream outputFile(p);
+        outputFile.write(dataString.c_str(), dataString.size());
+        outputFile.close();
     }
 
     void LoadAppConfig(struct AppConfig& config){
-        config = AppConfig();
-        fs::path home = get_home_directory();
-        home = home.append("january");
-        spdlog::debug("Try Load AppConfig: %s", home.string());
-        if(!fs::exists(home)){
-            spdlog::warn("[home]/january not exist, create one right now");
-            fs::create_directory(home);
-        }
-        home = home.append("config.json");
-        if(!fs::exists(home)){
+        fs::path p = get_config_path();
+        if(!fs::exists(p)){
             spdlog::warn("Detect config.json not exist, create default one right now");
-            json data = json();
-            data["j_FPS"] = config.j_FPS;
-            data["j_last_open"] = config.j_last_open;
-            data["j_page_name"] = config.j_page_name;
-            std::string dataString = data.dump(4) + "\n";
-            
-            std::ofstream outputFile(home);
-            outputFile.write(dataString.c_str(), dataString.size());
-            outputFile.close();
+            SaveAppConfig(config);
         }else{
-            std::fstream i(home);
+            std::fstream i(p);
             json data = json::parse(i);
-            config.j_FPS = data["j_FPS"];
-            config.j_last_open = data["j_last_open"];
-            config.j_page_name = data["j_page_name"];
+            if(data["j_FPS"].is_number_integer()){
+                config.j_FPS = data["j_FPS"].get<int32_t>();
+            }
+            if(data["j_last_open"].is_string()){
+                config.j_last_open = data["j_last_open"].get<std::string>();
+            }
+            if(data["j_recent"].is_array()){
+                config.j_recent.clear();
+                for(int32_t i = 0; i < data["j_recent"].size(); i++){
+                    json buffer = data["j_recent"].at(i);
+                    if(buffer.is_string()){
+                        config.j_recent.push_back(buffer.get<std::string>());
+                    }
+                }
+            }
+            if(data["j_views_enable"].is_array()){
+                config.j_views_enable.clear();
+                for(int32_t i = 0; i < data["j_views_enable"].size(); i++){
+                    json buffer = data["j_views_enable"].at(i);
+                    if(buffer.is_object()){
+                        if(buffer["id"].is_number_integer() && buffer["enable"].is_boolean()){
+                            buffer.push_back(
+                                std::pair<int64_t, bool>(
+                                    buffer["id"].get<int64_t>(),
+                                    buffer["enable"].get<bool>()
+                                )
+                            );
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -85,6 +128,9 @@ namespace January::Engine {
 
     int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow){
         spdlog::debug("Engine Init");
+        jengine.config = new AppConfig(); 
+        jengine.context = new AppContext();
+        jengine.manager = new View::ViewManager();
         LoadAppConfig(*jengine.config);
         GenerateAppContext(*jengine.context);
 

@@ -41,13 +41,15 @@ namespace January {
                     title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {
                         Init();
                     }
-                virtual ~JViewBase() {}
+                virtual ~JViewBase() {
+                    DeInit();
+                }
                 virtual void OnEnable() {};
                 virtual void OnDisable() {};
                 virtual void Init() {}
+                virtual void DeInit() {}
                 virtual void Update() {}
                 virtual void Draw() {}
-                virtual void DeInit() {}
 
                 bool IsEnable() { return enable; }
                 int64_t GetID(){
