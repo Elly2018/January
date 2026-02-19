@@ -24,24 +24,29 @@ SOFTWARE.
 #include "system.h"
 #include <thread>
 #include <spdlog.h>
+#include "window.h"
 #include "../engine/engine.h"
 
 namespace January::System {
     using namespace Engine;
 
     void UpdateLoop(JSystem& system){
-        while(!system.window.g_done){
-            EngineUpdate();
+        while(!system.window->g_done){
+            EngineUpdate(*system.engine);
         }
     }
 
     int32_t SInit(JSystem& system){
-        int32_t err = JInit(system.window, JRWindowInit());
+        int32_t err = JInit(*system.window, JRWindowInit());
         if(err != 0){
             spdlog::error("Vulkan Init Error");
             return err;
         }
-        system.engine = EngineInit();
+        err = EngineInit(*system.engine, *system.window);
+        if(err != 0){
+            spdlog::error("Engine Init Error");
+            return err;
+        }
         return 0;
     }
 

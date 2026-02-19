@@ -22,23 +22,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#include "window.h"
+#ifndef SYSTEM_SYSTEM_H
+#define SYSTEM_SYSTEM_H
+#include <cinttypes>
 
-namespace January::System {
-    // System context
-    // Contain all window objects
-    struct JSystem {
-        JWindow                  window;
-        JWindowRender            windows[36];
-        JEngine                  engine;
-    };
+namespace January {
+    namespace Engine {
+        struct JEngine;
+    }
+    namespace System {
+        struct JWindow;
+        struct JWindowRender;
 
-    void UpdateLoop(JSystem& system);
-
-    // System init
-    // This will create the editor context and return it
-    int32_t SInit(JSystem& system);
-
-    // January system running entry point
-    void SRun(JSystem& system);
+        // System context
+        // Contain all window objects
+        struct JSystem {
+            // How many extra pure window exists
+            size_t                          w_size;
+            // Editor window instance
+            struct JWindow*                 window;
+            // Extra pure windows
+            struct JWindowRender**          windows;
+            // Engine instance for backgroud calculation
+            struct Engine::JEngine*         engine;
+        };
+        // Main logic goes here
+        void UpdateLoop(JSystem& system);
+        // System init
+        // This will create the editor context and return it
+        int32_t SInit(JSystem& system);
+        // January system running entry point
+        void SRun(JSystem& system);
+    }
 }
+#endif

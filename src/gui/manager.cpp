@@ -22,13 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "manager.h"
+#include "../engine/engine.h"
+#include "../system/window.h"
+#include "view/blueprint.h"
+#include "view/explorer.h"
 
-using namespace January::Engine::View;
+namespace January::Engine::View {
+    void VInit(ViewManager& vm, System::JSystem& jsystem){
+        
+        //vm.explorer = JViewExplorer("explorer##view", JanuaryViewTypeFlag::GENERAL, JanuaryViewGeneralFlag::EXPLORER, system.);
+        //vm.blueprint = JViewBlueprint();
+    }
 
-void VInit(ViewManager& vm){
+    void VDeInit(ViewManager& vm){
 
-}
+    }
 
-void VDeInit(ViewManager& vm){
+    void VDraw(System::JWindow& win, Engine::JEngine& engine){
 
+    }
+
+    void VUpdate(System::JWindow& win, Engine::JEngine& engine){
+
+    }
 }

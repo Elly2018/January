@@ -21,34 +21,49 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "blueprint.h"
-#include <spdlog/spdlog.h>
-#include <imgui.h>
-#include "variable.h"
-#include "../../engine.h"
+#pragma once
+#include <vector>
+#include <string>
+#include <filesystem>
+#include <uuid_v4.h>
+#include <FileWatch.hpp>
+#include <mutex>
+#include "viewbase.h"
 
-// Global engine access point
-extern January::Engine::JEngine jengine;
+namespace fs = std::filesystem;
 
-January::Engine::View::JViewBlueprint::JViewBlueprint(const char* _title, int32_t _type) : JViewBase(_title, _type) {
+namespace January::Engine::View {
+    struct JFileContent {
+        UUIDv4::UUID uuid;
+        std::string title;
+        fs::path path;
+        bool is_dir;
+        uintmax_t filesize;
+    };
 
-}
+    class JViewExplorer : public JViewBase {
+    public:
+        void Init() override;
+        void Update() override;
+        void Draw() override;
+        void DeInit() override;
 
-January::Engine::View::JViewBlueprint::~JViewBlueprint(){
+    protected:
+        void DrawLeftSide();
+        void DrawRightSide();
 
-}
+    public:
+        std::string path = "";
 
-void January::Engine::View::JViewBlueprint::Init(){
-    spdlog::info("Loaded View: Blueprint");
-}
-void January::Engine::View::JViewBlueprint::Update(){
-
-}
-void January::Engine::View::JViewBlueprint::Draw(){
-    ImGui::Begin(title);
-    
-    ImGui::End();
-}
-void January::Engine::View::JViewBlueprint::DeInit(){
-
+    private:
+        bool changed = false;
+        bool init = false;
+        float leftWidth = 0;
+        float rightWidth = 0;
+        float imgSize = 0.5f;
+        int32_t selection = 0;
+        filewatch::FileWatch<std::string>* watcher = nullptr;
+        std::mutex mtx;
+        std::vector<JFileContent> files = std::vector<JFileContent>();
+    };
 }

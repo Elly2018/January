@@ -22,42 +22,46 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_ENGINE_H
-#define ENGINE_ENGINE_H
-#include <cinttypes>
+#ifndef GUI_MANAGER_H
+#define GUI_MANAGER_H
 
 namespace January {
     namespace System {
-        struct JWindow;
+        struct JSystem;
     }
     namespace Engine {
-        struct AppConfig;
-        struct AppContext;
+        struct JEngine;
+    }
+    namespace Engine::View {
 
-        namespace View {
-            struct ViewManager;
-        }
-        // Save app config to app preference location
-        void SaveAppConfig(AppConfig& target);
-        // Load app config from app preference location
-        void LoadAppConfig(AppConfig& config);
-        // Generate a app context data struct
-        void GenerateAppContext(AppContext& ctx);
+        struct JViewExplorer;
+        struct JViewBlueprint;
 
-        struct JEngine {
-            struct AppConfig*                  config;
-            struct AppContext*                 context;
-            struct View::ViewManager*          manager;
+        enum class JanuaryViewTypeFlag {
+            NONE = 0,
+            GENERAL = 0 << 1,
+            AUDIO = 0 << 2,
+            RENDER = 0 << 3,
         };
 
-        // Engine init
-        int32_t EngineInit(JEngine& jengine, System::JWindow& jwindow);
-        // Engine release memory
-        void EngineDeInit(JEngine& jengine);
-        // Update engine logic and stuff
-        void EngineUpdate(JEngine& jengine);
-        // Render engine GUI and scene
-        void EngineDraw(JEngine& jengine, System::JWindow& jwindow);
+        enum class JanuaryViewGeneralFlag {
+            NONE = 0,
+            EXPLORER = 0 << 1,
+            BLUEPRINT = 0 << 2,
+        };
+
+        struct ViewManager {
+            struct JViewExplorer       explorer;
+            struct JViewBlueprint      blueprint;
+        };
+
+        void VInit(ViewManager& vm, System::JSystem& jsystem);
+        void VDeInit(ViewManager& vm);
+        void VSetEnable(ViewManager& vm, int32_t type, int32_t subtype);
+        // Drawing imgui context on screen
+        void VDraw(System::JWindow& win, Engine::JEngine& engine);
+        // Update Imgui context
+        void VUpdate(System::JWindow& win, Engine::JEngine& engine);
     }
 }
 #endif

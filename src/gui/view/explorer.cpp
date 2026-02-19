@@ -31,14 +31,6 @@ SOFTWARE.
 
 namespace fs = std::filesystem;
 
-January::Engine::View::JViewExplorer::JViewExplorer(const char* _title, int32_t _type) : JViewBase(_title, _type) {
-
-}
-
-January::Engine::View::JViewExplorer::~JViewExplorer(){
-    
-}
-
 void January::Engine::View::JViewExplorer::Init() {
     spdlog::info("Loaded View: Explorer");
 }

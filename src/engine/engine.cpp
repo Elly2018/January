@@ -24,12 +24,14 @@ SOFTWARE.
 #include "engine.h"
 #include <iostream>
 #include <fstream>
-#include <memory>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
+#include "struct/config.h"
+#include "struct/context.h"
 #include "utility/path.h"
-#include "gui/mainframe.h"
 #include "../system/cli.h"
+#include "../system/window.h"
+#include "../gui/manager.h"
 
 using json = nlohmann::json;
 
@@ -39,10 +41,10 @@ namespace January::Engine {
     }
 
     void LoadAppConfig(AppConfig& config){
-        spdlog::debug("Try Load AppConfig");
         config = AppConfig();
         fs::path home = get_home_directory();
         home = home.append("january");
+        spdlog::debug("Try Load AppConfig: %s", home.string());
         if(!fs::exists(home)){
             spdlog::warn("[home]/january not exist, create one right now");
             fs::create_directory(home);
@@ -81,25 +83,16 @@ namespace January::Engine {
         }
     }
 
-    int32_t EngineInit(JEngine& jengine, JWindow& jwindow){
+    int32_t EngineInit(JEngine& jengine, System::JWindow& jwindow){
         spdlog::debug("Engine Init");
-        LoadAppConfig(jengine.config);
-        GenerateAppContext(jengine.context);
+        LoadAppConfig(*jengine.config);
+        GenerateAppContext(*jengine.context);
 
         // We check if page is first time fire
-        JPageType page = jengine.config.j_last_open;
-        bool firstFire = UIPageFirstTimeFire(jengine, page);
-        spdlog::debug("Check first fire page: {}", firstFire);
-        if(firstFire){
-            std::vector<JViewType> views = GetDefaultViewByPage(page);
-            UIGenerateViews(jengine, views);
-        }else{
-            std::string pageName = jengine.config.j_page_name;
-            UILoadPageFromDisk(jengine, pageName);
-        }
+        JPageType page = jengine.config->j_last_open;
 
-        if(fs::exists(jengine.context.project_path)){
-            std::string title = jengine.context.project_path;
+        if(fs::exists(jengine.context->project_path)){
+            std::string title = jengine.context->project_path;
             title = "project: " + title;
             SDL_SetWindowTitle(jwindow.g_window, title.c_str());
         }else{
@@ -110,26 +103,19 @@ namespace January::Engine {
     }
 
     void EngineDeInit(JEngine& jengine){
-        for(auto view : jengine.context.views){
-            view.reset();
-        }
-        jengine.context.views.clear();
+        VDeInit(*jengine.manager);
+        delete jengine.config;
+        delete jengine.context;
+        delete jengine.manager;
     }
 
     void EngineUpdate(JEngine& jengine){
         double current = ImGui::GetTime();
-        jengine.context.delta = current - jengine.context.time;
-        jengine.context.time = current;
-
-        for(auto view : jengine.context.views){
-            View::JViewBase* v = view.get();
-            if(v != nullptr){
-                v->Update();
-            }
-        }
+        jengine.context->delta = current - jengine.context->time;
+        jengine.context->time = current;
     }
 
-    void EngineDraw(JEngine& jengine, JWindow& jwindow){
-        UIDraw(jwindow, jengine);
+    void EngineDraw(JEngine& jengine, System::JWindow& jwindow){
+        
     }
 }

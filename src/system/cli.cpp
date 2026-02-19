@@ -29,7 +29,7 @@ SOFTWARE.
 
 namespace fs = std::filesystem;
 
-argh::parser cmd;
+static argh::parser cmd;
 
 void configure_parser() {
     cmd.add_params({"-p", "--path"});

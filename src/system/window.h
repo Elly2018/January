@@ -22,12 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#ifndef SYSTEM_WINDOW_H
+#define SYSTEM_WINDOW_H
+#include <cinttypes>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_vulkan.h>
 #include <stdio.h>          // printf, fprintf
 #include <stdlib.h>         // abort
-#include <memory>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 
@@ -82,8 +84,11 @@ namespace January::System {
 
     // Editor window context initialization
     int32_t JInit(JWindow& jwindow, JRWindowInit init);
-    // Escape the mainloop, release resource
+    // Editor window release resource
     void JDeInit(JWindow& jwindow);
+    // Pure window context initialization
     int32_t JRInit(JWindowRender& jrwindow, JRWindowInit init);
+    // Pure window release resource
     void JRDeInit(JWindowRender& jwindow);
 }
+#endif

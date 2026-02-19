@@ -21,16 +21,37 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "viewbase.h"
+#pragma once
+#include <memory>
+#include <string>
+#include "../../engine/engine.h"
+#include "../../system/window.h"
 
-using namespace January::Engine::View;
+namespace January::Engine::View {
+    // The base class for editor view
+    class JViewBase {
+    public:
+        JViewBase(const char* _title, int32_t _type, int32_t _subtype, JWindow _win, JEngine _engine) : 
+            title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {
+                Init();
+            }
+        virtual ~JViewBase() {}
+        virtual void OnEnable() {};
+        virtual void OnDisable() {};
+        virtual void Init() {}
+        virtual void Update() {}
+        virtual void Draw() {}
+        virtual void DeInit() {}
 
-JViewBase::JViewBase(
-    const char* _title, 
-    int32_t _type) 
-    : 
-    title(_title), 
-    type(_type) {
-    
+        void SetEnable(bool value);
+    public:
+        const char*     title;
+        int32_t         type;
+        int32_t         subtype;
+    protected:
+        JWindow         jwindow;
+        JEngine         jengine;
+    private:
+        bool            enable;
+    };
 }
-JViewBase::~JViewBase() {}
