@@ -25,7 +25,6 @@ SOFTWARE.
 #include <thread>
 #include <spdlog/spdlog.h>
 #include "window.h"
-#include "../gui/manager.h"
 #include "../engine/engine.h"
 #include "../engine/struct/context.h"
 
@@ -46,12 +45,11 @@ namespace January::System {
             spdlog::error("Vulkan Init Error");
             return err;
         }
-        err = EngineInit(*jsystem.engine, *jsystem.window);
+        err = EngineInit(*jsystem.engine, *jsystem.window, jsystem);
         if(err != 0){
             spdlog::error("Engine Init Error");
             return err;
         }
-        VInit(*jsystem.engine->manager, jsystem);
         return 0;
     }
 
@@ -77,5 +75,10 @@ namespace January::System {
         jsystem.window->g_done = true;
         if(draw_thread.joinable()) draw_thread.join();
         if(update_thread.joinable()) update_thread.join();
+        EngineDeInit(*jsystem.engine);
+        JDeInit(*jsystem.window);
+
+        delete jsystem.engine;
+        delete jsystem.window;
     }
 }

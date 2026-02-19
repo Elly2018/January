@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace January {
     namespace System {
+        struct JSystem;
         struct JWindow;
     }
     namespace Engine {
@@ -51,7 +52,7 @@ namespace January {
         };
 
         // Engine init
-        int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow);
+        int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow, struct System::JSystem& system);
         // Engine release memory
         void EngineDeInit(JEngine& jengine);
         // Update engine logic and stuff

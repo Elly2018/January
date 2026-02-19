@@ -126,13 +126,14 @@ namespace January::Engine {
         }
     }
 
-    int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow){
+    int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow, struct System::JSystem& system){
         spdlog::debug("Engine Init");
         jengine.config = new AppConfig(); 
         jengine.context = new AppContext();
         jengine.manager = new View::ViewManager();
         LoadAppConfig(*jengine.config);
         GenerateAppContext(*jengine.context);
+        VInit(*jengine.manager, system);
 
         if(fs::exists(jengine.context->project_path)){
             std::string title = jengine.context->project_path;
