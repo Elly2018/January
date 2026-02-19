@@ -24,6 +24,8 @@ SOFTWARE.
 #pragma once
 #include "viewbase.h"
 
-class JViewTimeline : public JViewBase {
+namespace January::Engine::View {
+    class JViewTimeline : public JViewBase {
 
-};
+    };
+}

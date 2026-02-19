@@ -135,7 +135,7 @@ void January::Engine::EngineUpdate(){
     jengine.context.get()->time = current;
 
     for(auto view : jengine.context.get()->views){
-        JViewBase* v = view.get();
+        January::Engine::View::JViewBase* v = view.get();
         if(v != nullptr){
             v->Update();
         }

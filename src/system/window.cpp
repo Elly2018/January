@@ -520,7 +520,7 @@ void January::Editor::JInit() {
     ImGui::MergeIconsWithLatestFont(16.f, false);
     ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
 
-    EngineInit();
+    January::Engine::EngineInit();
 }
 
 void January::Editor::JDeInit(){

@@ -26,8 +26,8 @@ SOFTWARE.
 
 // Program entry point
 int main(int argc, char** argv){
-    InitCMD(argc, argv);
-    JInit();
-    JMainloop();
-    JDeInit();
+    January::CLI::InitCMD(argc, argv);
+    January::Editor::JInit();
+    January::Editor::JMainloop();
+    January::Editor::JDeInit();
 }

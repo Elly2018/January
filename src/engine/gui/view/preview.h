@@ -23,7 +23,8 @@ SOFTWARE.
 */
 #pragma once
 #include "viewbase.h"
+namespace January::Engine::View {
+    class JViewPreview : public JViewBase {
 
-class JViewPreview : public JViewBase {
-
-};
+    };
+}
