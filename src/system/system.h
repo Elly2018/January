@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef SYSTEM_SYSTEM_H
 #define SYSTEM_SYSTEM_H
 #include <cinttypes>
+#include <vector>
 
 namespace January {
     namespace Engine {
@@ -37,22 +38,20 @@ namespace January {
         // System context
         // Contain all window objects
         struct JSystem {
-            // How many extra pure window exists
-            size_t                          w_size;
             // Editor window instance
-            struct JWindow*                 window;
+            struct JWindow*                     window;
             // Extra pure windows
-            struct JWindowRender**          windows;
+            std::vector<struct JWindowRender*>  windows;
             // Engine instance for backgroud calculation
-            struct Engine::JEngine*         engine;
+            struct Engine::JEngine*             engine;
         };
         // Main logic goes here
-        void UpdateLoop(JSystem& system);
+        void UpdateLoop(JSystem& jsystem);
         // System init
         // This will create the editor context and return it
-        int32_t SInit(JSystem& system);
+        int32_t SInit(JSystem& jsystem);
         // January system running entry point
-        void SRun(JSystem& system);
+        void SRun(JSystem& jsystem);
     }
 }
 #endif

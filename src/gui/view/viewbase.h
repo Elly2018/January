@@ -49,6 +49,14 @@ namespace January {
                 virtual void Draw() {}
                 virtual void DeInit() {}
 
+                bool IsEnable() { return enable; }
+                int64_t GetID(){
+                    int64_t p = 0;
+                    int32_t* pt = (int32_t*)(&p);
+                    pt[0] = type;
+                    pt[1] = subtype;
+                    return p;
+                }
                 void SetEnable(bool value) {
                     bool diff = value != enable;
                     if(diff){

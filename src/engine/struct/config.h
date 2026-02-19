@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#ifndef ENGINE_STRUCT_CONFIG_H
+#define ENGINE_STRUCT_CONFIG_H
 #include <cinttypes>
-#include "context.h"
+#include <string>
 
 namespace January::Engine {
     // Engine Configuration
@@ -31,7 +33,8 @@ namespace January::Engine {
     // Such as FPS
     struct AppConfig {
         int32_t j_FPS           = 60;
-        JPageType j_last_open   = JPageType::JPAGETYPE_RESOURCE;
+        int64_t j_last_open     = 0;
         std::string j_page_name = "";
     };
 }
+#endif

@@ -38,11 +38,11 @@ namespace January {
             struct ViewManager;
         }
         // Save app config to app preference location
-        void SaveAppConfig(AppConfig& target);
+        void SaveAppConfig(struct AppConfig& target);
         // Load app config from app preference location
-        void LoadAppConfig(AppConfig& config);
+        void LoadAppConfig(struct AppConfig& config);
         // Generate a app context data struct
-        void GenerateAppContext(AppContext& ctx);
+        void GenerateAppContext(struct AppContext& ctx);
 
         struct JEngine {
             struct AppConfig*                  config;
@@ -51,13 +51,11 @@ namespace January {
         };
 
         // Engine init
-        int32_t EngineInit(JEngine& jengine, System::JWindow& jwindow);
+        int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow);
         // Engine release memory
         void EngineDeInit(JEngine& jengine);
         // Update engine logic and stuff
         void EngineUpdate(JEngine& jengine);
-        // Render engine GUI and scene
-        void EngineDraw(JEngine& jengine, System::JWindow& jwindow);
     }
 }
 #endif

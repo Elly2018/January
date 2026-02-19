@@ -24,16 +24,19 @@ SOFTWARE.
 #pragma once
 #ifndef GUI_MANAGER_H
 #define GUI_MANAGER_H
+#include <cinttypes>
+#include <vector>
 
 namespace January {
     namespace System {
         struct JSystem;
+        struct JWindow;
     }
     namespace Engine {
         struct JEngine;
     }
     namespace Engine::View {
-
+        struct JViewBase;
         struct JViewExplorer;
         struct JViewBlueprint;
 
@@ -51,17 +54,18 @@ namespace January {
         };
 
         struct ViewManager {
-            struct JViewExplorer       explorer;
-            struct JViewBlueprint      blueprint;
+            struct JViewExplorer*           explorer;
+            struct JViewBlueprint*          blueprint;
+            std::vector<struct JViewBase*>  views;
         };
 
-        void VInit(ViewManager& vm, System::JSystem& jsystem);
+        void VInit(ViewManager& vm, struct System::JSystem& jsystem);
         void VDeInit(ViewManager& vm);
-        void VSetEnable(ViewManager& vm, int32_t type, int32_t subtype);
+        void VSetEnable(ViewManager& vm, int32_t type, int32_t subtype, bool value);
         // Drawing imgui context on screen
-        void VDraw(System::JWindow& win, Engine::JEngine& engine);
+        void VDraw(struct System::JWindow& win, struct JEngine& engine);
         // Update Imgui context
-        void VUpdate(System::JWindow& win, Engine::JEngine& engine);
+        void VUpdate(struct System::JWindow& win, struct JEngine& engine);
     }
 }
 #endif

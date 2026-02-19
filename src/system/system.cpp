@@ -23,26 +23,27 @@ SOFTWARE.
 */
 #include "system.h"
 #include <thread>
-#include <spdlog.h>
+#include <spdlog/spdlog.h>
 #include "window.h"
 #include "../engine/engine.h"
+#include "../engine/struct/context.h"
 
 namespace January::System {
     using namespace Engine;
 
-    void UpdateLoop(JSystem& system){
-        while(!system.window->g_done){
-            EngineUpdate(*system.engine);
+    void UpdateLoop(JSystem& jsystem){
+        while(!jsystem.window->g_done){
+            EngineUpdate(*jsystem.engine);
         }
     }
 
-    int32_t SInit(JSystem& system){
-        int32_t err = JInit(*system.window, JRWindowInit());
+    int32_t SInit(JSystem& jsystem){
+        int32_t err = JInit(*jsystem.window, JRWindowInit());
         if(err != 0){
             spdlog::error("Vulkan Init Error");
             return err;
         }
-        err = EngineInit(*system.engine, *system.window);
+        err = EngineInit(*jsystem.engine, *jsystem.window);
         if(err != 0){
             spdlog::error("Engine Init Error");
             return err;
@@ -50,11 +51,24 @@ namespace January::System {
         return 0;
     }
 
-    void SRun(JSystem& system){
+    void SRun(JSystem& jsystem){
         spdlog::debug("Enter Application Mainloop");
-        std::thread draw_thread(DrawLoop, system.window);
-        std::thread update_thread(UpdateLoop, system);
+        std::thread draw_thread([&jsystem]() {
+            DrawLoop(*jsystem.window);
+        });
+        std::thread update_thread([&jsystem](){
+            UpdateLoop(jsystem);
+        });
+
+        while(!jsystem.engine->context->done){
+            std::queue<std::string>& cb = jsystem.engine->context->commands;
+            if(cb.size() > 0){
+                std::string command = cb.front();
+                cb.pop();
+            }
+        }
+        jsystem.window->g_done = true;
         if(draw_thread.joinable()) draw_thread.join();
-        if(update_thread.joinable()) update_thread.join();
+        if(update_thread.joinable()) draw_thread.join();
     }
 }

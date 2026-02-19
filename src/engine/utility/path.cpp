@@ -31,7 +31,7 @@ SOFTWARE.
 #endif
 
 namespace January::Engine {
-    fs::path January::Engine::get_home_directory() {
+    fs::path get_home_directory() {
         const char* homedir = nullptr;
 #ifdef _WIN32
         homedir = std::getenv("USERPROFILE"); // Primary variable on Windows

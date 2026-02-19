@@ -29,6 +29,7 @@ SOFTWARE.
 #include <imgui_notify.h>
 #include <tahoma.h>
 #include <spdlog/spdlog.h>
+#include "system.h"
 #include "../engine/engine.h"
 
 namespace January::System {
@@ -369,7 +370,6 @@ namespace January::System {
             ImGui::NewFrame();
 
             jwindow.g_dockerspace = ImGui::DockSpaceOverViewport();
-            January::Engine::EngineDraw();
 
             // Render toasts on top of everything, at the end of your code!
             // You should push style vars here

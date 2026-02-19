@@ -22,12 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#ifndef GUI_VIEW_EXPLORER_H
+#define GUI_VIEW_EXPLORER_H
 #include <vector>
 #include <string>
+#include <mutex>
 #include <filesystem>
 #include <uuid_v4.h>
 #include <FileWatch.hpp>
-#include <mutex>
 #include "viewbase.h"
 
 namespace fs = std::filesystem;
@@ -43,6 +45,9 @@ namespace January::Engine::View {
 
     class JViewExplorer : public JViewBase {
     public:
+        JViewExplorer(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
+            JViewBase(_title, _type, _subtype, _win, _engine) {}
+        virtual ~JViewExplorer() {}
         void Init() override;
         void Update() override;
         void Draw() override;
@@ -67,3 +72,4 @@ namespace January::Engine::View {
         std::vector<JFileContent> files = std::vector<JFileContent>();
     };
 }
+#endif

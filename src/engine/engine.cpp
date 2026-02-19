@@ -36,11 +36,11 @@ SOFTWARE.
 using json = nlohmann::json;
 
 namespace January::Engine {
-    void SaveAppConfig(AppConfig& target){
+    void SaveAppConfig(struct AppConfig& target){
         fs::path home = get_home_directory();
     }
 
-    void LoadAppConfig(AppConfig& config){
+    void LoadAppConfig(struct AppConfig& config){
         config = AppConfig();
         fs::path home = get_home_directory();
         home = home.append("january");
@@ -70,7 +70,7 @@ namespace January::Engine {
         }
     }
 
-    void GenerateAppContext(AppContext& ctx){
+    void GenerateAppContext(struct AppContext& ctx){
         spdlog::debug("Try Generate AppContext");
         ctx = AppContext();
 
@@ -83,13 +83,10 @@ namespace January::Engine {
         }
     }
 
-    int32_t EngineInit(JEngine& jengine, System::JWindow& jwindow){
+    int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow){
         spdlog::debug("Engine Init");
         LoadAppConfig(*jengine.config);
         GenerateAppContext(*jengine.context);
-
-        // We check if page is first time fire
-        JPageType page = jengine.config->j_last_open;
 
         if(fs::exists(jengine.context->project_path)){
             std::string title = jengine.context->project_path;
@@ -113,9 +110,5 @@ namespace January::Engine {
         double current = ImGui::GetTime();
         jengine.context->delta = current - jengine.context->time;
         jengine.context->time = current;
-    }
-
-    void EngineDraw(JEngine& jengine, System::JWindow& jwindow){
-        
     }
 }

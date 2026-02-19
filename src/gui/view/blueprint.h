@@ -22,13 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#ifndef GUI_VIEW_BLUEPRINT_H
+#define GUI_VIEW_BLUEPRINT_H
 #include "viewbase.h"
 
 namespace January::Engine::View {
     class JViewBlueprint : public JViewBase {
+    public:
+        JViewBlueprint(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
+            JViewBase(_title, _type, _subtype, _win, _engine) {}
+        virtual ~JViewBlueprint() {}
         void Init() override;
         void Update() override;
         void Draw() override;
         void DeInit() override;
     };
 }
+#endif

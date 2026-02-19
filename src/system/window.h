@@ -45,50 +45,56 @@ SOFTWARE.
 static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
 
-namespace January::System {
+namespace January {
 
-    // Pure render window struct
-    // This should be generate by engine or editor
-    struct JWindowRender {
-        SDL_WindowFlags          g_windowFlags;
-        SDL_Window*              g_window = nullptr;
-        VkAllocationCallbacks*   g_Allocator = nullptr;
-        VkInstance               g_Instance = VK_NULL_HANDLE;
-        VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
-        VkDevice                 g_Device = VK_NULL_HANDLE;
-        uint32_t                 g_QueueFamily = (uint32_t)-1;
-        VkQueue                  g_Queue = VK_NULL_HANDLE;
-        VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
-        VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
+    namespace Engine {
+        struct JEngine;
+    }
 
-        bool                     g_done = false;
-        uint32_t                 g_MinImageCount = 2;
-        bool                     g_SwapChainRebuild = false;
-    };
+    namespace System {
+        // Pure render window struct
+        // This should be generate by engine or editor
+        struct JWindowRender {
+            SDL_WindowFlags          g_windowFlags;
+            SDL_Window*              g_window = nullptr;
+            VkAllocationCallbacks*   g_Allocator = nullptr;
+            VkInstance               g_Instance = VK_NULL_HANDLE;
+            VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
+            VkDevice                 g_Device = VK_NULL_HANDLE;
+            uint32_t                 g_QueueFamily = (uint32_t)-1;
+            VkQueue                  g_Queue = VK_NULL_HANDLE;
+            VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
+            VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
 
-    // Main window struct
-    // This handles the editor window
-    struct JWindow : JWindowRender {
-        ImGui_ImplVulkanH_Window g_MainWindowData;
-        ImGuiID                  g_dockerspace = 0;
-    };
-    // The init config for the window
-    struct JRWindowInit {
-        SDL_WindowFlags          g_flags = 0;
-        int32_t                  g_width = 800;
-        int32_t                  g_height = 600;
-    };
+            bool                     g_done = false;
+            uint32_t                 g_MinImageCount = 2;
+            bool                     g_SwapChainRebuild = false;
+        };
 
-    // The editor window drawing function call
-    void DrawLoop(JWindow& jwindow);
+        // Main window struct
+        // This handles the editor window
+        struct JWindow : JWindowRender {
+            ImGui_ImplVulkanH_Window g_MainWindowData;
+            ImGuiID                  g_dockerspace = 0;
+        };
+        // The init config for the window
+        struct JRWindowInit {
+            SDL_WindowFlags          g_flags = 0;
+            int32_t                  g_width = 800;
+            int32_t                  g_height = 600;
+        };
 
-    // Editor window context initialization
-    int32_t JInit(JWindow& jwindow, JRWindowInit init);
-    // Editor window release resource
-    void JDeInit(JWindow& jwindow);
-    // Pure window context initialization
-    int32_t JRInit(JWindowRender& jrwindow, JRWindowInit init);
-    // Pure window release resource
-    void JRDeInit(JWindowRender& jwindow);
+        // The editor window drawing function call
+        void DrawLoop(JWindow& jwindow);
+
+        // Editor window context initialization
+        int32_t JInit(JWindow& jwindow, JRWindowInit init);
+        // Editor window release resource
+        void JDeInit(JWindow& jwindow);
+        // Pure window context initialization
+        int32_t JRInit(JWindowRender& jrwindow, JRWindowInit init);
+        // Pure window release resource
+        void JRDeInit(JWindowRender& jwindow);
+    }
 }
 #endif

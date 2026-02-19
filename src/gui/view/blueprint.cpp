@@ -24,23 +24,20 @@ SOFTWARE.
 #include "blueprint.h"
 #include <spdlog/spdlog.h>
 #include <imgui.h>
-#include "variable.h"
-#include "../../engine.h"
 
-// Global engine access point
-extern January::Engine::JEngine jengine;
+namespace January::Engine::View {
+    void JViewBlueprint::Init(){
+        spdlog::info("Loaded View: Blueprint");
+    }
+    void JViewBlueprint::Update(){
 
-void January::Engine::View::JViewBlueprint::Init(){
-    spdlog::info("Loaded View: Blueprint");
-}
-void January::Engine::View::JViewBlueprint::Update(){
+    }
+    void JViewBlueprint::Draw(){
+        ImGui::Begin(title.c_str());
+        
+        ImGui::End();
+    }
+    void JViewBlueprint::DeInit(){
 
-}
-void January::Engine::View::JViewBlueprint::Draw(){
-    ImGui::Begin(title);
-    
-    ImGui::End();
-}
-void January::Engine::View::JViewBlueprint::DeInit(){
-
+    }
 }
