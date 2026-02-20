@@ -58,7 +58,6 @@ namespace January {
             protected:
                 System::JWindow&    jwindow;
                 JEngine&            jengine;
-            private:
                 bool                enable          = false;
             };
         }

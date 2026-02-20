@@ -69,7 +69,9 @@ namespace January {
         // Set the view instance enable variable
         // By search its type and subtype
         void VSetEnable(ViewManager& vm, int32_t type, int32_t subtype, bool value);
+        // Fetch window widget enable variables to config object
         void SaveEnableConfig(ViewManager& vm, struct AppConfig& config);
+        // Apply the config data to window widget enable variable
         void ApplyEnableConfig(ViewManager& vm, struct AppConfig& config);
         // Drawing imgui context on each views
         void VDraw(ViewManager& vm, System::JWindow& jwindow, JEngine& jengine);

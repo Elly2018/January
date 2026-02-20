@@ -87,8 +87,9 @@ namespace January {
 
         // The editor window drawing function call
         void DrawLoop(struct JSystem& jsystem);
-
+        // Save preference to home dir (imgui.ini)
         void SavePreference();
+        // Load preference from home dir (imgui.ini)
         void LoadPreference();
 
         // Editor window context initialization
