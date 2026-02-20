@@ -37,20 +37,20 @@ using json = nlohmann::json;
 
 namespace January::Engine {
 
-    fs::path get_config_path(){
+    fs::path get_config_path(const char* path){
         fs::path p = get_home_directory();
         p = p.append("january");
-        spdlog::debug("Try Load AppConfig: %s", p.string());
+        spdlog::debug("Try Load AppConfig: {}", p.string());
         if(!fs::exists(p)){
             spdlog::warn("[home]/january not exist, create one right now");
             fs::create_directory(p);
         }
-        p = p.append("config.json");
+        p = p.append(path);
         return p;
     }
 
     void SaveAppConfig(struct AppConfig& target){
-        fs::path p = get_config_path();
+        fs::path p = get_config_path("config.json");
         json data = json::object();
         data["j_FPS"] = target.j_FPS;
         data["j_last_open"] = target.j_last_open;
@@ -72,7 +72,7 @@ namespace January::Engine {
     }
 
     void LoadAppConfig(struct AppConfig& config){
-        fs::path p = get_config_path();
+        fs::path p = get_config_path("config.json");
         if(!fs::exists(p)){
             spdlog::warn("Detect config.json not exist, create default one right now");
             SaveAppConfig(config);
@@ -100,7 +100,7 @@ namespace January::Engine {
                     json buffer = data["j_views_enable"].at(i);
                     if(buffer.is_object()){
                         if(buffer["id"].is_number_integer() && buffer["enable"].is_boolean()){
-                            buffer.push_back(
+                            config.j_views_enable.push_back(
                                 std::pair<int64_t, bool>(
                                     buffer["id"].get<int64_t>(),
                                     buffer["enable"].get<bool>()
@@ -115,7 +115,6 @@ namespace January::Engine {
 
     void GenerateAppContext(struct AppContext& ctx){
         spdlog::debug("Try Generate AppContext");
-        ctx = AppContext();
 
         auto par_p = January::CLI::GetCMDParam("p", "path");
         if(par_p.has_value()){
@@ -157,5 +156,6 @@ namespace January::Engine {
         double current = ImGui::GetTime();
         jengine.context->delta = current - jengine.context->time;
         jengine.context->time = current;
+        VUpdate(*jengine.manager);
     }
 }

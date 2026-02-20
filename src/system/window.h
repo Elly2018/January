@@ -88,6 +88,9 @@ namespace January {
         // The editor window drawing function call
         void DrawLoop(struct JSystem& jsystem);
 
+        void SavePreference();
+        void LoadPreference();
+
         // Editor window context initialization
         int32_t JInit(JWindow& jwindow, JRWindowInit init);
         // Editor window release resource

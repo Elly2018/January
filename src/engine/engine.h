@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef ENGINE_ENGINE_H
 #define ENGINE_ENGINE_H
 #include <cinttypes>
+#include <filesystem>
 
 namespace January {
     namespace System {
@@ -38,6 +39,7 @@ namespace January {
         namespace View {
             struct ViewManager;
         }
+        std::filesystem::path get_config_path(const char* path);
         // Save app config to app preference location
         void SaveAppConfig(struct AppConfig& target);
         // Load app config from app preference location

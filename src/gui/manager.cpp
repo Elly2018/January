@@ -27,13 +27,14 @@ SOFTWARE.
 #include "../engine/engine.h"
 #include "../engine/struct/config.h"
 #include "../engine/struct/context.h"
+#include "../engine/utility/command.h"
 #include "../system/system.h"
 #include "../system/window.h"
 
 namespace January::Engine::View {
     void VInit(ViewManager& vm, struct System::JSystem& jsystem){
         vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
-        vm.blueprint = new JViewBlueprint("Blueprint##view", (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
+        vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
         vm.views.push_back(vm.explorer);
         vm.views.push_back(vm.blueprint);
     }
@@ -57,29 +58,51 @@ namespace January::Engine::View {
         }
     }
 
+    void SaveEnableConfig(ViewManager& vm, struct AppConfig& config){
+        config.j_views_enable.clear();
+        for(auto& view : vm.views){
+            config.j_views_enable.push_back(std::pair<int64_t, bool>(
+                view->GetID(),
+                view->IsEnable()
+            ));
+        }
+    }
+
+    void ApplyEnableConfig(ViewManager& vm, struct AppConfig& config){
+        std::unordered_map<int64_t, bool> mmap = std::unordered_map<int64_t, bool>();
+        for(auto& ve : config.j_views_enable){
+            mmap.insert_or_assign(ve.first, ve.second);
+        }
+        for(auto& view : vm.views){
+            if(mmap.count(view->GetID())){
+                view->SetEnable(mmap.at(view->GetID()));
+            }
+        }
+    }
+
     void VDraw(ViewManager& vm, System::JWindow& jwindow, JEngine& jengine){
         if(ImGui::BeginMainMenuBar()){
             // File bar
             if(ImGui::BeginMenu("File##MainMenuBar")){
                 if(ImGui::MenuItem("New Project##MainMenuBar_File", "Ctrl+N")){
-                    jengine.context->commands.push("new_project");
+                    PushCommand(*jengine.context, "new_project");
                 }
                 if(ImGui::MenuItem("Open Project##MainMenuBar_File", "Ctrl+O")){
-                    jengine.context->commands.push("open_project");
+                    PushCommand(*jengine.context, "open_project");
                 }
                 ImGui::Separator();
                 if(ImGui::MenuItem("Save Project##MainMenuBar_File", "Ctrl+S")){
-                    jengine.context->commands.push("save_project");
+                    PushCommand(*jengine.context, "save_project");
                 }
                 if(ImGui::MenuItem("Save Project As##MainMenuBar_File", "Ctrl+Shift+S")){
-                    jengine.context->commands.push("save_project_as");
+                    PushCommand(*jengine.context, "save_project_as");
                 }
                 ImGui::Separator();
                 if(ImGui::MenuItem("Setting##MainMenuBar_File")){
-                    jengine.context->commands.push("open_setting");
+                    PushCommand(*jengine.context, "open_setting");
                 }
                 if(ImGui::MenuItem("Preference##MainMenuBar_File")){
-                    jengine.context->commands.push("open_preference");
+                    PushCommand(*jengine.context, "open_preference");
                 }
                 ImGui::Separator();
                 if(ImGui::MenuItem("Quit##MainMenuBar_File")){
@@ -91,9 +114,11 @@ namespace January::Engine::View {
                 if(ImGui::BeginMenu("General##MainMenuBar_View")){
                     if(ImGui::MenuItem("Blueprint##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){
                         vm.blueprint->SetEnable(!vm.blueprint->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
                     }
                     if(ImGui::MenuItem("Explorer##MainMenuBar_View_General", NULL, vm.explorer->IsEnable())){
                         vm.explorer->SetEnable(!vm.explorer->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
                     }
                     ImGui::EndMenu();
                 }
@@ -103,7 +128,9 @@ namespace January::Engine::View {
         }
         for(auto& view : vm.views){
             if(view->IsEnable()){
+                view->PreDraw();
                 view->Draw();
+                view->PostDraw();
             }
         }
     }

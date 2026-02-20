@@ -34,6 +34,7 @@ namespace January {
     }
     namespace Engine {
         struct JEngine;
+        struct AppConfig;
     }
     namespace Engine::View {
         struct JViewBase;
@@ -68,6 +69,8 @@ namespace January {
         // Set the view instance enable variable
         // By search its type and subtype
         void VSetEnable(ViewManager& vm, int32_t type, int32_t subtype, bool value);
+        void SaveEnableConfig(ViewManager& vm, struct AppConfig& config);
+        void ApplyEnableConfig(ViewManager& vm, struct AppConfig& config);
         // Drawing imgui context on each views
         void VDraw(ViewManager& vm, System::JWindow& jwindow, JEngine& jengine);
         // Update call for each views

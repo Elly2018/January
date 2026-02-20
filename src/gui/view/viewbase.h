@@ -37,45 +37,29 @@ namespace January {
             // The base class for editor view
             class JViewBase {
             public:
-                JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
-                    title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {
-                        Init();
-                    }
-                virtual ~JViewBase() {
-                    DeInit();
-                }
+                JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine);
+                virtual ~JViewBase();
                 virtual void OnEnable() {};
                 virtual void OnDisable() {};
                 virtual void Init() {}
                 virtual void DeInit() {}
                 virtual void Update() {}
+                virtual bool PreDraw();
                 virtual void Draw() {}
+                virtual void PostDraw();
 
                 bool IsEnable() { return enable; }
-                int64_t GetID(){
-                    int64_t p = 0;
-                    int32_t* pt = (int32_t*)(&p);
-                    pt[0] = type;
-                    pt[1] = subtype;
-                    return p;
-                }
-                void SetEnable(bool value) {
-                    bool diff = value != enable;
-                    if(diff){
-                        enable = value;
-                        if(enable) OnEnable();
-                        else OnDisable();
-                    }
-                }
+                int64_t GetID();
+                void SetEnable(bool value);
             public:
-                std::string         title;
-                int32_t             type;
-                int32_t             subtype;
+                std::string         title           = "";
+                int32_t             type            = 0;
+                int32_t             subtype         = 0;
             protected:
                 System::JWindow&    jwindow;
                 JEngine&            jengine;
             private:
-                bool                enable;
+                bool                enable          = false;
             };
         }
     }

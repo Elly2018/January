@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#ifndef ENGINE_UTILITY_PATH_H
+#define ENGINE_UTILITY_PATH_H
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -29,3 +31,4 @@ namespace fs = std::filesystem;
 namespace January::Engine {
     fs::path get_home_directory();
 }
+#endif

@@ -31,6 +31,7 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include "system.h"
 #include "../engine/engine.h"
+#include "../engine/utility/path.h"
 #include "../gui/manager.h"
 
 namespace January::System {
@@ -109,17 +110,16 @@ namespace January::System {
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
             volkLoadInstance(g_Instance);
 #endif
-
             // Setup the debug report callback
 #ifdef APP_USE_VULKAN_DEBUG_REPORT
-            auto f_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(window.g_Instance, "vkCreateDebugReportCallbackEXT");
+            auto f_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(win.g_Instance, "vkCreateDebugReportCallbackEXT");
             IM_ASSERT(f_vkCreateDebugReportCallbackEXT != nullptr);
             VkDebugReportCallbackCreateInfoEXT debug_report_ci = {};
             debug_report_ci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
             debug_report_ci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
             debug_report_ci.pfnCallback = debug_report;
             debug_report_ci.pUserData = nullptr;
-            err = f_vkCreateDebugReportCallbackEXT(window.g_Instance, &debug_report_ci, window.g_Allocator, &g_DebugReport);
+            err = f_vkCreateDebugReportCallbackEXT(win.g_Instance, &debug_report_ci, win.g_Allocator, &g_DebugReport);
             check_vk_result(err);
 #endif
         }
@@ -371,8 +371,8 @@ namespace January::System {
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
-            VDraw(*jsystem.engine->manager, *jsystem.window, *jsystem.engine);
             jwindow.g_dockerspace = ImGui::DockSpaceOverViewport();
+            VDraw(*jsystem.engine->manager, *jsystem.window, *jsystem.engine);
 
             // Render toasts on top of everything, at the end of your code!
             // You should push style vars here
@@ -400,6 +400,14 @@ namespace January::System {
     }
 #pragma endregion
 
+    void SavePreference(){
+        ImGui::SaveIniSettingsToDisk(Engine::get_config_path("imgui.ini").c_str());
+    }
+
+    void LoadPreference(){
+        ImGui::LoadIniSettingsFromDisk(Engine::get_config_path("imgui.ini").c_str());
+    }
+
     int32_t JInit(JWindow& jwindow, JRWindowInit init) {
         spdlog::debug("Application Initialization: Editor");
 
@@ -413,6 +421,7 @@ namespace January::System {
 
         // Create window with Vulkan graphics context
         float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+        spdlog::debug("\tmain_scale: {}", main_scale);
         jwindow.g_windowFlags = SDL_WINDOW_VULKAN | 
             SDL_WINDOW_RESIZABLE | 
             SDL_WINDOW_HIGH_PIXEL_DENSITY |
@@ -423,6 +432,7 @@ namespace January::System {
         {
             throw std::runtime_error(std::format("Error: SDL_CreateWindow(): {}\n", SDL_GetError()));
         }
+        spdlog::debug("\tSDL window created");
 
         ImVector<const char*> extensions;
         {
@@ -432,6 +442,7 @@ namespace January::System {
                 extensions.push_back(sdl_extensions[n]);
         }
         SetupVulkan(jwindow, extensions);
+        spdlog::debug("\tVulkan setup finish");
 
         // Create Window Surface
         VkSurfaceKHR surface;
@@ -440,6 +451,7 @@ namespace January::System {
         {
             throw std::runtime_error("Failed to create Vulkan surface.\n");
         }
+        spdlog::debug("\tVulkan surface finish");
 
         // Create Framebuffers
         int w, h;
@@ -453,6 +465,8 @@ namespace January::System {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.IniFilename = Engine::get_config_path("imgui.ini").c_str();
+        io.LogFilename = Engine::get_config_path("imgui.log").c_str();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking

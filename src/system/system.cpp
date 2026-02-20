@@ -27,6 +27,8 @@ SOFTWARE.
 #include "window.h"
 #include "../engine/engine.h"
 #include "../engine/struct/context.h"
+#include "../engine/utility/command.h"
+#include "../gui/manager.h"
 
 namespace January::System {
     using namespace Engine;
@@ -50,6 +52,9 @@ namespace January::System {
             spdlog::error("Engine Init Error");
             return err;
         }
+        LoadAppConfig(*jsystem.engine->config);
+        ApplyEnableConfig(*jsystem.engine->manager, *jsystem.engine->config);
+        LoadPreference();
         return 0;
     }
 
@@ -63,10 +68,14 @@ namespace January::System {
         });
 
         while(!jsystem.engine->context->done){
-            std::queue<std::string>& cb = jsystem.engine->context->commands;
-            if(cb.size() > 0){
-                std::string command = cb.front();
-                cb.pop();
+            {
+                std::lock_guard<std::mutex> lock(jsystem.engine->context->commands_mtx);
+                std::queue<std::string>& cb = jsystem.engine->context->commands;
+                while(cb.size() > 0){
+                    std::string command = cb.front();
+                    cb.pop();
+                    ApplyCommand(jsystem, command);
+                }
             }
             if(jsystem.window->g_done){
                 jsystem.engine->context->done = true;

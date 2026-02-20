@@ -30,6 +30,10 @@ using namespace January::System;
 
 // Program entry point
 int main(int argc, char** argv){
+    spdlog::info("Application Entry Point");
+#if DEBUG_MODE
+    spdlog::set_level(spdlog::level::debug);
+#endif
     InitCMD(argc, argv);
     JSystem jsystem;
     if(SInit(jsystem) == -1){

@@ -22,26 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_STRUCT_CONTEXT_H
-#define ENGINE_STRUCT_CONTEXT_H
+#ifndef ENGINE_UTILITY_COMMAND_H
+#define ENGINE_UTILITY_COMMAND_H
 #include <string>
-#include <queue>
-#include <mutex>
 
-namespace January::Engine {
-    // Current application context
-    // This data cannot be store in disk, This is the memory only data
-    struct AppContext {
-        std::string                 project_path                  = "";
-        // Application global time
-        double                      time                          = 0;
-        // Application delta time
-        double                      delta                         = 0;
-        // Application end signal
-        bool                        done                          = false;
-        // Command buffer, execute next frame
-        std::queue<std::string>     commands                      = std::queue<std::string>();
-        std::mutex                  commands_mtx;
-    };
+namespace January {
+    namespace System {
+        struct JSystem;
+    }
+    namespace Engine {
+        struct AppContext;
+        void ApplyCommand(struct System::JSystem& jsystem, std::string cmd);
+        void PushCommand(struct AppContext& config, std::string cmd);
+    }
 }
 #endif

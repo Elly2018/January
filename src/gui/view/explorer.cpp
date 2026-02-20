@@ -89,36 +89,33 @@ namespace January::Engine::View {
 
     void JViewExplorer::Draw() {
         ImGuiStyle& style = ImGui::GetStyle();
-        ImGui::Begin(title.c_str());
-            if(!init){
-                changed = true;
-                init = true;
-            }
+        if(!init){
+            changed = true;
+            init = true;
+        }
+        float w = std::max(ImGui::GetWindowWidth(), 20.f);
+        leftWidth = w * (1.f / 3.f);
+        rightWidth = w * (2.f / 3.f);
 
-            float w = std::max(ImGui::GetWindowWidth(), 20.f);
-            leftWidth = w * (1.f / 3.f);
-            rightWidth = w * (2.f / 3.f);
+        AppContext* context = jengine.context;
+        if(context == nullptr){
+            spdlog::error("context is nullptr");
+        }
 
-            AppContext* context = jengine.context;
-            if(context == nullptr){
-                spdlog::error("context is nullptr");
-            }
-
-            if(context != nullptr && fs::exists(context->project_path)){
-                bool change = ImGui::InputText("Path", path.data(), 512, ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_EnterReturnsTrue);
-                if(change) changed = true;
-                ImGui::SliderFloat("size", &imgSize, 0.f, 1.f, "%.1f");
-                ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
-                    DrawLeftSide();
-                ImGui::EndChild();
-                ImGui::SameLine();
-                ImGui::BeginChild("ViewExplorer_Right", ImVec2(rightWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
-                    DrawRightSide();
-                ImGui::EndChild();
-            }else{
-                ImGui::Text("You need to choose path fist");
-            }
-        ImGui::End();
+        if(context != nullptr && fs::exists(context->project_path)){
+            bool change = ImGui::InputText("Path", path.data(), 512, ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_EnterReturnsTrue);
+            if(change) changed = true;
+            ImGui::SliderFloat("size", &imgSize, 0.f, 1.f, "%.1f");
+            ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
+                DrawLeftSide();
+            ImGui::EndChild();
+            ImGui::SameLine();
+            ImGui::BeginChild("ViewExplorer_Right", ImVec2(rightWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
+                DrawRightSide();
+            ImGui::EndChild();
+        }else{
+            ImGui::Text("You need to choose path fist");
+        }
     }
 
     void JViewExplorer::DeInit() {

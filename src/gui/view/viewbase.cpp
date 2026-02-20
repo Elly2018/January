@@ -21,21 +21,46 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "blueprint.h"
-#include <spdlog/spdlog.h>
+#include "viewbase.h"
 #include <imgui.h>
+#include "../../engine/engine.h"
+#include "../../engine/struct/context.h"
+#include "../../engine/utility/command.h"
 
 namespace January::Engine::View {
-    void JViewBlueprint::Init(){
-        spdlog::info("Loaded View: Blueprint");
+    JViewBase::JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
+        title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {
+            Init();
+        }
+    JViewBase::~JViewBase() {
+        DeInit();
     }
-    void JViewBlueprint::Update(){
 
+    bool JViewBase::PreDraw(){
+        return ImGui::Begin(title.c_str(), &enable);
     }
-    void JViewBlueprint::Draw(){
-        
-    }
-    void JViewBlueprint::DeInit(){
 
+    void JViewBase::PostDraw(){
+        ImGui::End();
+        if(!enable){
+            PushCommand(*jengine.context, "config_dirty");
+        }
+    }
+
+    int64_t JViewBase::GetID(){
+        int64_t p = 0;
+        int32_t* pt = (int32_t*)(&p);
+        pt[0] = type;
+        pt[1] = subtype;
+        return p;
+    }
+
+    void JViewBase::SetEnable(bool value) {
+        bool diff = value != enable;
+        if(diff){
+            enable = value;
+            if(enable) OnEnable();
+            else OnDisable();
+        }
     }
 }

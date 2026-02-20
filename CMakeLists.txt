@@ -87,3 +87,11 @@ target_link_libraries(january PRIVATE glfw;Vulkan::Vulkan SDL3::SDL3)
 target_include_directories(january PUBLIC ${SDL3_INCLUDE_DIRS})
 target_include_directories(january PUBLIC ${LOG_DIR}/src)
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(january PRIVATE DEBUG_MODE)
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_definitions(january PRIVATE RELEASE_MODE)
+endif()
