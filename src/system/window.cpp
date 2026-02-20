@@ -530,8 +530,11 @@ namespace January::System {
         return 0;
     }
 
-    void JDeInit(JWindow& jwindow){
+    void JDeInit(JWindow& jwindow, struct Engine::JEngine& jengine){
         spdlog::debug("Release Application Resources");
+        SaveEnableConfig(*jengine.manager, *jengine.config);
+        SaveAppConfig(*jengine.config);
+        System::SavePreference();
         // Cleanup
         // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppQuit() function]
         VkResult err = vkDeviceWaitIdle(jwindow.g_Device);
