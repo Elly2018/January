@@ -85,7 +85,7 @@ namespace January::System {
         if(draw_thread.joinable()) draw_thread.join();
         if(update_thread.joinable()) update_thread.join();
         EngineDeInit(*jsystem.engine);
-        JDeInit(*jsystem.window);
+        JDeInit(*jsystem.window, *jsystem.engine);
 
         delete jsystem.engine;
         delete jsystem.window;
