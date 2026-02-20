@@ -94,7 +94,7 @@ namespace January {
         // Editor window context initialization
         int32_t JInit(JWindow& jwindow, JRWindowInit init);
         // Editor window release resource
-        void JDeInit(JWindow& jwindow, struct Engine::JEngine& jengine);
+        void JDeInit(JWindow& jwindow);
         // Pure window context initialization
         int32_t JRInit(JWindowRender& jrwindow, JRWindowInit init);
         // Pure window release resource

@@ -24,6 +24,7 @@ SOFTWARE.
 #include "engine.h"
 #include <iostream>
 #include <fstream>
+#include <imgui.h>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
 #include "struct/config.h"
@@ -146,6 +147,10 @@ namespace January::Engine {
     }
 
     void EngineDeInit(JEngine& jengine){
+        SaveEnableConfig(*jengine.manager, *jengine.config);
+        SaveAppConfig(*jengine.config);
+        System::SavePreference();
+
         VDeInit(*jengine.manager);
         delete jengine.config;
         delete jengine.context;
