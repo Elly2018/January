@@ -55,10 +55,13 @@ namespace January {
 
         enum class JanuaryViewTypeFlag {
             NONE = 0,
-            POPUP = 0 << 1,
-            GENERAL = 0 << 2,
-            AUDIO = 0 << 3,
-            RENDER = 0 << 4,
+            POPUP = 1 << 0,
+            GENERAL = 1 << 1,
+            AUDIO = 1 << 2,
+            RENDER = 1 << 3,
+            SCRIPT = 1 << 4,
+            DEBUG = 1 << 5,
+            ANIMATION = 1 << 6,
         };
 
         enum class JanuaryViewGeneralFlag {
@@ -67,17 +70,43 @@ namespace January {
             CONSOLE = 2,
             EXPLORER = 3,
             INSPECTOR = 4,
-            PREVIEW = 5,
-            PROFILER = 6,
-            SCRIPT = 7,
-            TIMELINE = 8,
-            VOLUMN = 9,
+        };
+
+        enum class JanuaryViewAudioFlag {
+            NONE = 0,
+            VOLUMN = 1,
+            MIXER = 2,
+            EDITOR = 3,
+        };
+
+        enum class JanuaryViewRenderFlag {
+            NONE = 0,
+            PREVIEW = 1,
+            MATERIAL = 2,
+        };
+
+        enum class JanuaryViewScriptFlag {
+            NONE = 0,
+            SCRIPT = 1,
+            Debug = 2,
+        };
+
+        enum class JanuaryViewDebugFlag {
+            NONE = 0,
+            PROFILER = 1,
+        };
+
+        enum class JanuaryViewAnimationFlag {
+            NONE = 0,
+            TIMELINE = 1
         };
 
         enum class JanuaryViewGeneralPopupFlag {
             NONE = 0,
             FILE_DIALOG = 1,
             PROJECT_DASHBOARD = 2,
+            PREFERENCE = 3,
+            SETTING = 4,
         };
 
         struct ViewManager {

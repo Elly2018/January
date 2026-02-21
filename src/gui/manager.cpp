@@ -46,11 +46,11 @@ namespace January::Engine::View {
         vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
         vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
         vm.inspector = new JViewInspector(std::string("Inspector##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::INSPECTOR, *jsystem.window, *jsystem.engine);
-        vm.preview = new JViewPreview(std::string("Preview##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::PREVIEW, *jsystem.window, *jsystem.engine);
-        vm.profiler = new JViewProfiler(std::string("Profiler##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::PROFILER, *jsystem.window, *jsystem.engine);
-        vm.script = new JViewScript(std::string("Script##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::SCRIPT, *jsystem.window, *jsystem.engine);
-        vm.timeline = new JViewTimeline(std::string("Timeline##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::TIMELINE, *jsystem.window, *jsystem.engine);
-        vm.volumn = new JViewVolumn(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::VOLUMN, *jsystem.window, *jsystem.engine);
+        vm.preview = new JViewPreview(std::string("Preview##view"), (int32_t)JanuaryViewTypeFlag::RENDER, (int32_t)JanuaryViewRenderFlag::PREVIEW, *jsystem.window, *jsystem.engine);
+        vm.profiler = new JViewProfiler(std::string("Profiler##view"), (int32_t)JanuaryViewTypeFlag::DEBUG, (int32_t)JanuaryViewDebugFlag::PROFILER, *jsystem.window, *jsystem.engine);
+        vm.script = new JViewScript(std::string("Script##view"), (int32_t)JanuaryViewTypeFlag::SCRIPT, (int32_t)JanuaryViewScriptFlag::SCRIPT, *jsystem.window, *jsystem.engine);
+        vm.timeline = new JViewTimeline(std::string("Timeline##view"), (int32_t)JanuaryViewTypeFlag::ANIMATION, (int32_t)JanuaryViewAnimationFlag::TIMELINE, *jsystem.window, *jsystem.engine);
+        vm.volumn = new JViewVolumn(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::AUDIO, (int32_t)JanuaryViewAudioFlag::VOLUMN, *jsystem.window, *jsystem.engine);
 
         vm.file_dialog = new JPopupFileDialog(std::string("File Dialog##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::FILE_DIALOG, *jsystem.window, *jsystem.engine);
         vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
@@ -120,6 +120,16 @@ namespace January::Engine::View {
                 if(ImGui::MenuItem("Open Project##MainMenuBar_File", "Ctrl+O")){
                     PushCommand(*jengine.context, "open_project");
                 }
+                if(jengine.config->j_recent.size() > 0){
+                    if(ImGui::BeginMenu("Open Recent##MainMenuBar_File")){
+                        for(auto& recent : jengine.config->j_recent){
+                            if(ImGui::MenuItem("Open Project##MainMenuBar_File_Recent")){
+                                PushCommand(*jengine.context, "open_recent " + recent);
+                            }
+                        }
+                        ImGui::EndMenu();
+                    }
+                }
                 ImGui::Separator();
                 if(ImGui::MenuItem("Save Project##MainMenuBar_File", "Ctrl+S")){
                     PushCommand(*jengine.context, "save_project");
@@ -141,6 +151,24 @@ namespace January::Engine::View {
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("View##MainMenuBar")){
+                if(ImGui::BeginMenu("Workspace##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Add Current Workspace")){
+                        PushCommand(*jengine.context, "add_current_workspace");
+                    }
+                    if(ImGui::MenuItem("Edit Workspace")){
+                        PushCommand(*jengine.context, "edit_workspace");
+                    }
+                    if(jengine.config->j_workspace.size() > 0){
+                        ImGui::Separator();
+                        for(auto& wrokspace : jengine.config->j_workspace){
+                            if(ImGui::MenuItem("Open Project##MainMenuBar_View")){
+                                PushCommand(*jengine.context, "apply_workspace " + wrokspace);
+                            }
+                        }
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::Separator();
                 if(ImGui::BeginMenu("General##MainMenuBar_View")){
                     if(ImGui::MenuItem("Blueprint##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){
                         vm.blueprint->SetEnable(!vm.blueprint->IsEnable());
@@ -151,6 +179,15 @@ namespace January::Engine::View {
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     ImGui::EndMenu();
+                }
+                if(ImGui::BeginMenu("Render##MainMenuBar_View")){
+
+                }
+                if(ImGui::BeginMenu("Audio##MainMenuBar_View")){
+
+                }
+                if(ImGui::BeginMenu("Logic##MainMenuBar_View")){
+
                 }
                 ImGui::EndMenu();
             }

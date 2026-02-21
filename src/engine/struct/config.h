@@ -37,6 +37,7 @@ namespace January::Engine {
         std::string j_last_open                                  = "";
         std::vector<std::string> j_recent                        = std::vector<std::string>();
         std::vector<std::pair<int64_t, bool>> j_views_enable     = std::vector<std::pair<int64_t, bool>>();
+        std::vector<std::string> j_workspace                     = std::vector<std::string>();
     };
 }
 #endif
