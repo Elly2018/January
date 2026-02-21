@@ -25,13 +25,37 @@ SOFTWARE.
 #ifndef GUI_POPUP_FILE_DIALOG_H
 #define GUI_POPUP_FILE_DIALOG_H
 #include <cinttypes>
+#include <vector>
+#include <string>
 #include "popupbase.h"
 
 namespace January::Engine::View {
+    typedef void (*DialogResultFeedback)(bool cancel, std::vector<std::string> results);
+
     class JPopupFileDialog : public JPopupBase {
     public:
         DEFAULT_POPUP_CTOR(JPopupFileDialog) {}
         DEFAULT_POPUP_DECTOR(JPopupFileDialog) {}
+
+        void OnDisable() override;
+
+        enum class DialogType {
+            SINGLE_FILE,
+            MULTIPLE_FILE,
+            SINGLE_DIR
+        };
+
+        void SetTitle(std::string _newtitle);
+        void SetFilter(std::vector<std::pair<std::string, std::string>> _filters);
+        void SetDialogType(DialogType _dialog_type);
+        void RegisterOneTimeFeedback(DialogResultFeedback _feedback);
+
+        void Draw() override;
+
+    private:
+        std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
+        DialogType dialog_type;
+        DialogResultFeedback feedback;
     };
 }
 

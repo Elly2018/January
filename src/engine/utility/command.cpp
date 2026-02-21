@@ -6,6 +6,7 @@
 #include "../../system/system.h"
 #include "../../system/window.h"
 #include "../../gui/manager.h"
+#include "../../gui/popup/file_dialog.h"
 #include "../engine.h"
 #include "../struct/config.h"
 #include "../struct/context.h"
@@ -35,10 +36,10 @@ namespace January::Engine {
             System::SavePreference();
         }
         else if(cmd == "new_project"){
-            
+            jsystem.engine->manager->file_dialog->SetEnable(true);
         }
         else if(cmd == "open_project"){
-
+            jsystem.engine->manager->file_dialog->SetEnable(true);
         }
         else if(cmd == "save_project"){
 
@@ -70,3 +71,4 @@ namespace January::Engine {
         spdlog::debug("Push command: {}", cmd);
     }
 }
+
