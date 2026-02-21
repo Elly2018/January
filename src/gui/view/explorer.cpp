@@ -34,6 +34,7 @@ namespace fs = std::filesystem;
 
 namespace January::Engine::View {
     void JViewExplorer::Init() {
+        JViewBase::Init();
         spdlog::info("Loaded View: Explorer");
     }
 
@@ -119,7 +120,7 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DeInit() {
-
+        JViewBase::DeInit();
     }
 
     void JViewExplorer::DrawLeftSide(){

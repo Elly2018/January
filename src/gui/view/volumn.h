@@ -23,9 +23,13 @@ SOFTWARE.
 */
 #pragma once
 #include "viewbase.h"
+#ifndef GUI_VIEW_VOLUMN_H
+#define GUI_VIEW_VOLUMN_H
 
 namespace January::Engine::View { 
     class JViewVolumn : public JViewBase {
-
+        DEFAULT_VIEW_CTOR(JViewVolumn) {}
+        DEFAULT_VIEW_DECTOR(JViewVolumn) {}
     };
 }
+#endif

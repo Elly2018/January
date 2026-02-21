@@ -26,6 +26,13 @@ SOFTWARE.
 #define GUI_POPUP_POPUP_BASE_H
 #include "../view/viewbase.h"
 
+#define DEFAULT_POPUP_CTOR(x) \
+x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) :  \
+JPopupBase(_title, _type, _subtype, _win, _engine) \
+
+#define DEFAULT_POPUP_DECTOR(x) \
+    virtual ~x() \
+
 namespace January::Engine::View {
     class JPopupBase : public JViewBase {
         public:

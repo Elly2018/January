@@ -38,8 +38,20 @@ namespace January {
     }
     namespace Engine::View {
         struct JViewBase;
-        struct JViewExplorer;
+        struct JPopupBase;
+
         struct JViewBlueprint;
+        struct JViewConsole;
+        struct JViewExplorer;
+        struct JViewInspector;
+        struct JViewPreview;
+        struct JViewProfile;
+        struct JViewScript;
+        struct JViewTimeline;
+        struct JViewVolumn;
+
+        struct JPopupFileDialog;
+        struct JPopupProjectDashboard;
 
         enum class JanuaryViewTypeFlag {
             NONE = 0,
@@ -55,9 +67,21 @@ namespace January {
         };
 
         struct ViewManager {
-            struct JViewExplorer*           explorer;
             struct JViewBlueprint*          blueprint;
+            struct JViewConsole*            console;
+            struct JViewExplorer*           explorer;
+            struct JViewInspector*          inspector;
+            struct JViewPreview*            preview;
+            struct JViewProfile*            profile;
+            struct JViewScript*             script;
+            struct JViewTimeline*           timeline;
+            struct JViewVolumn*             volumn;
+
+            struct JPopupFileDialog*        file_dialog;
+            struct JPopupProjectDashboard*  project_dashboard;
+
             std::vector<struct JViewBase*>  views;
+            std::vector<struct JPopupBase*>  popups;
         };
 
         // View manager initialization

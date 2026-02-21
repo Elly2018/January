@@ -23,9 +23,13 @@ SOFTWARE.
 */
 #pragma once
 #include "viewbase.h"
+#ifndef GUI_VIEW_TIMELINE_H
+#define GUI_VIEW_TIMELINE_H
 
 namespace January::Engine::View {
     class JViewTimeline : public JViewBase {
-
+        DEFAULT_VIEW_CTOR(JViewTimeline) {}
+        DEFAULT_VIEW_DECTOR(JViewTimeline) {}
     };
 }
+#endif

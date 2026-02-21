@@ -22,53 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef GUI_VIEW_EXPLORER_H
-#define GUI_VIEW_EXPLORER_H
-#include <vector>
-#include <string>
-#include <mutex>
-#include <filesystem>
-#include <uuid_v4.h>
-#include <FileWatch.hpp>
-#include "viewbase.h"
-
-namespace fs = std::filesystem;
+#ifndef GUI_POPUP_PROJECT_DASHBOARD_H
+#define GUI_POPUP_PROJECT_DASHBOARD_H
+#include "popupbase.h"
 
 namespace January::Engine::View {
-    struct JFileContent {
-        UUIDv4::UUID uuid;
-        std::string title;
-        fs::path path;
-        bool is_dir;
-        uintmax_t filesize;
-    };
-
-    class JViewExplorer : public JViewBase {
-    public:
-        DEFAULT_VIEW_CTOR(JViewExplorer) {}
-        DEFAULT_VIEW_DECTOR(JViewExplorer) {}
-        void Init() override;
-        void Update() override;
-        void Draw() override;
-        void DeInit() override;
-
-    protected:
-        void DrawLeftSide();
-        void DrawRightSide();
-
-    public:
-        std::string path = "";
-
-    private:
-        bool changed = false;
-        bool init = false;
-        float leftWidth = 0;
-        float rightWidth = 0;
-        float imgSize = 0.5f;
-        int32_t selection = 0;
-        filewatch::FileWatch<std::string>* watcher = nullptr;
-        std::mutex mtx;
-        std::vector<JFileContent> files = std::vector<JFileContent>();
+    class JPopupProjectBoard : public JPopupBase {
+        DEFAULT_POPUP_CTOR(JPopupProjectBoard) {}
+        DEFAULT_POPUP_DECTOR(JPopupProjectBoard) {}
     };
 }
+
 #endif

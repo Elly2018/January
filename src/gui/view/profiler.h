@@ -22,53 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef GUI_VIEW_EXPLORER_H
-#define GUI_VIEW_EXPLORER_H
-#include <vector>
-#include <string>
-#include <mutex>
-#include <filesystem>
-#include <uuid_v4.h>
-#include <FileWatch.hpp>
 #include "viewbase.h"
-
-namespace fs = std::filesystem;
+#ifndef GUI_VIEW_PROFILER_H
+#define GUI_VIEW_PROFILER_H
 
 namespace January::Engine::View {
-    struct JFileContent {
-        UUIDv4::UUID uuid;
-        std::string title;
-        fs::path path;
-        bool is_dir;
-        uintmax_t filesize;
-    };
-
-    class JViewExplorer : public JViewBase {
-    public:
-        DEFAULT_VIEW_CTOR(JViewExplorer) {}
-        DEFAULT_VIEW_DECTOR(JViewExplorer) {}
-        void Init() override;
-        void Update() override;
-        void Draw() override;
-        void DeInit() override;
-
-    protected:
-        void DrawLeftSide();
-        void DrawRightSide();
-
-    public:
-        std::string path = "";
-
-    private:
-        bool changed = false;
-        bool init = false;
-        float leftWidth = 0;
-        float rightWidth = 0;
-        float imgSize = 0.5f;
-        int32_t selection = 0;
-        filewatch::FileWatch<std::string>* watcher = nullptr;
-        std::mutex mtx;
-        std::vector<JFileContent> files = std::vector<JFileContent>();
+    class JViewProfiler : public JViewBase {
+        DEFAULT_VIEW_CTOR(JViewProfiler) {}
+        DEFAULT_VIEW_DECTOR(JViewProfiler) {}
     };
 }
 #endif

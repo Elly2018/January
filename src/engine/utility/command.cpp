@@ -34,6 +34,24 @@ namespace January::Engine {
             SaveAppConfig(*jsystem.engine->config);
             System::SavePreference();
         }
+        else if(cmd == "new_project"){
+            
+        }
+        else if(cmd == "open_project"){
+
+        }
+        else if(cmd == "save_project"){
+
+        }
+        else if(cmd == "save_project_as"){
+
+        }
+        else if(cmd == "open_setting"){
+
+        }
+        else if(cmd == "open_preference"){
+
+        }
     }
 
     void ApplyCommand(struct System::JSystem& jsystem, std::string cmd){

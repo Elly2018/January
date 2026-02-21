@@ -23,9 +23,13 @@ SOFTWARE.
 */
 #pragma once
 #include "viewbase.h"
+#ifndef GUI_VIEW_SCRIPT_H
+#define GUI_VIEW_SCRIPT_H
 
 namespace January::Engine::View {
     class JViewScript : public JViewBase {
-
+        DEFAULT_VIEW_CTOR(JViewScript) {}
+        DEFAULT_VIEW_DECTOR(JViewScript) {}
     };
 }
+#endif

@@ -23,8 +23,13 @@ SOFTWARE.
 */
 #pragma once
 #include "viewbase.h"
+#ifndef GUI_VIEW_INSPECTOR_H
+#define GUI_VIEW_INSPECTOR_H
+
 namespace January::Engine::View {
     class JViewInspector : public JViewBase {
-
+        DEFAULT_VIEW_CTOR(JViewInspector) {}
+        DEFAULT_VIEW_DECTOR(JViewInspector) {}
     };
 }
+#endif

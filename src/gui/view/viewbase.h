@@ -27,6 +27,13 @@ SOFTWARE.
 #include <cinttypes>
 #include <string>
 
+#define DEFAULT_VIEW_CTOR(x) \
+x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) :  \
+JViewBase(_title, _type, _subtype, _win, _engine) \
+
+#define DEFAULT_VIEW_DECTOR(x) \
+    virtual ~x() \
+
 namespace January {
     namespace System {
         struct JWindow;
