@@ -163,6 +163,13 @@ namespace January::Engine::View {
                 view->PostDraw();
             }
         }
+        for(auto& view : vm.popups){
+            if(view->PreDraw()){
+                view->Draw();
+                view->PostDraw();
+            }
+            view->PopupEvent();
+        }
     }
 
     void VUpdate(ViewManager& vm){

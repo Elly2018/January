@@ -42,7 +42,9 @@ namespace January::Engine::View {
             void OnDisable() override;
             bool PreDraw() override;
             void PostDraw() override;
-        protected:
+            void PopupEvent();
+        private:
+            int32_t popup_flag = 0;
     };
 }
 #endif

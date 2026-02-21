@@ -13,11 +13,11 @@ namespace January::Engine::View {
     }
 
     void JPopupBase::OnEnable() {
-        ImGui::OpenPopup(title.c_str());
+        popup_flag = 1;
     }
 
     void JPopupBase::OnDisable() {
-        ImGui::CloseCurrentPopup();
+        popup_flag = 2;
     }
 
     bool JPopupBase::PreDraw(){
@@ -26,5 +26,14 @@ namespace January::Engine::View {
 
     void JPopupBase::PostDraw(){
         ImGui::EndPopup();
+    }
+
+    void JPopupBase::PopupEvent(){
+        if(popup_flag == 1){
+            ImGui::OpenPopup(title.c_str());
+        }else if(popup_flag == 2){
+            ImGui::CloseCurrentPopup();
+        }
+        popup_flag = 0;
     }
 }
