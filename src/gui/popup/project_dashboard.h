@@ -27,9 +27,10 @@ SOFTWARE.
 #include "popupbase.h"
 
 namespace January::Engine::View {
-    class JPopupProjectBoard : public JPopupBase {
-        DEFAULT_POPUP_CTOR(JPopupProjectBoard) {}
-        DEFAULT_POPUP_DECTOR(JPopupProjectBoard) {}
+    class JPopupProjectDashboard : public JPopupBase {
+    public:
+        DEFAULT_POPUP_CTOR(JPopupProjectDashboard) {}
+        DEFAULT_POPUP_DECTOR(JPopupProjectDashboard) {}
     };
 }
 

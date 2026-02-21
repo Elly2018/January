@@ -29,6 +29,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
     class JPopupFileDialog : public JPopupBase {
+    public:
         DEFAULT_POPUP_CTOR(JPopupFileDialog) {}
         DEFAULT_POPUP_DECTOR(JPopupFileDialog) {}
     };

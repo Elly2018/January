@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace January::Engine::View { 
     class JViewVolumn : public JViewBase {
+    public:
         DEFAULT_VIEW_CTOR(JViewVolumn) {}
         DEFAULT_VIEW_DECTOR(JViewVolumn) {}
     };

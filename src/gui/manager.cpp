@@ -23,7 +23,16 @@ SOFTWARE.
 */
 #include "manager.h"
 #include "view/blueprint.h"
+#include "view/console.h"
 #include "view/explorer.h"
+#include "view/inspector.h"
+#include "view/preview.h"
+#include "view/profiler.h"
+#include "view/script.h"
+#include "view/timeline.h"
+#include "view/volumn.h"
+#include "popup/file_dialog.h"
+#include "popup/project_dashboard.h"
 #include "../engine/engine.h"
 #include "../engine/struct/config.h"
 #include "../engine/struct/context.h"
@@ -33,10 +42,31 @@ SOFTWARE.
 
 namespace January::Engine::View {
     void VInit(ViewManager& vm, struct System::JSystem& jsystem){
-        vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
         vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
-        vm.views.push_back(vm.explorer);
+        vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
+        vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
+        vm.inspector = new JViewInspector(std::string("Inspector##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::INSPECTOR, *jsystem.window, *jsystem.engine);
+        vm.preview = new JViewPreview(std::string("Preview##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::PREVIEW, *jsystem.window, *jsystem.engine);
+        vm.profiler = new JViewProfiler(std::string("Profiler##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::PROFILER, *jsystem.window, *jsystem.engine);
+        vm.script = new JViewScript(std::string("Script##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::SCRIPT, *jsystem.window, *jsystem.engine);
+        vm.timeline = new JViewTimeline(std::string("Timeline##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::TIMELINE, *jsystem.window, *jsystem.engine);
+        vm.volumn = new JViewVolumn(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::VOLUMN, *jsystem.window, *jsystem.engine);
+
+        vm.file_dialog = new JPopupFileDialog(std::string("File Dialog##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::FILE_DIALOG, *jsystem.window, *jsystem.engine);
+        vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
+        
         vm.views.push_back(vm.blueprint);
+        vm.views.push_back(vm.console);
+        vm.views.push_back(vm.explorer);
+        vm.views.push_back(vm.inspector);
+        vm.views.push_back(vm.preview);
+        vm.views.push_back(vm.profiler);
+        vm.views.push_back(vm.script);
+        vm.views.push_back(vm.timeline);
+        vm.views.push_back(vm.volumn);
+
+        vm.popups.push_back(vm.file_dialog);
+        vm.popups.push_back(vm.project_dashboard);
     }
 
     void VDeInit(ViewManager& vm){

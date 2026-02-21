@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
     class JViewConsole : public JViewBase {
+    public:
         DEFAULT_VIEW_CTOR(JViewConsole) {}
         DEFAULT_VIEW_DECTOR(JViewConsole) {}
     };

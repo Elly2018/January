@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
     class JViewTimeline : public JViewBase {
+    public:
         DEFAULT_VIEW_CTOR(JViewTimeline) {}
         DEFAULT_VIEW_DECTOR(JViewTimeline) {}
     };

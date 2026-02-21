@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
     class JViewProfiler : public JViewBase {
+    public:
         DEFAULT_VIEW_CTOR(JViewProfiler) {}
         DEFAULT_VIEW_DECTOR(JViewProfiler) {}
     };

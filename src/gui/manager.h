@@ -55,15 +55,29 @@ namespace January {
 
         enum class JanuaryViewTypeFlag {
             NONE = 0,
-            GENERAL = 0 << 1,
-            AUDIO = 0 << 2,
-            RENDER = 0 << 3,
+            POPUP = 0 << 1,
+            GENERAL = 0 << 2,
+            AUDIO = 0 << 3,
+            RENDER = 0 << 4,
         };
 
         enum class JanuaryViewGeneralFlag {
             NONE = 0,
-            EXPLORER = 0 << 1,
-            BLUEPRINT = 0 << 2,
+            BLUEPRINT = 1,
+            CONSOLE = 2,
+            EXPLORER = 3,
+            INSPECTOR = 4,
+            PREVIEW = 5,
+            PROFILER = 6,
+            SCRIPT = 7,
+            TIMELINE = 8,
+            VOLUMN = 9,
+        };
+
+        enum class JanuaryViewGeneralPopupFlag {
+            NONE = 0,
+            FILE_DIALOG = 1,
+            PROJECT_DASHBOARD = 2,
         };
 
         struct ViewManager {
@@ -72,7 +86,7 @@ namespace January {
             struct JViewExplorer*           explorer;
             struct JViewInspector*          inspector;
             struct JViewPreview*            preview;
-            struct JViewProfile*            profile;
+            struct JViewProfiler*            profiler;
             struct JViewScript*             script;
             struct JViewTimeline*           timeline;
             struct JViewVolumn*             volumn;

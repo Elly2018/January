@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
     class JViewScript : public JViewBase {
+    public:
         DEFAULT_VIEW_CTOR(JViewScript) {}
         DEFAULT_VIEW_DECTOR(JViewScript) {}
     };
