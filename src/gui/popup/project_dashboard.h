@@ -31,6 +31,9 @@ namespace January::Engine::View {
     public:
         DEFAULT_POPUP_CTOR(JPopupProjectDashboard) {}
         DEFAULT_POPUP_DECTOR(JPopupProjectDashboard) {}
+
+        bool PreDraw() override;
+        void Draw() override;
     };
 }
 

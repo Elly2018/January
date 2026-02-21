@@ -20,7 +20,7 @@ find_package(SDL3 REQUIRED)
 
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
-include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends)
+include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ${IMGUI_DIR}/misc/cpp)
 
 # Node editorc
 set(Node_DIR third-party/node-editor)
@@ -74,6 +74,7 @@ add_executable(january
   ${sources} 
   ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp 
   ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp 
+  ${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp
   ${IMGUI_DIR}/imgui.cpp 
   ${IMGUI_DIR}/imgui_draw.cpp 
   ${IMGUI_DIR}/imgui_demo.cpp 

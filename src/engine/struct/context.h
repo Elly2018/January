@@ -33,6 +33,8 @@ namespace January::Engine {
     // This data cannot be store in disk, This is the memory only data
     struct AppContext {
         std::string                 project_path                  = "";
+        // Does application needs load project right now
+        bool                        load_project                  = false;
         // Application global time
         double                      time                          = 0;
         // Application delta time

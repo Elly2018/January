@@ -25,12 +25,15 @@ SOFTWARE.
 #ifndef GUI_POPUP_FILE_DIALOG_H
 #define GUI_POPUP_FILE_DIALOG_H
 #include <cinttypes>
+#include <map>
+#include <thread>
+#include <functional>
 #include <vector>
 #include <string>
 #include "popupbase.h"
 
 namespace January::Engine::View {
-    typedef void (*DialogResultFeedback)(bool cancel, std::vector<std::string> results);
+    typedef std::function<void(bool cancel, std::vector<std::string> results)> DialogResultFeedback;
 
     class JPopupFileDialog : public JPopupBase {
     public:
@@ -50,12 +53,28 @@ namespace January::Engine::View {
         void SetDialogType(DialogType _dialog_type);
         void RegisterOneTimeFeedback(DialogResultFeedback _feedback);
 
+        void Init() override;
+        bool PreDraw() override;
         void Draw() override;
+        void Update() override;
+
+    protected:
+
+        void LoadContent();
 
     private:
         std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
         DialogType dialog_type;
         DialogResultFeedback feedback;
+
+        std::string path;
+        std::string path_dirty;
+        bool load = false;
+        std::thread::id cid;
+        std::mutex content_mtx;
+        std::vector<std::string> favorite = std::vector<std::string>();
+        std::vector<std::string> contents_dir = std::vector<std::string>();
+        std::vector<std::string> contents_file = std::vector<std::string>();
     };
 }
 

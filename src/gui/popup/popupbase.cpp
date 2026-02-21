@@ -21,7 +21,7 @@ namespace January::Engine::View {
     }
 
     bool JPopupBase::PreDraw(){
-        return ImGui::BeginPopupModal(title.c_str());
+        return ImGui::BeginPopupModal(title.c_str(), NULL, window_flag);
     }
 
     void JPopupBase::PostDraw(){

@@ -66,6 +66,7 @@ namespace January {
                 System::JWindow&    jwindow;
                 JEngine&            jengine;
                 bool                enable          = false;
+                int32_t             window_flag     = 0;
             };
         }
     }

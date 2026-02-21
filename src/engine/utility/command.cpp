@@ -2,14 +2,18 @@
 #include <vector>
 #include <sstream>
 #include <mutex>
+#include <filesystem>
 #include "spdlog/spdlog.h"
 #include "../../system/system.h"
 #include "../../system/window.h"
 #include "../../gui/manager.h"
 #include "../../gui/popup/file_dialog.h"
+#include "../../gui/popup/project_dashboard.h"
 #include "../engine.h"
 #include "../struct/config.h"
 #include "../struct/context.h"
+
+namespace fs = std::filesystem;
 
 namespace January::Engine {
     std::vector<std::string> split_string_by_space(const std::string& str) {
@@ -36,9 +40,19 @@ namespace January::Engine {
             System::SavePreference();
         }
         else if(cmd == "new_project"){
-            jsystem.engine->manager->file_dialog->SetEnable(true);
+            jsystem.engine->manager->project_dashboard->SetEnable(true);
         }
         else if(cmd == "open_project"){
+            View::DialogResultFeedback feedback = [&jsystem](bool cancel, std::vector<std::string> results) {
+                if(cancel || results.size() < 1) return;
+                std::string target_path = results.at(0);
+                if(!fs::exists(target_path) || fs::is_directory(target_path)) return;
+                jsystem.engine->context->project_path = target_path;
+                jsystem.engine->context->load_project = true;
+            };
+            jsystem.engine->manager->file_dialog->SetTitle("New Project");
+            jsystem.engine->manager->file_dialog->SetDialogType(View::JPopupFileDialog::DialogType::SINGLE_DIR);
+            jsystem.engine->manager->file_dialog->RegisterOneTimeFeedback(feedback);
             jsystem.engine->manager->file_dialog->SetEnable(true);
         }
         else if(cmd == "save_project"){

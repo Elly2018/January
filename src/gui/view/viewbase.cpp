@@ -37,7 +37,7 @@ namespace January::Engine::View {
     }
 
     bool JViewBase::PreDraw(){
-        return ImGui::Begin(title.c_str(), &enable);
+        return ImGui::Begin(title.c_str(), &enable, window_flag);
     }
 
     void JViewBase::PostDraw(){

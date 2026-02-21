@@ -229,5 +229,10 @@ namespace January::Engine::View {
                 view->Update();
             }
         }
+        for(auto& view : vm.popups){
+            if(view->IsEnable()){
+                view->Update();
+            }
+        }
     }
 }
