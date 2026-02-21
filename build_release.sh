@@ -4,7 +4,7 @@
 mkdir -p build
 cd build
 
-cp ../Roboto-Medium.ttf .
+cp ../res/*.ttf .
 
 # Configure CMake
 cmake .. -DCMAKE_BUILD_TYPE=Release

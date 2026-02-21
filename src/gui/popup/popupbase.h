@@ -38,11 +38,16 @@ namespace January::Engine::View {
         public:
             JPopupBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine);
             virtual ~JPopupBase();
+
+            enum class SIDE {
+                PRE, INSIDE, POST
+            };
+
             void OnEnable() override;
             void OnDisable() override;
             bool PreDraw() override;
             void PostDraw() override;
-            void PopupEvent();
+            void PopupEvent(SIDE side);
         private:
             int32_t popup_flag = 0;
     };

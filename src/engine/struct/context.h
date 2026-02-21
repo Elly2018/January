@@ -28,6 +28,8 @@ SOFTWARE.
 #include <queue>
 #include <mutex>
 
+struct ImFont;
+
 namespace January::Engine {
     // Current application context
     // This data cannot be store in disk, This is the memory only data
@@ -44,6 +46,9 @@ namespace January::Engine {
         // Command buffer, execute next frame
         std::queue<std::string>     commands                      = std::queue<std::string>();
         std::mutex                  commands_mtx;
+        struct ImFont*              text_font;
+        struct ImFont*              icon_font;
+        struct ImFont*              emoji_font;
     };
 }
 #endif

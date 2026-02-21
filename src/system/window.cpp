@@ -26,11 +26,12 @@ SOFTWARE.
 #include <memory>
 #include <thread>
 #include <stdexcept>
+#include <imgui.h>
 #include <imgui_notify.h>
-#include <tahoma.h>
 #include <spdlog/spdlog.h>
 #include "system.h"
 #include "../engine/engine.h"
+#include "../engine/struct/context.h"
 #include "../engine/utility/path.h"
 #include "../gui/manager.h"
 
@@ -513,20 +514,10 @@ namespace January::System {
         // - Read 'docs/FONTS.md' for more instructions and details. If you like the default font but want it to scale better, consider using the 'ProggyVector' from the same author!
         // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
         style.FontSizeBase = 20.0f;
-        //io.Fonts->AddFontDefault();
-        //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
-        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
         //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
         //IM_ASSERT(font != nullptr);
-
-        ImFontConfig font_cfg;
-        font_cfg.FontDataOwnedByAtlas = false;
-        io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
-        // Initialize notify
-        ImGui::MergeIconsWithLatestFont(16.f, false);
-        ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
         return 0;
     }
 

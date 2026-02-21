@@ -28,12 +28,13 @@ namespace January::Engine::View {
         ImGui::EndPopup();
     }
 
-    void JPopupBase::PopupEvent(){
-        if(popup_flag == 1){
+    void JPopupBase::PopupEvent(SIDE side){
+        if(popup_flag == 1 && side == SIDE::POST){
             ImGui::OpenPopup(title.c_str());
-        }else if(popup_flag == 2){
+            popup_flag = 0;
+        }else if(popup_flag == 2 && side == SIDE::INSIDE){
             ImGui::CloseCurrentPopup();
+            popup_flag = 0;
         }
-        popup_flag = 0;
     }
 }

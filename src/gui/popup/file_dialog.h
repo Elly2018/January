@@ -59,6 +59,9 @@ namespace January::Engine::View {
         void Update() override;
 
     protected:
+        void DrawURLBar();
+        void DrawDirRegion();
+        void DrawContentRegion();
 
         void LoadContent();
 
@@ -71,6 +74,7 @@ namespace January::Engine::View {
         std::string path_dirty;
         bool load = false;
         std::thread::id cid;
+        std::mutex favorite_mtx;
         std::mutex content_mtx;
         std::vector<std::string> favorite = std::vector<std::string>();
         std::vector<std::string> contents_dir = std::vector<std::string>();

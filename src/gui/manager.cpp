@@ -215,11 +215,13 @@ namespace January::Engine::View {
             }
         }
         for(auto& view : vm.popups){
+            view->PopupEvent(JPopupBase::SIDE::PRE);
             if(view->PreDraw()){
                 view->Draw();
+                view->PopupEvent(JPopupBase::SIDE::INSIDE);
                 view->PostDraw();
             }
-            view->PopupEvent();
+            view->PopupEvent(JPopupBase::SIDE::POST);
         }
     }
 
