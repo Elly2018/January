@@ -40,6 +40,7 @@ namespace January::Engine::View {
         DEFAULT_POPUP_CTOR(JPopupFileDialog) {}
         DEFAULT_POPUP_DECTOR(JPopupFileDialog) {}
 
+        void OnEnable() override;
         void OnDisable() override;
 
         enum class DialogType {

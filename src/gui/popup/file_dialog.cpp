@@ -56,6 +56,13 @@ namespace January::Engine::View {
         feedback = NULL;
     }
 
+    void JPopupFileDialog::OnEnable(){
+        path_dirty = get_home_directory().string();
+        path = path_dirty;
+        load = true;
+        JPopupBase::OnEnable();
+    }
+
     void JPopupFileDialog::SetTitle(std::string _newtitle){
         title = _newtitle + "##popup_file_dialog";
     }
@@ -94,17 +101,18 @@ namespace January::Engine::View {
         ImVec2 winsize = ImGui::GetWindowSize();
         winsize.x -= (style.WindowPadding.x + style.FramePadding.x);
         winsize.y -= (style.WindowPadding.y + style.FramePadding.y);
+        float bottom = ImGui::GetFrameHeightWithSpacing() * 3;
         if(ImGui::BeginChild("URL Field##project_dashboard", ImVec2(winsize.x, ImGui::GetFrameHeightWithSpacing()), 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)){
             DrawURLBar();
             ImGui::EndChild();
         }
 
-        if(ImGui::BeginChild("Dirs##project_dashboard", ImVec2(((winsize.x / 5) * 1) - (style.ItemSpacing.x / 2), winsize.y - 250), 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)){
+        if(ImGui::BeginChild("Dirs##project_dashboard", ImVec2(((winsize.x / 5) * 1) - (style.ItemSpacing.x / 2), winsize.y - bottom), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY, ImGuiWindowFlags_NoNav)){
             DrawDirRegion();
             ImGui::EndChild();
         }
         ImGui::SameLine();
-        if(ImGui::BeginChild("Dir Contents##project_dashboard", ImVec2(((winsize.x / 5) * 4) - (style.ItemSpacing.x / 2), winsize.y - 250), 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)){
+        if(ImGui::BeginChild("Dir Contents##project_dashboard", ImVec2(((winsize.x / 5) * 4) - (style.ItemSpacing.x / 2), winsize.y - bottom), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY, ImGuiWindowFlags_NoNav)){
             DrawContentRegion();
             ImGui::EndChild();
         }
@@ -201,14 +209,21 @@ namespace January::Engine::View {
     void JPopupFileDialog::DrawContentRegion(){
         std::lock_guard<std::mutex> lock(content_mtx);
         for(auto& dir : contents_dir){
+            ImGui::PushFont(jengine.context->icon_font);
+            ImGui::Text(UnicodeToUTF8(0xF07B).c_str());
+            ImGui::PopFont();
             ImGui::Selectable((dir + "##project_dashboard_dir_contents").c_str());
         }
         for(auto& file : contents_file){
+            ImGui::PushFont(jengine.context->icon_font);
+            ImGui::Text(UnicodeToUTF8(0xF016).c_str());
+            ImGui::PopFont();
             ImGui::Selectable((file + "##project_dashboard_dir_contents").c_str());
         }
     }
 
     void JPopupFileDialog::LoadContent() {
+        if(!fs::exists(path)) return;
         if(!fs::is_directory(path)) return;
         std::ostringstream oss;
         oss << std::this_thread::get_id();
