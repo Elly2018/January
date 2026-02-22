@@ -25,10 +25,18 @@ SOFTWARE.
 #ifndef ENGINE_STRUCT_CONFIG_H
 #define ENGINE_STRUCT_CONFIG_H
 #include <cinttypes>
+#include <chrono>
+#include <ctime>
 #include <utility>
 #include <string>
 
+namespace sc = std::chrono;
+
 namespace January::Engine {
+    struct AppConfigRecent {
+        std::string j_path                                       = "";
+        time_t j_last_open                                       = sc::system_clock::to_time_t(sc::system_clock::now());
+    };
     // Engine Configuration
     // Store information which can be modify and affect the inner workflow.
     // Such as FPS
@@ -36,7 +44,7 @@ namespace January::Engine {
         int32_t j_FPS                                            = 60;
         // Last open project
         std::string j_last_open                                  = "";
-        std::vector<std::string> j_recent                        = std::vector<std::string>();
+        std::vector<AppConfigRecent> j_recent                    = std::vector<AppConfigRecent>();
         std::vector<std::pair<int64_t, bool>> j_views_enable     = std::vector<std::pair<int64_t, bool>>();
         std::vector<std::string> j_workspace                     = std::vector<std::string>();
         std::vector<std::string> j_favorite                      = std::vector<std::string>();

@@ -29,6 +29,7 @@ SOFTWARE.
 #include "../engine/struct/context.h"
 #include "../engine/utility/command.h"
 #include "../gui/manager.h"
+#include "../gui/view/explorer.h"
 
 namespace January::System {
     using namespace Engine;
@@ -76,6 +77,10 @@ namespace January::System {
                     cb.pop();
                     ApplyCommand(jsystem, command);
                 }
+            }
+            if(jsystem.engine->context->load_project){
+                jsystem.engine->manager->explorer->ReloadProject();
+                jsystem.engine->context->load_project = false;
             }
             if(jsystem.window->g_done){
                 jsystem.engine->context->done = true;

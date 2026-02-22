@@ -50,9 +50,12 @@ namespace January::Engine {
                 jsystem.engine->context->project_path = target_path;
                 jsystem.engine->context->load_project = true;
             };
+            std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
+            filters.push_back(std::pair<std::string, std::string>(".january", "January Project"));
             jsystem.engine->manager->file_dialog->SetTitle("New Project");
             jsystem.engine->manager->file_dialog->SetDialogType(View::JPopupFileDialog::DialogType::SINGLE_DIR);
             jsystem.engine->manager->file_dialog->RegisterOneTimeFeedback(feedback);
+            jsystem.engine->manager->file_dialog->SetFilter(filters);
             jsystem.engine->manager->file_dialog->SetEnable(true);
         }
         else if(cmd == "save_project"){

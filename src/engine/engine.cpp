@@ -58,7 +58,10 @@ namespace January::Engine {
         data["j_last_open"] = target.j_last_open;
         data["j_recent"] = json::array();
         for(auto& v : target.j_recent){
-            data["j_recent"].push_back(v);
+            json buffer = json::object();
+            buffer["j_path"] = v.j_path;
+            buffer["j_last_open"] = v.j_last_open;
+            data["j_recent"].push_back(buffer);
         }
         data["j_views_enable"] = json::array();
         for(auto& v : target.j_views_enable){
@@ -91,8 +94,13 @@ namespace January::Engine {
                 config.j_recent.clear();
                 for(int32_t i = 0; i < data["j_recent"].size(); i++){
                     json buffer = data["j_recent"].at(i);
-                    if(buffer.is_string()){
-                        config.j_recent.push_back(buffer.get<std::string>());
+                    if(buffer.is_object()){
+                        if(buffer["j_path"].is_string() && buffer["j_last_open"].is_number_integer()){
+                            AppConfigRecent recent;
+                            recent.j_path = buffer["j_path"].get<std::string>();
+                            recent.j_last_open = buffer["j_last_open"].get<long>();
+                            config.j_recent.push_back(recent);
+                        }
                     }
                 }
             }

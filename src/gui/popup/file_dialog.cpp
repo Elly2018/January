@@ -91,8 +91,8 @@ namespace January::Engine::View {
         ImGuiIO& io = ImGui::GetIO();
         ImVec2 display = io.DisplaySize;
         ImVec2 unit = ImVec2(display.x / 10.0f, display.y / 10.0f);
-        ImGui::SetNextWindowPos(ImVec2(unit.x * 1, unit.y * 1), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(unit.x * 8, unit.y * 8), ImGuiCond_Always);
+        ImGui::SetNextWindowPos(ImVec2(unit.x * 0.5F, unit.y * 0.5F), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(unit.x * 9, unit.y * 9), ImGuiCond_Always);
         return JPopupBase::PreDraw();
     }
 
@@ -215,12 +215,26 @@ namespace January::Engine::View {
             ImGui::SameLine();
             ImGui::Selectable((dir + "##project_dashboard_dir_contents").c_str());
         }
-        for(auto& file : contents_file){
-            ImGui::PushFont(jengine.context->icon_font);
-            ImGui::Text(UnicodeToUTF8(0xF016).c_str());
-            ImGui::PopFont();
-            ImGui::SameLine();
-            ImGui::Selectable((file + "##project_dashboard_dir_contents").c_str());
+        if(dialog_type != DialogType::SINGLE_DIR){
+            for(auto& file : contents_file){
+                bool pass = false;
+                if(filters.size() != 0){
+                    for(auto& f : filters){
+                        if(file.ends_with(f.first)){
+                            pass = true;
+                            break;
+                        }
+                    }
+                }else{
+                    pass = true;
+                }
+                
+                ImGui::PushFont(jengine.context->icon_font);
+                ImGui::Text(UnicodeToUTF8(0xF016).c_str());
+                ImGui::PopFont();
+                ImGui::SameLine();
+                ImGui::Selectable((file + "##project_dashboard_dir_contents").c_str());
+            }
         }
     }
 

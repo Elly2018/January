@@ -52,6 +52,7 @@ namespace January::Engine::View {
         void Draw() override;
         void DeInit() override;
 
+        void ReloadProject();
     protected:
         void DrawLeftSide();
         void DrawRightSide();
