@@ -32,10 +32,20 @@ namespace January::Engine::View {
         DEFAULT_POPUP_CTOR(JPopupProjectDashboard) {}
         DEFAULT_POPUP_DECTOR(JPopupProjectDashboard) {}
 
+        void OnEnable() override;
+        void OnDisable() override;
+
+        enum class PAGE {
+            MAIN, NEW
+        };
+
         void Init() override;
         bool PreDraw() override;
         void Draw() override;
         void Update() override;
+
+    private:
+        PAGE page = PAGE::MAIN;
     };
 }
 
