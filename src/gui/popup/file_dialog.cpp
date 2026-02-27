@@ -118,17 +118,36 @@ namespace January::Engine::View {
         }
         
         if(ImGui::Button("Confirm", ImVec2(winsize.x / 2 - (style.ItemSpacing.x / 2), ImGui::GetFrameHeightWithSpacing()))){
-            
+            SetEnable(false);
+            spdlog::debug("File dialog confirm:");
+            for(int32_t i = 0; i < selection.size(); i++){
+                std::string buffer = selection.at(i);
+                selection[i] = path + "/" + buffer;
+                spdlog::debug("\t{}, path: {}", i, selection[i]);
+            }
+            if(feedback != NULL){
+                feedback(true, selection);
+            }
+            selection.clear();
+            feedback = NULL;
         }
         ImGui::SameLine();
         if(ImGui::Button("Cancel", ImVec2(winsize.x / 2 - (style.ItemSpacing.x / 2), ImGui::GetFrameHeightWithSpacing()))){
             SetEnable(false);
+            if(feedback != NULL){
+                feedback(false, std::vector<std::string>());
+            }
+            selection.clear();
+            feedback = NULL;
         }
     }
 
     void JPopupFileDialog::Update(){
         if(load){
             spdlog::debug("File Dialog load !");
+            selection.clear();
+            contents_dir.clear();
+            contents_file.clear();
             std::thread t1 = std::thread([&](){
                 LoadContent();
             });
@@ -139,37 +158,52 @@ namespace January::Engine::View {
     }
 
     void JPopupFileDialog::DrawURLBar(){
+        ImGui::PushFont(jengine.context->icon_font);
+        {
+            // Last page
+            if(ImGui::Button((UnicodeToUTF8(0xF060) + "##File_Dialog_LastPage").c_str())){
+                fs::path p = path;
+                p = p.parent_path();
+                path = p.string();
+                path_dirty = path;
+                load = true;
+            }
+            ImGui::SameLine();
+        }
+        ImGui::PopFont();
+
+
         if(ImGui::InputText("URL##project_dashboard", &path_dirty)){
             if(!fs::exists(path_dirty)) {
                 path_dirty = path;
             } else {
                 path = path_dirty;
-                contents_dir.clear();
-                contents_file.clear();
                 load = true;
             }
         }
         ImGui::SameLine();
         
         ImGui::PushFont(jengine.context->icon_font);
-        // Big grid elements
-        if(ImGui::Button(UnicodeToUTF8(0xF009).c_str())){
-
-        }
-        ImGui::SameLine();
-        // List of elements
-        ImGui::SameLine();
-        // List of elements
-        if(ImGui::Button(UnicodeToUTF8(0xF03A).c_str())){
-
-        }
-        ImGui::SameLine();
-        ImGui::Dummy(ImVec2(10, 0));
-        ImGui::SameLine();
-        // Add favorite 
-        if(ImGui::Button(UnicodeToUTF8(0xF004).c_str())){
-            std::lock_guard<std::mutex> lock(favorite_mtx);
-            favorite.push_back(path.c_str());
+        {        
+            // Last page
+            if(ImGui::Button((UnicodeToUTF8(0xF009) + "##File_Dialog_Grid").c_str())){
+                display_type = DisplayType::GRID;
+            }
+            ImGui::SameLine();
+            // List of elements
+            ImGui::SameLine();
+            // List of elements
+            if(ImGui::Button((UnicodeToUTF8(0xF03A) + "##File_Dialog_List").c_str())){
+                display_type = DisplayType::LIST;
+            }
+            ImGui::SameLine();
+            ImGui::Dummy(ImVec2(10, 0));
+            ImGui::SameLine();
+            // Add favorite 
+            if(ImGui::Button(UnicodeToUTF8(0xF004).c_str())){
+                std::lock_guard<std::mutex> lock(favorite_mtx);
+                favorite.push_back(path.c_str());
+            }
         }
         ImGui::PopFont();
     }
@@ -178,8 +212,6 @@ namespace January::Engine::View {
         if(ImGui::Selectable("Home##project_dashboard_favorite_default")){
             path_dirty = get_home_directory().string();
             path = path_dirty;
-            contents_dir.clear();
-            contents_file.clear();
             load = true;
         }
         if(favorite.size() > 0) ImGui::Separator();
@@ -193,8 +225,6 @@ namespace January::Engine::View {
             if(ImGui::Selectable((label + "##project_dashboard_favorite").c_str(), false, flag)){
                 path_dirty = fav;
                 path = path_dirty;
-                contents_dir.clear();
-                contents_file.clear();
                 load = true;
             }
             ImGui::PushFont(jengine.context->icon_font);
@@ -209,11 +239,45 @@ namespace January::Engine::View {
     void JPopupFileDialog::DrawContentRegion(){
         std::lock_guard<std::mutex> lock(content_mtx);
         for(auto& dir : contents_dir){
+            bool isSelect = false;
+            int32_t select_index = -1;
+            for(int32_t i = 0; i < selection.size(); i++){
+                if(selection.at(i) == dir){
+                    isSelect = true;
+                    select_index = i;
+                    break;
+                }
+            }
+
             ImGui::PushFont(jengine.context->icon_font);
-            ImGui::Text(UnicodeToUTF8(0xF07B).c_str());
+            ImGui::Text((UnicodeToUTF8(0xF07B)).c_str());
             ImGui::PopFont();
             ImGui::SameLine();
-            ImGui::Selectable((dir + "##project_dashboard_dir_contents").c_str());
+            if(ImGui::Selectable((dir + "##project_dashboard_dir_contents").c_str(), isSelect)){
+                if(ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)){
+                    if(isSelect){
+                        selection.erase(selection.begin() + select_index);
+                    }else{
+                        if(dialog_type == DialogType::SINGLE_DIR){
+                            selection.clear();
+                            selection.push_back(dir);
+                        }else{
+                            selection.push_back(dir);
+                        }
+                    }
+                }else{
+                    selection.clear();
+                    selection.push_back(dir);
+                }
+            }
+            if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered()){
+                spdlog::debug("Enter {} folder", dir);
+                path_dirty += "/";
+                path_dirty += dir;
+                path += "/";
+                path += dir;
+                load = true;
+            }
         }
         if(dialog_type != DialogType::SINGLE_DIR){
             for(auto& file : contents_file){
@@ -228,12 +292,35 @@ namespace January::Engine::View {
                 }else{
                     pass = true;
                 }
+
+                if(!pass) continue;
+
+                bool isSelect = false;
+                int32_t select_index = -1;
+                for(int32_t i = 0; i < selection.size(); i++){
+                    if(selection.at(i) == file){
+                        isSelect = true;
+                        select_index = i;
+                        break;
+                    }
+                }
                 
                 ImGui::PushFont(jengine.context->icon_font);
                 ImGui::Text(UnicodeToUTF8(0xF016).c_str());
                 ImGui::PopFont();
                 ImGui::SameLine();
-                ImGui::Selectable((file + "##project_dashboard_dir_contents").c_str());
+                if(ImGui::Selectable((file + "##project_dashboard_dir_contents").c_str(), isSelect)){
+                    if(ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)){
+                        if(isSelect){
+                            selection.erase(selection.begin() + select_index);
+                        }else{
+                            selection.push_back(file);
+                        }
+                    }else{
+                        selection.clear();
+                        selection.push_back(file);
+                    }
+                }
             }
         }
     }

@@ -14,6 +14,22 @@ namespace January::Engine::View {
         return JPopupBase::PreDraw();
     }
 
+    void JPopupProjectDashboard::OnEnable(){
+        JPopupBase::OnEnable();
+    }
+
+    void JPopupProjectDashboard::OnDisable(){
+        JPopupBase::OnDisable();
+    }
+
+    void JPopupProjectDashboard::Init() {
+        JPopupBase::Init();
+    }
+
+    void JPopupProjectDashboard::Update() {
+        
+    }
+
     void JPopupProjectDashboard::Draw() {
         
     }

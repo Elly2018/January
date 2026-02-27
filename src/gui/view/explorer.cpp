@@ -41,7 +41,7 @@ namespace January::Engine::View {
     void JViewExplorer::Update() {
         if(changed){
             spdlog::debug("Detect explorer update");
-            fs::path pp(jengine.context->project_path.c_str());
+            fs::path pp = CurrentFolder();
             if(fs::exists(pp)){
                 if(path != "/" || path != "") pp /= path.c_str();
                 if(!fs::exists(pp)){
@@ -123,6 +123,11 @@ namespace January::Engine::View {
         JViewBase::DeInit();
     }
 
+    void JViewExplorer::ReloadProject(){
+        path = "";
+        init = false;
+    }
+
     void JViewExplorer::DrawLeftSide(){
         ImGui::Text("Left");
     }
@@ -149,5 +154,11 @@ namespace January::Engine::View {
             }
             ImGui::EndGroup();
         }
+    }
+
+    fs::path JViewExplorer::CurrentFolder(){
+        fs::path p = jengine.context->project_path;
+        p /= path;
+        return p;
     }
 }

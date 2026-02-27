@@ -52,7 +52,7 @@ namespace January::Engine {
             };
             std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
             filters.push_back(std::pair<std::string, std::string>(".january", "January Project"));
-            jsystem.engine->manager->file_dialog->SetTitle("New Project");
+            jsystem.engine->manager->file_dialog->SetTitle("Open Project");
             jsystem.engine->manager->file_dialog->SetDialogType(View::JPopupFileDialog::DialogType::SINGLE_DIR);
             jsystem.engine->manager->file_dialog->RegisterOneTimeFeedback(feedback);
             jsystem.engine->manager->file_dialog->SetFilter(filters);

@@ -48,6 +48,10 @@ namespace January::Engine::View {
             MULTIPLE_FILE,
             SINGLE_DIR
         };
+        enum class DisplayType {
+            GRID,
+            LIST
+        };
 
         void SetTitle(std::string _newtitle);
         void SetFilter(std::vector<std::pair<std::string, std::string>> _filters);
@@ -69,10 +73,12 @@ namespace January::Engine::View {
     private:
         std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
         DialogType dialog_type;
+        DisplayType display_type;
         DialogResultFeedback feedback;
 
         std::string path;
         std::string path_dirty;
+        // Reload the contents
         bool load = false;
         std::thread::id cid;
         std::mutex favorite_mtx;
@@ -80,6 +86,8 @@ namespace January::Engine::View {
         std::vector<std::string> favorite = std::vector<std::string>();
         std::vector<std::string> contents_dir = std::vector<std::string>();
         std::vector<std::string> contents_file = std::vector<std::string>();
+
+        std::vector<std::string> selection = std::vector<std::string>();
     };
 }
 

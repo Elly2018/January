@@ -58,10 +58,15 @@ namespace January::Engine::View {
         void DrawRightSide();
 
     public:
+        fs::path CurrentFolder();
+        // The relative path base on project path
         std::string path = "";
 
     private:
+        // Does user change the path by input or enter folder etc...
         bool changed = false;
+        // Init will be the trigger
+        // Define if the first event call is on.
         bool init = false;
         float leftWidth = 0;
         float rightWidth = 0;

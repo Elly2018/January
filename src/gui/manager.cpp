@@ -124,7 +124,7 @@ namespace January::Engine::View {
                     if(ImGui::BeginMenu("Open Recent##MainMenuBar_File")){
                         for(auto& recent : jengine.config->j_recent){
                             if(ImGui::MenuItem("Open Project##MainMenuBar_File_Recent")){
-                                PushCommand(*jengine.context, "open_recent " + recent);
+                                PushCommand(*jengine.context, std::string("open_recent ") + recent.j_path);
                             }
                         }
                         ImGui::EndMenu();
