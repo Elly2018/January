@@ -23,14 +23,47 @@ SOFTWARE.
 */
 #pragma once
 #include "viewbase.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/callback_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #ifndef GUI_VIEW_CONSOLE_H
 #define GUI_VIEW_CONSOLE_H
 
 namespace January::Engine::View {
+    struct ConsoleLog {
+        spdlog::level::level_enum level;
+        std::vector<std::string> messages;
+    };
+
     class JViewConsole : public JViewBase {
     public:
-        DEFAULT_VIEW_CTOR(JViewConsole) {}
-        DEFAULT_VIEW_DECTOR(JViewConsole) {}
+        DEFAULT_VIEW_CTOR(JViewConsole) {
+            callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([](const spdlog::details::log_msg &msg) {
+                // for example you can be notified by sending an email to yourself
+            });
+            callback_sink->set_level(spdlog::level::info);
+            console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+            logger = new spdlog::logger("engine logger", {console_sink, callback_sink});
+        }
+        DEFAULT_VIEW_DECTOR(JViewConsole) {
+            delete logger;
+            console_sink.reset();
+            callback_sink.reset();
+        }
+
+        void Draw() override;
+        void Update() override;
+
+        void RenderBar();
+        void RenderContent();
+
+        spdlog::logger& GetLogger() { return *logger; }
+
+    private:
+        std::vector<ConsoleLog> logs = std::vector<ConsoleLog>();
+        std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
+        std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink;
+        spdlog::logger* logger;
     };
 }
 #endif
