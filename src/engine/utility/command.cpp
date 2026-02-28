@@ -3,7 +3,10 @@
 #include <sstream>
 #include <mutex>
 #include <filesystem>
+#include "imgui.h"
+#include "imgui_notify.h"
 #include "spdlog/spdlog.h"
+#include "path.h"
 #include "../../system/system.h"
 #include "../../system/window.h"
 #include "../../gui/manager.h"
@@ -44,19 +47,42 @@ namespace January::Engine {
         }
         else if(cmd == "open_project"){
             View::DialogResultFeedback feedback = [&jsystem](bool cancel, std::vector<std::string> results) {
-                if(cancel || results.size() < 1) return;
+                if(cancel) {
+                    std::string t = "Project path file dialog: cancel";
+                    spdlog::warn(t);
+                    ImGui::InsertNotification({ ImGuiToastType_Warning, 3000, "Project Load", t });
+                    return;
+                }
+                if(results.size() < 1) {
+                    std::string t = "Project path file dialog: no path select";
+                    spdlog::warn(t);
+                    ImGui::InsertNotification({ ImGuiToastType_Warning, 3000, "Project Load", t });
+                    return;
+                }
                 std::string target_path = results.at(0);
-                if(!fs::exists(target_path) || fs::is_directory(target_path)) return;
+                if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
+                    std::string t = std::format("Project path does not exist: {}", target_path.c_str());
+                    spdlog::error(t);
+                    ImGui::InsertNotification({ ImGuiToastType_Error, 3000, "Project Load", t });
+                    return;
+                }
+                if(!is_project_path_vaild(target_path)){
+                    std::string t = std::format("Project path vaildation check failed: {}", target_path.c_str());
+                    spdlog::error(t);
+                    ImGui::InsertNotification({ ImGuiToastType_Error, 3000, "Project Load", t });
+                    return;
+                }
                 jsystem.engine->context->project_path = target_path;
                 jsystem.engine->context->load_project = true;
+                spdlog::info("Project path successfully load: {}", target_path.c_str());
             };
             std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
             filters.push_back(std::pair<std::string, std::string>(".january", "January Project"));
             jsystem.engine->manager->file_dialog->SetTitle("Open Project");
             jsystem.engine->manager->file_dialog->SetDialogType(View::JPopupFileDialog::DialogType::SINGLE_DIR);
-            jsystem.engine->manager->file_dialog->RegisterOneTimeFeedback(feedback);
             jsystem.engine->manager->file_dialog->SetFilter(filters);
             jsystem.engine->manager->file_dialog->SetEnable(true);
+            jsystem.engine->manager->file_dialog->RegisterOneTimeFeedback(feedback);
         }
         else if(cmd == "save_project"){
 

@@ -28,6 +28,7 @@ SOFTWARE.
 #include <stdexcept>
 #include <imgui.h>
 #include <imgui_notify.h>
+#include <tahoma.h>
 #include <spdlog/spdlog.h>
 #include "system.h"
 #include "../engine/engine.h"

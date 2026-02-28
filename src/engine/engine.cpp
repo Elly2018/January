@@ -26,6 +26,7 @@ SOFTWARE.
 #include <fstream>
 #include <imgui.h>
 #include <imgui_notify.h>
+#include <tahoma.h>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
 #include "struct/config.h"
@@ -144,10 +145,16 @@ namespace January::Engine {
         GenerateAppContext(*jengine.context);
 
         ImGuiIO& io = ImGui::GetIO(); (void)io;
-        jengine.context->text_font = io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f);
-        jengine.context->icon_font = io.Fonts->AddFontFromFileTTF("icons.ttf", 16.0f);
-        jengine.context->emoji_font = io.Fonts->AddFontFromFileTTF("NotoEmoji-VariableFont_wght.ttf", 16.0f);
+        ImFontConfig font_cfg;
+        font_cfg.FontDataOwnedByAtlas = false;
+        jengine.context->text_font = io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f, &font_cfg);
+        ImGui::MergeIconsWithLatestFont(16.f, false);
+        jengine.context->icon_font = io.Fonts->AddFontFromFileTTF("icons.ttf", 16.0f, &font_cfg);
+        ImGui::MergeIconsWithLatestFont(16.f, false);
+        jengine.context->emoji_font = io.Fonts->AddFontFromFileTTF("NotoEmoji-VariableFont_wght.ttf", 16.0f, &font_cfg);
+        ImGui::MergeIconsWithLatestFont(16.f, false);
         // Initialize notify
+        io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
         ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
 

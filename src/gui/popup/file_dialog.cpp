@@ -118,7 +118,6 @@ namespace January::Engine::View {
         }
         
         if(ImGui::Button("Confirm", ImVec2(winsize.x / 2 - (style.ItemSpacing.x / 2), ImGui::GetFrameHeightWithSpacing()))){
-            SetEnable(false);
             spdlog::debug("File dialog confirm:");
             for(int32_t i = 0; i < selection.size(); i++){
                 std::string buffer = selection.at(i);
@@ -126,19 +125,20 @@ namespace January::Engine::View {
                 spdlog::debug("\t{}, path: {}", i, selection[i]);
             }
             if(feedback != NULL){
-                feedback(true, selection);
+                feedback(false, selection);
             }
             selection.clear();
             feedback = NULL;
+            SetEnable(false);
         }
         ImGui::SameLine();
         if(ImGui::Button("Cancel", ImVec2(winsize.x / 2 - (style.ItemSpacing.x / 2), ImGui::GetFrameHeightWithSpacing()))){
-            SetEnable(false);
             if(feedback != NULL){
-                feedback(false, std::vector<std::string>());
+                feedback(true, std::vector<std::string>());
             }
             selection.clear();
             feedback = NULL;
+            SetEnable(false);
         }
     }
 

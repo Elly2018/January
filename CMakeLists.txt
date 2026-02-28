@@ -46,6 +46,10 @@ include_directories(${CMD_DIR})
 set(JSON_DIR third-party/json)
 include_directories(${JSON_DIR})
 
+# ini
+set(INI_DIR third-party/mINI)
+include_directories(${INI_DIR}/src/mini)
+
 # spdlog
 set(LOG_DIR third-party/spdlog)
 include_directories(${LOG_DIR}/include)
