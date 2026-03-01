@@ -33,7 +33,27 @@ namespace January::Engine {
     }
 
     void multi_command(struct System::JSystem& jsystem, std::vector<std::string> cmds){
-        
+        if(cmds.size() == 2 && cmds.at(0) == "open_recent"){
+            std::string& r_path = cmds.at(1);
+            int32_t search = -1;
+            for(int32_t i = 0; i < jsystem.engine->config->j_recent.size(); i++){
+                if(jsystem.engine->config->j_recent.at(i).j_path == r_path){
+                    search = i;
+                    break;
+                }
+            }
+            if(search != -1){
+                jsystem.engine->config->j_recent[search].j_last_open = sc::system_clock::to_time_t(sc::system_clock::now());
+            }else{
+                AppConfigRecent acr;
+                acr.j_path = r_path;
+                acr.j_last_open = sc::system_clock::to_time_t(sc::system_clock::now());
+                jsystem.engine->config->j_recent.push_back(acr);
+            }
+            SaveEnableConfig(*jsystem.engine->manager, *jsystem.engine->config);
+            jsystem.engine->context->project_path = r_path;
+            jsystem.engine->context->load_project = true;
+        }
     }
 
     void single_command(struct System::JSystem& jsystem, std::string cmd){

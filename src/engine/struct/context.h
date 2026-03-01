@@ -30,6 +30,10 @@ SOFTWARE.
 
 struct ImFont;
 
+namespace spdlog {
+    struct logger;
+}
+
 namespace January::Engine {
     // Current application context
     // This data cannot be store in disk, This is the memory only data
@@ -49,6 +53,7 @@ namespace January::Engine {
         struct ImFont*              text_font;
         struct ImFont*              icon_font;
         struct ImFont*              emoji_font;
+        struct spdlog::logger*      logger;
     };
 }
 #endif
