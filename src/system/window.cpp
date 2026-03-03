@@ -334,22 +334,6 @@ namespace January::System {
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         
         while (!jwindow.g_done){
-            // Poll and handle events (inputs, window resize, etc.)
-            // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-            // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-            // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-            // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-            // [If using SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your SDL_AppEvent() function]
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
-            {
-                ImGui_ImplSDL3_ProcessEvent(&event);
-                if (event.type == SDL_EVENT_QUIT)
-                    jwindow.g_done = true;
-                if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(jwindow.g_window))
-                    jwindow.g_done = true;
-            }
-
             // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
             if (SDL_GetWindowFlags(jwindow.g_window) & SDL_WINDOW_MINIMIZED)
             {

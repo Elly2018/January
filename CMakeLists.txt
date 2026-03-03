@@ -16,7 +16,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_PROTOTYPES")
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # SDL3
-find_package(SDL3 REQUIRED)
+add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
 
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
