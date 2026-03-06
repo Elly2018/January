@@ -26,6 +26,10 @@ SOFTWARE.
 #define GUI_VIEW_BLUEPRINT_H
 #include "viewbase.h"
 
+namespace ax::NodeEditor {
+    struct EditorContext;
+}
+
 namespace January::Engine::View {
     class JViewBlueprint : public JViewBase {
     public:
@@ -35,6 +39,8 @@ namespace January::Engine::View {
         void Update() override;
         void Draw() override;
         void DeInit() override;
+    private:
+        struct ax::NodeEditor::EditorContext* ctx;
     };
 }
 #endif

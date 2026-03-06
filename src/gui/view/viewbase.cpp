@@ -29,11 +29,8 @@ SOFTWARE.
 
 namespace January::Engine::View {
     JViewBase::JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
-        title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {
-            Init();
-        }
+        title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {}
     JViewBase::~JViewBase() {
-        DeInit();
     }
 
     bool JViewBase::PreDraw(){

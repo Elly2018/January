@@ -67,13 +67,26 @@ namespace January::Engine::View {
 
         vm.popups.push_back(vm.file_dialog);
         vm.popups.push_back(vm.project_dashboard);
+
+        for(auto& c : vm.views){
+            c->Init();
+        }
+        for(auto& c : vm.popups){
+            c->Init();
+        }
     }
 
     void VDeInit(ViewManager& vm){
-        for(auto& view : vm.views){
-            delete view;
+        for(auto& c : vm.views){
+            c->DeInit();
+            delete c;
+        }
+        for(auto& c : vm.popups){
+            c->DeInit();
+            delete c;
         }
         vm.views.clear();
+        vm.popups.clear();
     }
 
     void VSetEnable(ViewManager& vm, int32_t type, int32_t subtype, bool value){
