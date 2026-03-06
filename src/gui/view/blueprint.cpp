@@ -25,23 +25,21 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include <imgui.h>
 #include <imgui_node_editor.h>
+#include "../../engine/utility/path.h"
 
 namespace ed = ax::NodeEditor;
 
 namespace January::Engine::View {
     void JViewBlueprint::Init(){
         spdlog::info("Loaded View: Blueprint");
-
-        ed::Config config;
-        config.SettingsFile = "Simple.json";
-        ctx = ed::CreateEditor(&config);
+        CreateTempConfig();
     }
     void JViewBlueprint::Update(){
 
     }
     void JViewBlueprint::Draw(){
         ed::SetCurrentEditor(ctx);
-        ed::Begin("My Editor", ImVec2(0.0, 0.0f));
+        ed::Begin("Blueprint Editor");
         int uniqueId = 1;
         // Start drawing nodes.
         ed::BeginNode(uniqueId++);
@@ -59,5 +57,14 @@ namespace January::Engine::View {
     }
     void JViewBlueprint::DeInit(){
         ed::DestroyEditor(ctx);
+    }
+
+    void JViewBlueprint::CreateTempConfig(){
+        fs::path tempFile = get_temp_directory();
+        tempFile /= "placeholder.json";
+        if(fs::exists(tempFile)) fs::remove(tempFile);
+        ed::Config config;
+        config.SettingsFile = tempFile.c_str();
+        ctx = ed::CreateEditor(&config);
     }
 }

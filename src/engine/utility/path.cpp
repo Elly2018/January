@@ -62,6 +62,13 @@ namespace January::Engine {
         throw std::runtime_error("Could not determine home directory");
     }
 
+    fs::path get_temp_directory(){
+        fs::path p = get_home_directory();
+        p /= "january";
+        if(!fs::exists(p)) fs::create_directory(p);
+        return p;
+    }
+
     bool is_project_path_vaild(const fs::path& path){
         if(!fs::exists(path)) {
             spdlog::warn("Project path not exist: {}", path.c_str());

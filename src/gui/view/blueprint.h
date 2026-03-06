@@ -39,7 +39,10 @@ namespace January::Engine::View {
         void Update() override;
         void Draw() override;
         void DeInit() override;
+    protected:
+        virtual void CreateTempConfig();
     private:
+        bool dirty = false;
         struct ax::NodeEditor::EditorContext* ctx;
     };
 }

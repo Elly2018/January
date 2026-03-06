@@ -30,6 +30,7 @@ namespace fs = std::filesystem;
 
 namespace January::Engine {
     fs::path get_home_directory();
+    fs::path get_temp_directory();
 
     bool is_project_path_vaild(const fs::path& path);
 }
