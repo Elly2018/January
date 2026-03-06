@@ -26,6 +26,8 @@ SOFTWARE.
 #include <imgui.h>
 #include <imgui_node_editor.h>
 #include "../../engine/utility/path.h"
+#include "../nodes/nodebase.h"
+#include "../nodes/edgebase.h"
 
 namespace ed = ax::NodeEditor;
 
@@ -38,25 +40,39 @@ namespace January::Engine::View {
 
     }
     void JViewBlueprint::Draw(){
-        ed::SetCurrentEditor(ctx);
-        ed::Begin("Blueprint Editor");
-        int32_t uniqueId = 1;
-        // Start drawing nodes.
-        ed::BeginNode(uniqueId++);
-            ImGui::Text("Node A");
-            ed::BeginPin(uniqueId++, ed::PinKind::Input);
-                ImGui::Text("-> In");
-            ed::EndPin();
-            ImGui::SameLine();
-            ed::BeginPin(uniqueId++, ed::PinKind::Output);
-                ImGui::Text("Out ->");
-            ed::EndPin();
-        ed::EndNode();
-        ed::End();
-        ed::SetCurrentEditor(nullptr);
+        ImGuiIO& io = ImGui::GetIO();
+
+        if(ImGui::BeginTabBar("BlueprintTab#jblueprint")){
+            for(auto& b : blueprints){
+                if(ImGui::BeginTabItem((b.file + "#jblueprint_tab_title").c_str())){
+                    DrawBlueprint(b);
+                    ImGui::EndTabItem();
+                }
+            }
+            ImGui::EndTabBar();
+        }
     }
     void JViewBlueprint::DeInit(){
-        ed::DestroyEditor(ctx);
+        for(auto& b : blueprints){
+            ed::DestroyEditor(b.ctx);
+        }
+        blueprints.clear();
+    }
+
+    void JViewBlueprint::DrawBlueprint(BlueprintObject& bo){
+        ed::SetCurrentEditor(bo.ctx);
+        ed::Begin("Blueprint Editor");
+        int32_t uniqueId = 1;
+        for(auto& n : bo.nodes){
+            n->PreDraw(uniqueId);
+            n->Draw();
+            n->PostDraw();
+        }
+        for(auto& e : bo.edges){
+            
+        }
+        ed::End();
+        ed::SetCurrentEditor(nullptr);
     }
 
     void JViewBlueprint::CreateTempConfig(){
@@ -65,6 +81,10 @@ namespace January::Engine::View {
         if(fs::exists(tempFile)) fs::remove(tempFile);
         ed::Config config;
         config.SettingsFile = tempFile.c_str();
-        ctx = ed::CreateEditor(&config);
+        BlueprintObject bo;
+        bo.file = "temp";
+        bo.path = tempFile;
+        bo.ctx = ed::CreateEditor(&config);
+        blueprints.push_back(bo);
     }
 }
