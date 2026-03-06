@@ -40,7 +40,7 @@ namespace January::Engine::View {
     void JViewBlueprint::Draw(){
         ed::SetCurrentEditor(ctx);
         ed::Begin("Blueprint Editor");
-        int uniqueId = 1;
+        int32_t uniqueId = 1;
         // Start drawing nodes.
         ed::BeginNode(uniqueId++);
             ImGui::Text("Node A");
