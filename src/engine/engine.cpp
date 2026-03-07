@@ -157,7 +157,7 @@ namespace January::Engine {
         io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
         ImGuiToast toast = ImGuiToast(ImGuiToastType_Success, 3000);
-        toast.set_title("Hello World! This is a success!");
+        toast.set_title("Hello World!");
         toast.set_content("We can also format here:)");
         ImGui::InsertNotification(toast);
 

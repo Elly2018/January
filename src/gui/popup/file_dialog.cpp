@@ -102,17 +102,17 @@ namespace January::Engine::View {
         winsize.x -= (style.WindowPadding.x + style.FramePadding.x);
         winsize.y -= (style.WindowPadding.y + style.FramePadding.y);
         float bottom = ImGui::GetFrameHeightWithSpacing() * 3.5F;
-        if(ImGui::BeginChild("URL Field##project_dashboard", ImVec2(winsize.x, ImGui::GetFrameHeightWithSpacing()), 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)){
+        if(ImGui::BeginChild("URL Field##file_dialog", ImVec2(winsize.x, ImGui::GetFrameHeightWithSpacing()), 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)){
             DrawURLBar();
             ImGui::EndChild();
         }
 
-        if(ImGui::BeginChild("Dirs##project_dashboard", ImVec2(((winsize.x / 5) * 1) - (style.ItemSpacing.x / 2), winsize.y - bottom), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoNav)){
+        if(ImGui::BeginChild("Dirs##file_dialog", ImVec2(((winsize.x / 5) * 1) - (style.ItemSpacing.x / 2), winsize.y - bottom), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoNav)){
             DrawDirRegion();
             ImGui::EndChild();
         }
         ImGui::SameLine();
-        if(ImGui::BeginChild("Dir Contents##project_dashboard", ImVec2(((winsize.x / 5) * 4) - (style.ItemSpacing.x / 2), winsize.y - bottom), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoNav)){
+        if(ImGui::BeginChild("Dir Contents##file_dialog", ImVec2(((winsize.x / 5) * 4) - (style.ItemSpacing.x / 2), winsize.y - bottom), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoNav)){
             DrawContentRegion();
             ImGui::EndChild();
         }
@@ -173,7 +173,7 @@ namespace January::Engine::View {
         ImGui::PopFont();
 
 
-        if(ImGui::InputText("URL##project_dashboard", &path_dirty)){
+        if(ImGui::InputText("URL##file_dialog", &path_dirty)){
             if(!fs::exists(path_dirty)) {
                 path_dirty = path;
             } else {
@@ -209,7 +209,7 @@ namespace January::Engine::View {
     }
 
     void JPopupFileDialog::DrawDirRegion(){
-        if(ImGui::Selectable("Home##project_dashboard_favorite_default")){
+        if(ImGui::Selectable("Home##file_dialog_favorite_default")){
             path_dirty = get_home_directory().string();
             path = path_dirty;
             load = true;
@@ -222,7 +222,7 @@ namespace January::Engine::View {
             if(!fs::exists(fav) || !fs::is_directory(fav)){
                 flag = ImGuiSelectableFlags_Disabled;
             }
-            if(ImGui::Selectable((label + "##project_dashboard_favorite").c_str(), false, flag)){
+            if(ImGui::Selectable((label + "##file_dialog_favorite").c_str(), false, flag)){
                 path_dirty = fav;
                 path = path_dirty;
                 load = true;
@@ -253,7 +253,7 @@ namespace January::Engine::View {
             ImGui::Text((UnicodeToUTF8(0xF07B)).c_str());
             ImGui::PopFont();
             ImGui::SameLine();
-            if(ImGui::Selectable((dir + "##project_dashboard_dir_contents").c_str(), isSelect)){
+            if(ImGui::Selectable((dir + "##file_dialog_dir_contents").c_str(), isSelect)){
                 if(ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)){
                     if(isSelect){
                         selection.erase(selection.begin() + select_index);
@@ -309,7 +309,7 @@ namespace January::Engine::View {
                 ImGui::Text(UnicodeToUTF8(0xF016).c_str());
                 ImGui::PopFont();
                 ImGui::SameLine();
-                if(ImGui::Selectable((file + "##project_dashboard_dir_contents").c_str(), isSelect)){
+                if(ImGui::Selectable((file + "##file_dialog_dir_contents").c_str(), isSelect)){
                     if(ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)){
                         if(isSelect){
                             selection.erase(selection.begin() + select_index);

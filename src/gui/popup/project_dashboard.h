@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef GUI_POPUP_PROJECT_DASHBOARD_H
 #define GUI_POPUP_PROJECT_DASHBOARD_H
 #include "popupbase.h"
+#include <string>
 
 namespace January::Engine::View {
     class JPopupProjectDashboard : public JPopupBase {
@@ -39,13 +40,29 @@ namespace January::Engine::View {
             MAIN, NEW
         };
 
+        enum class TEMPLATE {
+            BLANK, RT_ART, FILM, GAME, SOFTWARE, SERVER
+        };
+
         void Init() override;
         bool PreDraw() override;
         void Draw() override;
         void Update() override;
 
+    protected:
+        void DrawOption();
+        void DrawRecent();
+        void DrawNewProject();
+
     private:
+        std::string GetTemplateName(TEMPLATE _temp);
+        void GenerateProject();
+
         PAGE page = PAGE::MAIN;
+        TEMPLATE temp = TEMPLATE::BLANK;
+        std::string p_name;
+        std::string p_path;
+        std::string p_text;
     };
 }
 

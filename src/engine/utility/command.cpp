@@ -106,7 +106,13 @@ namespace January::Engine {
                 }
                 jsystem.engine->context->project_path = target_path;
                 jsystem.engine->context->load_project = true;
-                spdlog::info("Project path successfully load: {}", target_path.c_str());
+                jsystem.engine->manager->project_dashboard->SetEnable(false);
+                std::string t = std::format("Project path successfully load: {}", target_path.c_str());
+                spdlog::info(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Success, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
             };
             std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
             filters.push_back(std::pair<std::string, std::string>(".january", "January Project"));

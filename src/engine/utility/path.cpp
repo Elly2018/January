@@ -65,7 +65,7 @@ namespace January::Engine {
     fs::path get_temp_directory(){
         fs::path p = get_home_directory();
         p /= "january";
-        if(!fs::exists(p)) fs::create_directory(p);
+        if(!fs::exists(p)) fs::create_directories(p);
         return p;
     }
 
@@ -75,9 +75,9 @@ namespace January::Engine {
             return false;
         }
         fs::path manifest = path;
-        manifest /= "manifest.ini";
+        manifest /= MANIFEST_FILENAME;
         if(!fs::exists(manifest)) {
-            spdlog::warn("Manifest.ini file not exist: {}", manifest.c_str());
+            spdlog::warn("{} file not exist: {}", MANIFEST_FILENAME, manifest.c_str());
             return false;
         }
         mINI::INIFile mani(manifest);
@@ -88,7 +88,7 @@ namespace January::Engine {
         std::string& description = ini["header"]["description"];
         std::string& version = ini["header"]["version"];
 
-        spdlog::info("Manifest.ini loaded: {} {} {}", name.c_str(), description.c_str(), version.c_str());
+        spdlog::info("{} loaded: {} {} {}", MANIFEST_FILENAME, name.c_str(), description.c_str(), version.c_str());
 
         return true;
     }

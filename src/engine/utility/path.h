@@ -29,6 +29,8 @@ SOFTWARE.
 namespace fs = std::filesystem;
 
 namespace January::Engine {
+    static const char* MANIFEST_FILENAME = "manifest.ini";
+
     fs::path get_home_directory();
     fs::path get_temp_directory();
 
