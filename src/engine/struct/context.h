@@ -53,6 +53,9 @@ namespace January::Engine {
         struct ImFont*              text_font;
         struct ImFont*              icon_font;
         struct ImFont*              emoji_font;
+        // This is for console view content output
+        // Everything called here can be find in console view
+        // spdlog::info <- default logger is for os cli console output
         struct spdlog::logger*      logger;
     };
 }
