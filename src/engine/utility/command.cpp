@@ -33,8 +33,13 @@ namespace January::Engine {
     }
 
     void multi_command(struct System::JSystem& jsystem, std::vector<std::string> cmds){
-        if(cmds.size() == 2 && cmds.at(0) == "open_recent"){
-            std::string& r_path = cmds.at(1);
+        if(cmds.size() >= 2 && cmds.at(0) == "open_recent"){
+            std::string r_path = "";
+            for(int32_t i = 1; i < cmds.size(); i++){
+                r_path += cmds.at(i);
+                r_path += " ";
+            }
+            r_path.pop_back();
             int32_t search = -1;
             for(int32_t i = 0; i < jsystem.engine->config->j_recent.size(); i++){
                 if(jsystem.engine->config->j_recent.at(i).j_path == r_path){
@@ -53,6 +58,13 @@ namespace January::Engine {
             SaveEnableConfig(*jsystem.engine->manager, *jsystem.engine->config);
             jsystem.engine->context->project_path = r_path;
             jsystem.engine->context->load_project = true;
+            std::string t = std::format("Project path successfully load: {}", r_path.c_str());
+            spdlog::info(t);
+            ImGuiToast toast = ImGuiToast(ImGuiToastType_Success, 3000);
+            toast.set_title("Project Load");
+            toast.set_content(t.c_str());
+            ImGui::InsertNotification(toast);
+            AddRecent(*jsystem.engine, r_path);
         }
     }
 
