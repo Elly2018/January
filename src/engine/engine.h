@@ -59,6 +59,9 @@ namespace January {
         void EngineDeInit(JEngine& jengine);
         // Update engine logic and stuff
         void EngineUpdate(JEngine& jengine);
+
+        // ...
+        void AddRecent(JEngine& jengine, std::string& path);
     }
 }
 #endif

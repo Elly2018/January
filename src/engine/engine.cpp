@@ -191,4 +191,26 @@ namespace January::Engine {
         jengine.context->time = current;
         VUpdate(*jengine.manager);
     }
+
+    void AddRecent(JEngine& jengine, std::string& path){
+        int32_t exist = -1;
+        for(int32_t i = 0; i < jengine.config->j_recent.size(); i++){
+            if(jengine.config->j_recent.at(i).j_path == path){
+                exist = i;
+                break;
+            }
+        }
+
+        if(exist != -1){
+            AppConfigRecent acr = AppConfigRecent();
+            acr.j_path = jengine.config->j_recent.at(exist).j_path;
+            jengine.config->j_recent.erase(jengine.config->j_recent.begin() + exist);
+            jengine.config->j_recent.insert(jengine.config->j_recent.begin(), acr);
+        }else{
+            AppConfigRecent acr = AppConfigRecent();
+            acr.j_path = path;
+            jengine.config->j_recent.insert(jengine.config->j_recent.begin(), acr);
+        }
+        SaveAppConfig(*jengine.config);
+    }
 }

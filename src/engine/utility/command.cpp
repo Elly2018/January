@@ -113,6 +113,7 @@ namespace January::Engine {
                 toast.set_title("Project Load");
                 toast.set_content(t.c_str());
                 ImGui::InsertNotification(toast);
+                AddRecent(*jsystem.engine, target_path);
             };
             std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
             filters.push_back(std::pair<std::string, std::string>(".january", "January Project"));
