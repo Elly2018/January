@@ -162,6 +162,7 @@ namespace January::Engine {
         ImGui::InsertNotification(toast);
 
         VInit(*jengine.manager, system);
+        jengine.context->logger->info("Views init finished");
 
         if(fs::exists(jengine.context->project_path)){
             std::string title = jengine.context->project_path;

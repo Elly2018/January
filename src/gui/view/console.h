@@ -44,6 +44,7 @@ namespace January::Engine::View {
         DEFAULT_VIEW_DECTOR(JViewConsole){}
 
         void Init() override;
+        void DeInit() override;
         void Draw() override;
         void Update() override;
 
@@ -53,6 +54,8 @@ namespace January::Engine::View {
         const struct ImVec4 GetColor(spdlog::level::level_enum col);
 
     private:
+        std::string search;
+        std::shared_ptr<spdlog::logger> og;
         std::vector<ConsoleLog> logs = std::vector<ConsoleLog>();
         std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
         std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink;

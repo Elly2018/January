@@ -1,5 +1,6 @@
 #include "console.h"
 #include <imgui.h>
+#include <imgui_stdlib.h>
 #include "../../engine/engine.h"
 #include "../../engine/struct/context.h"
 
@@ -7,7 +8,7 @@ namespace January::Engine::View {
     void JViewConsole::Init() {
         callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([&](const spdlog::details::log_msg &msg) {
             // for example you can be notified by sending an email to yourself
-            ConsoleLog cl;
+            ConsoleLog cl = ConsoleLog();
             cl.level = msg.level;
             cl.messages = msg.payload.data();
             logs.push_back(cl);
@@ -15,6 +16,10 @@ namespace January::Engine::View {
         callback_sink->set_level(spdlog::level::info);
         console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         jengine.context->logger = new spdlog::logger("engine logger", {console_sink, callback_sink});
+    }
+
+    void JViewConsole::DeInit(){
+
     }
 
     void JViewConsole::Draw() {
@@ -27,12 +32,12 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::RenderBar(){
-
+        ImGui::InputText("Search##console_view", &search);
     }
 
     void JViewConsole::RenderContent(){
         for(int32_t i = 0; i < logs.size(); i++){
-            ImGui::TextColored(GetColor(logs[i].level), "%s", logs[i].messages);
+            ImGui::TextColored(GetColor(logs[i].level), "%s", logs[i].messages.c_str());
         }
     }
 
