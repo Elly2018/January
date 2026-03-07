@@ -70,26 +70,38 @@ namespace January::Engine {
                 if(cancel) {
                     std::string t = "Project path file dialog: cancel";
                     spdlog::warn(t);
-                    ImGui::InsertNotification({ ImGuiToastType_Warning, 3000, "Project Load", t });
+                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Warning, 3000);
+                    toast.set_title("Project Load");
+                    toast.set_content(t.c_str());
+                    ImGui::InsertNotification(toast);
                     return;
                 }
                 if(results.size() < 1) {
                     std::string t = "Project path file dialog: no path select";
                     spdlog::warn(t);
-                    ImGui::InsertNotification({ ImGuiToastType_Warning, 3000, "Project Load", t });
+                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Warning, 3000);
+                    toast.set_title("Project Load");
+                    toast.set_content(t.c_str());
+                    ImGui::InsertNotification(toast);
                     return;
                 }
                 std::string target_path = results.at(0);
                 if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
                     std::string t = std::format("Project path does not exist: {}", target_path.c_str());
                     spdlog::error(t);
-                    ImGui::InsertNotification({ ImGuiToastType_Error, 3000, "Project Load", t });
+                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                    toast.set_title("Project Load");
+                    toast.set_content(t.c_str());
+                    ImGui::InsertNotification(toast);
                     return;
                 }
                 if(!is_project_path_vaild(target_path)){
                     std::string t = std::format("Project path vaildation check failed: {}", target_path.c_str());
                     spdlog::error(t);
-                    ImGui::InsertNotification({ ImGuiToastType_Error, 3000, "Project Load", t });
+                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                    toast.set_title("Project Load");
+                    toast.set_content(t.c_str());
+                    ImGui::InsertNotification(toast);
                     return;
                 }
                 jsystem.engine->context->project_path = target_path;
