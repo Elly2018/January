@@ -72,7 +72,7 @@ namespace January::Engine::View {
         };
     }
 
-    std::string GetName(spdlog::level::level_enum col){
+    std::string JViewConsole::GetName(spdlog::level::level_enum col){
         switch(col){
             case spdlog::level::level_enum::trace: return "Trace";
             case spdlog::level::level_enum::debug: return "Debug";
