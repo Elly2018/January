@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 #include "viewbase.h"
 #include <string>
+#include <mutex>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/callback_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -52,11 +53,19 @@ namespace January::Engine::View {
         void RenderContent();
 
         const struct ImVec4 GetColor(spdlog::level::level_enum col);
+        std::string GetName(spdlog::level::level_enum col);
+
+    protected:
+        void GetFilteredResult();
+        void Clear();
 
     private:
-        std::string search;
-        std::shared_ptr<spdlog::logger> og;
+        std::string search = "";
+        spdlog::level::level_enum level_filter = spdlog::level::level_enum::info;
         std::vector<ConsoleLog> logs = std::vector<ConsoleLog>();
+        std::vector<ConsoleLog> buffer = std::vector<ConsoleLog>();
+        std::mutex buffer_mtx;
+        bool changed = false;
         std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
         std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink;
     };

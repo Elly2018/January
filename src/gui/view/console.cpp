@@ -12,6 +12,7 @@ namespace January::Engine::View {
             cl.level = msg.level;
             cl.messages = msg.payload.data();
             logs.push_back(cl);
+            changed = true;
         });
         callback_sink->set_level(spdlog::level::info);
         console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -19,7 +20,7 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::DeInit(){
-
+        Clear();
     }
 
     void JViewConsole::Draw() {
@@ -28,16 +29,32 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Update() {
-        
+        if(changed){
+            GetFilteredResult();
+            changed = false;
+        }
     }
 
     void JViewConsole::RenderBar(){
-        ImGui::InputText("Search##console_view", &search);
+        if(ImGui::BeginCombo("Filter##console_view", GetName(level_filter).c_str())){
+            for(int32_t n = 0; n < 6; n++){
+                if(ImGui::Selectable( (GetName((spdlog::level::level_enum)n) + "##console_view_level_filter").c_str())){
+                    level_filter = (spdlog::level::level_enum)n;
+                    changed = true;
+                }
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::SameLine();
+        if(ImGui::InputText("Search##console_view", &search)){
+            changed = true;
+        }
     }
 
     void JViewConsole::RenderContent(){
-        for(int32_t i = 0; i < logs.size(); i++){
-            ImGui::TextColored(GetColor(logs[i].level), "%s", logs[i].messages.c_str());
+        std::lock_guard<std::mutex> lock(buffer_mtx);
+        for(int32_t i = 0; i < buffer.size(); i++){
+            ImGui::TextColored(GetColor(buffer.at(i).level), "%s", buffer.at(i).messages.c_str());
         }
     }
 
@@ -53,5 +70,38 @@ namespace January::Engine::View {
             case spdlog::level::level_enum::off: return ImVec4(0, 0, 0, 0);
             case spdlog::level::level_enum::n_levels: return ImVec4(0, 0, 0, 0);
         };
+    }
+
+    std::string GetName(spdlog::level::level_enum col){
+        switch(col){
+            case spdlog::level::level_enum::trace: return "Trace";
+            case spdlog::level::level_enum::debug: return "Debug";
+            default:
+            case spdlog::level::level_enum::info: return "Info";
+            case spdlog::level::level_enum::warn: return "Warn";
+            case spdlog::level::level_enum::err: return "Error";
+            case spdlog::level::level_enum::critical: return "Critical";
+            case spdlog::level::level_enum::off: return "Off";
+            case spdlog::level::level_enum::n_levels: return "n_level";
+        };
+    }
+
+    void JViewConsole::GetFilteredResult(){
+        std::lock_guard<std::mutex> lock(buffer_mtx);
+        buffer.clear();
+        for(int32_t i = 0; i < logs.size(); i++){
+            if(logs.at(i).level < level_filter){
+                continue;
+            }
+            if(search.size() == 0 || logs.at(i).messages.find(search.c_str())){
+                buffer.push_back(logs.at(i));
+            }
+        }
+    }
+
+    void JViewConsole::Clear(){
+        std::lock_guard<std::mutex> lock(buffer_mtx);
+        buffer.clear();
+        logs.clear();
     }
 }
