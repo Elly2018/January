@@ -30,15 +30,13 @@ using namespace January::System;
 
 // Program entry point
 int main(int argc, char** argv){
-    spdlog::info("Application Entry Point");
+    int32_t err;
 #if DEBUG_MODE
     spdlog::set_level(spdlog::level::debug);
 #endif
     InitCMD(argc, argv);
     JSystem jsystem;
-    if(SInit(jsystem) == -1){
-        spdlog::trace("SInit failed");
-        return -1;
-    }
+    err = SInit(jsystem);
+    assert(err != -1 && "SInit failed");
     SRun(jsystem);
 }
