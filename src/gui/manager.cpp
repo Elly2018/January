@@ -183,6 +183,9 @@ namespace January::Engine::View {
                 }
                 ImGui::Separator();
                 if(ImGui::BeginMenu("General##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Application##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
                     if(ImGui::MenuItem("Blueprint##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){
                         vm.blueprint->SetEnable(!vm.blueprint->IsEnable());
                         PushCommand(*jengine.context, "config_dirty");
@@ -202,18 +205,62 @@ namespace January::Engine::View {
                     ImGui::EndMenu();
                 }
                 if(ImGui::BeginMenu("Audio##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Mixer##MainMenuBar_View_Audio", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
+                    if(ImGui::MenuItem("Volume##MainMenuBar_View_Audio", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
                     ImGui::EndMenu();
                 }
                 if(ImGui::BeginMenu("Render##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Preview##MainMenuBar_View_Render", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
+                    if(ImGui::MenuItem("Material##MainMenuBar_View_Render", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
+                    if(ImGui::MenuItem("Texture##MainMenuBar_View_Render", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
                     ImGui::EndMenu();
                 }
                 if(ImGui::BeginMenu("Script##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Script##MainMenuBar_View_Script", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
+                    if(ImGui::MenuItem("Plugin Manager##MainMenuBar_View_Script", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
                     ImGui::EndMenu();
                 }
                 if(ImGui::BeginMenu("Debug##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Profiler##MainMenuBar_View_Debug", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
                     ImGui::EndMenu();
                 }
                 if(ImGui::BeginMenu("Animation##MainMenuBar_View")){
+                    if(ImGui::MenuItem("Timeline##MainMenuBar_View_Animation", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
+                    if(ImGui::MenuItem("Animator##MainMenuBar_View_Animation", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
+                    if(ImGui::MenuItem("Animation##MainMenuBar_View_Animation", NULL, vm.inspector->IsEnable())){
+                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        PushCommand(*jengine.context, "config_dirty");
+                    }
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenu();
