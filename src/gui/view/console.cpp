@@ -25,6 +25,7 @@ namespace January::Engine::View {
 
     void JViewConsole::Draw() {
         RenderBar();
+        ImGui::Separator();
         RenderContent();
     }
 
@@ -45,7 +46,6 @@ namespace January::Engine::View {
             }
             ImGui::EndCombo();
         }
-        ImGui::SameLine();
         if(ImGui::InputText("Search##console_view", &search)){
             changed = true;
         }
@@ -93,7 +93,7 @@ namespace January::Engine::View {
             if(logs.at(i).level < level_filter){
                 continue;
             }
-            if(search.size() == 0 || logs.at(i).messages.find(search.c_str())){
+            if(search.size() == 0 || logs.at(i).messages.find(search) != std::string::npos){
                 buffer.push_back(logs.at(i));
             }
         }
