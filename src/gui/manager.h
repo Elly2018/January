@@ -125,6 +125,7 @@ namespace January {
 
             std::vector<struct JViewBase*>  views;
             std::vector<struct JPopupBase*>  popups;
+            std::vector<int32_t> popup_orders;
         };
 
         // View manager initialization
@@ -144,6 +145,8 @@ namespace January {
         void VDraw(ViewManager& vm, System::JWindow& jwindow, JEngine& jengine);
         // Update call for each views
         void VUpdate(ViewManager& vm);
+        // Render Popuo
+        void VRenderPopup(ViewManager& vm, std::vector<int32_t>& arrays, int32_t index);
     }
 }
 #endif

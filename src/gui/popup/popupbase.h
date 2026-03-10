@@ -49,6 +49,7 @@ namespace January::Engine::View {
             void PostDraw() override;
             void PopupEvent(SIDE side);
         private:
+            // 0: no action, 1: Needs to open, 2: Needs to close
             int32_t popup_flag = 0;
     };
 }

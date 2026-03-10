@@ -274,15 +274,7 @@ namespace January::Engine::View {
                 view->PostDraw();
             }
         }
-        for(auto& view : vm.popups){
-            view->PopupEvent(JPopupBase::SIDE::PRE);
-            if(view->PreDraw()){
-                view->Draw();
-                view->PopupEvent(JPopupBase::SIDE::INSIDE);
-                view->PostDraw();
-            }
-            view->PopupEvent(JPopupBase::SIDE::POST);
-        }
+        if(vm.popup_orders.size() > 0) VRenderPopup(vm, vm.popup_orders, 0);
     }
 
     void VUpdate(ViewManager& vm){
@@ -296,5 +288,19 @@ namespace January::Engine::View {
                 view->Update();
             }
         }
+    }
+
+    void VRenderPopup(ViewManager& vm, std::vector<int32_t>& arrays, int32_t index){
+        if(index >= arrays.size()) return;
+        int32_t n = arrays.at(index);
+        auto& view = vm.popups.at(n);
+        view->PopupEvent(JPopupBase::SIDE::PRE);
+        if(view->PreDraw()){
+            view->Draw();
+            view->PopupEvent(JPopupBase::SIDE::INSIDE);
+            VRenderPopup(vm, arrays, ++index);
+            view->PostDraw();
+        }
+        view->PopupEvent(JPopupBase::SIDE::POST);
     }
 }
