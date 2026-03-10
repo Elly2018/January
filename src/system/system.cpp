@@ -44,9 +44,9 @@ namespace January::System {
         jsystem.window = new JWindow();
         jsystem.engine = new Engine::JEngine();
         int32_t err = JInit(*jsystem.window, JRWindowInit());
-        assert(err != 0 && "Vulkan Init Error");
+        assert(err == 0 && "Vulkan Init Error");
         err = EngineInit(*jsystem.engine, *jsystem.window, jsystem);
-        assert(err != 0 && "Engine Init Error");
+        assert(err == 0 && "Engine Init Error");
         LoadAppConfig(*jsystem.engine->config);
         ApplyEnableConfig(*jsystem.engine->manager, *jsystem.engine->config);
         LoadPreference();
