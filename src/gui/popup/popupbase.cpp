@@ -6,14 +6,15 @@
 #include "../../engine/utility/command.h"
 
 namespace January::Engine::View {
-    JPopupBase::JPopupBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
-        JViewBase(_title, _type, subtype, _win, _engine) {
-        }
+    JPopupBase::JPopupBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine, int32_t _popup_id) : JViewBase(_title, _type, subtype, _win, _engine) {
+        popup_id = _popup_id;
+    }
     JPopupBase::~JPopupBase() {
     }
 
     void JPopupBase::OnEnable() {
         popup_flag = 1;
+        PushCommand(*jengine.context, "open_popup " + std::to_string(popup_id));
     }
 
     void JPopupBase::OnDisable() {
