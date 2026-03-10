@@ -66,15 +66,6 @@ namespace January::Engine {
             ImGui::InsertNotification(toast);
             AddRecent(*jsystem.engine, r_path);
         }
-        else if(cmds.size() >= 2 && cmds.at(0) == "open_popup"){
-            int32_t popup_id = std::stoi(cmds.at(1).c_str());
-            auto it = std::find(jsystem.engine->manager->popup_orders.begin(), jsystem.engine->manager->popup_orders.end(), popup_id);
-            if(it == jsystem.engine->manager->popup_orders.end()){
-                jsystem.engine->manager->popup_orders.push_back(popup_id);
-            }else{
-                spdlog::warn("Popup already in the list");
-            }
-        }
     }
 
     void single_command(struct System::JSystem& jsystem, std::string cmd){

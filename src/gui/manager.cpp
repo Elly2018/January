@@ -52,8 +52,8 @@ namespace January::Engine::View {
         vm.timeline = new JViewTimeline(std::string("Timeline##view"), (int32_t)JanuaryViewTypeFlag::ANIMATION, (int32_t)JanuaryViewAnimationFlag::TIMELINE, *jsystem.window, *jsystem.engine);
         vm.volumn = new JViewVolumn(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::AUDIO, (int32_t)JanuaryViewAudioFlag::VOLUMN, *jsystem.window, *jsystem.engine);
 
-        vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine, 0);
-        vm.file_dialog = new JPopupFileDialog(std::string("File Dialog##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::FILE_DIALOG, *jsystem.window, *jsystem.engine, 1);
+        vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
+        vm.file_dialog = new JPopupFileDialog(std::string("File Dialog##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::FILE_DIALOG, *jsystem.window, *jsystem.engine);
         
         vm.views.push_back(vm.blueprint);
         vm.views.push_back(vm.console);
@@ -274,7 +274,15 @@ namespace January::Engine::View {
                 view->PostDraw();
             }
         }
-        if(vm.popup_orders.size() > 0) VRenderPopup(vm, vm.popup_orders, 0);
+        for(auto& view : vm.popups){
+            view->PopupEvent(JPopupBase::SIDE::PRE);
+            if(view->PreDraw()){
+                view->Draw();
+                view->PopupEvent(JPopupBase::SIDE::INSIDE);
+                view->PostDraw();
+            }
+            view->PopupEvent(JPopupBase::SIDE::POST);
+        }
     }
 
     void VUpdate(ViewManager& vm){
@@ -288,19 +296,5 @@ namespace January::Engine::View {
                 view->Update();
             }
         }
-    }
-
-    void VRenderPopup(ViewManager& vm, std::vector<int32_t>& arrays, int32_t index){
-        if(index >= arrays.size()) return;
-        int32_t n = arrays.at(index);
-        auto& view = vm.popups.at(n);
-        view->PopupEvent(JPopupBase::SIDE::PRE);
-        if(view->PreDraw()){
-            view->Draw();
-            view->PopupEvent(JPopupBase::SIDE::INSIDE);
-            VRenderPopup(vm, arrays, ++index);
-            view->PostDraw();
-        }
-        view->PopupEvent(JPopupBase::SIDE::POST);
     }
 }

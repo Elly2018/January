@@ -27,8 +27,8 @@ SOFTWARE.
 #include "../view/viewbase.h"
 
 #define DEFAULT_POPUP_CTOR(x) \
-x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine, int32_t _popup_id) :  \
-JPopupBase(_title, _type, _subtype, _win, _engine, _popup_id) \
+x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) :  \
+JPopupBase(_title, _type, _subtype, _win, _engine) \
 
 #define DEFAULT_POPUP_DECTOR(x) \
     virtual ~x() \
@@ -36,7 +36,7 @@ JPopupBase(_title, _type, _subtype, _win, _engine, _popup_id) \
 namespace January::Engine::View {
     class JPopupBase : public JViewBase {
         public:
-            JPopupBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine, int32_t _popup_id);
+            JPopupBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine);
             virtual ~JPopupBase();
 
             enum class SIDE {
@@ -51,7 +51,6 @@ namespace January::Engine::View {
         private:
             // 0: no action, 1: Needs to open, 2: Needs to close
             int32_t popup_flag = 0;
-            int32_t popup_id = -1;
     };
 }
 #endif
