@@ -150,6 +150,7 @@ namespace January {
         void VUpdate(ViewManager& vm);
         // Render Popuo
         void VRenderPopup(ViewManager& vm, std::vector<int32_t>& arrays, int32_t index);
+        void FocusEvent(ViewManager& vm, bool v);
     }
 }
 #endif

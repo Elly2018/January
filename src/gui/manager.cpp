@@ -313,4 +313,12 @@ namespace January::Engine::View {
             }
         }
     }
+
+    void FocusEvent(ViewManager& vm, bool v){
+        for(auto& view : vm.views){
+            if(view->IsEnable()){
+                view->Focus(v);
+            }
+        }
+    }
 }

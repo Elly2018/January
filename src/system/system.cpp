@@ -77,6 +77,12 @@ namespace January::System {
                     jsystem.window->g_done = true;
                 if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(jsystem.window->g_window))
                     jsystem.window->g_done = true;
+                if (event.type == SDL_EVENT_WINDOW_FOCUS_GAINED) {
+                    FocusEvent(*jsystem.engine->manager, true);
+                }
+                if (event.type == SDL_EVENT_WINDOW_FOCUS_LOST) {
+                    FocusEvent(*jsystem.engine->manager, false);
+                }
             }
 
             {

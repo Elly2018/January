@@ -51,6 +51,7 @@ namespace January::Engine::View {
         void Update() override;
         void Draw() override;
         void DeInit() override;
+        void Focus(bool value) override;
 
         void ReloadProject();
     protected:

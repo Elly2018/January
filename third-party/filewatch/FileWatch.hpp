@@ -276,7 +276,7 @@ namespace filewatch {
 
 		FolderInfo  _directory;
 
-		const std::uint32_t _listen_filters = IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVED;
+		const std::uint32_t _listen_filters = IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVE;
 
 		const static std::size_t event_size = (sizeof(struct inotify_event));
 #endif // __unix__

@@ -126,6 +126,11 @@ namespace January::Engine::View {
         JViewBase::DeInit();
     }
 
+    void JViewExplorer::Focus(bool value) {
+        JViewBase::Focus(value);
+        changed = true;
+    }
+
     void JViewExplorer::ReloadProject(){
         path = "";
         init = false;
