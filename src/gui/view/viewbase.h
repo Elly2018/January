@@ -50,6 +50,7 @@ namespace January {
                 virtual void OnDisable() {};
                 virtual void Init() {}
                 virtual void DeInit() {}
+                virtual void Focus(bool value) {}
                 virtual void Update() {}
                 virtual bool PreDraw();
                 virtual void Draw() {}

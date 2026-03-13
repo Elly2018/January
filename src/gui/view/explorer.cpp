@@ -43,7 +43,7 @@ namespace January::Engine::View {
             spdlog::debug("Detect explorer update");
             fs::path pp = CurrentFolder();
             if(fs::exists(pp)){
-                if(path != "/" || path != "") pp /= path.c_str();
+                if(path != "/" && path != "") pp /= path.c_str();
                 if(!fs::exists(pp)){
                     spdlog::warn("\tPath does not exist: {}, So we change back to project root instead", pp.c_str());
                     pp = fs::path(jengine.context->project_path.c_str());
@@ -51,8 +51,9 @@ namespace January::Engine::View {
                 }
                 if(watcher != nullptr){
                     delete watcher;
-                    spdlog::debug("\tRemove explorer file watcher");
                 }
+                spdlog::debug("\tRemove explorer file watcher");
+
                 spdlog::debug("\tTry register watcher: {}", pp.c_str());
                 watcher = new filewatch::FileWatch<std::string>(
                     pp.string(),
@@ -79,6 +80,8 @@ namespace January::Engine::View {
                             file.filesize = entry.file_size();
                         }
                         files.push_back(file);
+
+                        spdlog::info("Assgin file watch event to {}", entry.path().string().c_str());
                     }
                 }
             }else{

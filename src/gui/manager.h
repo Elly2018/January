@@ -40,6 +40,7 @@ namespace January {
         struct JViewBase;
         struct JPopupBase;
 
+        struct JViewAction;
         struct JViewBlueprint;
         struct JViewConsole;
         struct JViewExplorer;
@@ -66,10 +67,11 @@ namespace January {
 
         enum class JanuaryViewGeneralFlag {
             NONE = 0,
-            BLUEPRINT = 1,
-            CONSOLE = 2,
-            EXPLORER = 3,
-            INSPECTOR = 4,
+            ACTION = 1,
+            BLUEPRINT = 2,
+            CONSOLE = 3,
+            EXPLORER = 4,
+            INSPECTOR = 5,
         };
 
         enum class JanuaryViewAudioFlag {
@@ -110,6 +112,7 @@ namespace January {
         };
 
         struct ViewManager {
+            struct JViewAction*             action;
             struct JViewBlueprint*          blueprint;
             struct JViewConsole*            console;
             struct JViewExplorer*           explorer;

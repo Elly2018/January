@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "manager.h"
+#include "view/action.h"
 #include "view/blueprint.h"
 #include "view/console.h"
 #include "view/explorer.h"
@@ -42,6 +43,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
     void VInit(ViewManager& vm, struct System::JSystem& jsystem){
+        vm.action = new JViewAction(std::string("Action##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::ACTION, *jsystem.window, *jsystem.engine);
         vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
         vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
         vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
@@ -183,7 +185,8 @@ namespace January::Engine::View {
                 }
                 ImGui::Separator();
                 if(ImGui::BeginMenu("General##MainMenuBar_View")){
-                    if(ImGui::MenuItem("Application##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){
+                    if(ImGui::MenuItem("Application##MainMenuBar_View_General", NULL, vm.action->IsEnable())){
+                        vm.action->SetEnable(!vm.action->IsEnable());
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     if(ImGui::MenuItem("Blueprint##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){
@@ -262,6 +265,19 @@ namespace January::Engine::View {
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     ImGui::EndMenu();
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Help##MainMenuBar")){
+                if(ImGui::MenuItem("Welcome##MainMenuBar_Help", NULL)){
+                    PushCommand(*jengine.context, "open_welcome");
+                }
+                if(ImGui::MenuItem("Wiki##MainMenuBar_Help", NULL)){
+                    PushCommand(*jengine.context, "open_wiki");
+                }
+                ImGui::Separator();
+                if(ImGui::MenuItem("About##MainMenuBar_Help", NULL)){
+                    PushCommand(*jengine.context, "open_about");
                 }
                 ImGui::EndMenu();
             }
