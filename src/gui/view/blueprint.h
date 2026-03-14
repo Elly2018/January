@@ -30,6 +30,7 @@ SOFTWARE.
 
 namespace ax::NodeEditor {
     struct EditorContext;
+    struct Config;
 }
 
 namespace January::Engine {
@@ -45,6 +46,7 @@ namespace January::Engine {
             std::string file;
             std::string path;
             struct ax::NodeEditor::EditorContext* ctx;
+            struct ax::NodeEditor::Config* config;
             std::vector<struct Node::NodeBase*> nodes;
             std::vector<struct Node::EdgeBase*> edges;
         };
@@ -61,7 +63,7 @@ namespace January::Engine {
             virtual void DrawBlueprint(BlueprintObject& bo);
             virtual void CreateTempConfig();
         private:
-            std::vector<BlueprintObject> blueprints;
+            std::vector<BlueprintObject*> blueprints;
         };
     }
 }

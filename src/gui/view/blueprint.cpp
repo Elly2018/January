@@ -39,6 +39,8 @@ namespace January::Engine::View {
     void JViewBlueprint::Init(){
         spdlog::info("Loaded View: Blueprint");
         CreateTempConfig();
+        BlueprintObject* bo = blueprints.at(blueprints.size() - 1);
+        spdlog::debug("Load temp file: {}", bo->config->SettingsFile);
         //m_HeaderBackground = LoadTexture("data/BlueprintBackground.png");
         //m_SaveIcon         = LoadTexture("data/ic_save_white_24dp.png");
         //m_RestoreIcon      = LoadTexture("data/ic_restore_white_24dp.png");
@@ -51,8 +53,8 @@ namespace January::Engine::View {
 
         if(ImGui::BeginTabBar("BlueprintTab#jblueprint")){
             for(auto& b : blueprints){
-                if(ImGui::BeginTabItem((b.file + "#jblueprint_tab_title").c_str())){
-                    DrawBlueprint(b);
+                if(ImGui::BeginTabItem((b->file + "#jblueprint_tab_title").c_str())){
+                    DrawBlueprint(*b);
                     ImGui::EndTabItem();
                 }
             }
@@ -61,7 +63,15 @@ namespace January::Engine::View {
     }
     void JViewBlueprint::DeInit(){
         for(auto& b : blueprints){
-            ed::DestroyEditor(b.ctx);
+            ed::DestroyEditor(b->ctx);
+            delete b->config;
+            for(auto& n : b->nodes){
+                delete n;
+            }
+            for(auto& e : b->edges){
+                delete e;
+            }
+            delete b;
         }
         blueprints.clear();
     }
@@ -72,18 +82,22 @@ namespace January::Engine::View {
         {
             ImVec2 cursorTopLeft = ImGui::GetCursorScreenPos();
             //util::BlueprintNodeBuilder builder(m_HeaderBackground, GetTextureWidth(m_HeaderBackground), GetTextureHeight(m_HeaderBackground));
-            int32_t uniqueId = 1;
+            int32_t uniqueId = 0;
 
             for(auto& n : bo.nodes){
                 n->PreDraw(uniqueId);
                 n->Draw();
                 n->PostDraw();
             }
+
             for(auto& e : bo.edges){
 
             }
         }
         ed::End();
+        if(ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered()){
+            ed::ShowBackgroundContextMenu();
+        }
         ed::SetCurrentEditor(nullptr);
     }
 
@@ -91,12 +105,12 @@ namespace January::Engine::View {
         fs::path tempFile = get_temp_directory();
         tempFile /= "placeholder.json";
         if(fs::exists(tempFile)) fs::remove(tempFile);
-        ed::Config config;
-        config.SettingsFile = tempFile.c_str();
-        BlueprintObject bo;
-        bo.file = "temp";
-        bo.path = tempFile;
-        bo.ctx = ed::CreateEditor(&config);
-        blueprints.push_back(bo);
+        blueprints.push_back(new BlueprintObject());
+        BlueprintObject* bo = blueprints.at(blueprints.size() - 1);
+        bo->config = new ed::Config();
+        bo->config->SettingsFile = tempFile.string().c_str();
+        bo->file = "temp";
+        bo->path = tempFile;
+        bo->ctx = ed::CreateEditor(bo->config);
     }
 }
