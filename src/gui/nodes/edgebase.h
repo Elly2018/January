@@ -26,16 +26,25 @@ SOFTWARE.
 #define GUI_NODES_EDGEBASE_H
 #include <cinttypes>
 
+struct ImColor;
+
+namespace ax::NodeEditor {
+    struct NodeId;
+    struct PinId;
+}
+
 namespace January::Engine::Node {
     class EdgeBase {
     public:
         EdgeBase();
         virtual ~EdgeBase();
 
-        int32_t id0;
-        int32_t id1;
-        int32_t slot0;
-        int32_t slot1;
+        struct ax::NodeEditor::LinkId* ID;
+
+        struct ax::NodeEditor::PinId* StartPinID;
+        struct ax::NodeEditor::PinId* EndPinID;
+
+        struct ImColor* Color;
     };
 }
 #endif

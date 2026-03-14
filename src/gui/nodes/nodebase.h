@@ -37,6 +37,13 @@ NodeBase(_type, _title, _path) \
 #define DEFAULT_NODE_DECTOR(x) \
     virtual ~x() \
 
+struct ImColor;
+struct ImVec2;
+
+namespace ax::NodeEditor {
+    struct NodeId;
+}
+
 namespace January::Engine::Node {
     struct InPin;
     struct OutPin;
@@ -70,7 +77,13 @@ namespace January::Engine::Node {
         std::vector<struct OutPin*> outpins;
     
     private:
+        struct ax::NodeEditor::NodeId* id;
         NodeType node_type = NodeType::COMP;
+        struct ImColor* color;
+        struct ImVec2* size;
+
+        std::string State;
+        std::string SavedState;
     };
 
     class NodeManager {
