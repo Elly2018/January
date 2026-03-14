@@ -67,6 +67,15 @@ namespace January {
                 // Editor view after content draw
                 virtual void PostDraw();
 
+                // Runtime event: Play
+                virtual void OnPlay() {}
+                // Runtime event: Pause
+                virtual void OnPause() {}
+                // Runtime event: UnPause
+                virtual void OnUnPause() {}
+                // Runtime event: Stop
+                virtual void OnStop() {}
+
                 // Check view is show up currently or not
                 bool IsEnable() { return enable; }
                 // Get category ID, (type + subtype)
