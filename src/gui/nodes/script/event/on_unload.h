@@ -28,7 +28,8 @@ SOFTWARE.
 
 namespace January::Engine::Node {
     class JNScriptUnLoad : public NodeBase {
-
+        DEFAULT_NODE_CTOR(JNScriptUnLoad) {}
+        DEFAULT_NODE_DECTOR(JNScriptUnLoad) {}
     };
 }
 

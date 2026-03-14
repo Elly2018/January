@@ -28,7 +28,8 @@ SOFTWARE.
 
 namespace January::Engine::Node {
     class JNScriptUpdate : public NodeBase {
-
+        DEFAULT_NODE_CTOR(JNScriptUpdate) {}
+        DEFAULT_NODE_DECTOR(JNScriptUpdate) {}
     };
 }
 

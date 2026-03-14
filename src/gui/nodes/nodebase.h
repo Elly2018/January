@@ -28,13 +28,26 @@ SOFTWARE.
 #include <cinttypes>
 #include <string>
 
+// Quick way to create view subclass constructor
+#define DEFAULT_NODE_CTOR(x) \
+x (NodeType _type, std::string _title, std::string _path) :  \
+NodeBase(_type, _title, _path) \
+
+// Quick way to create view subclass deconstructor
+#define DEFAULT_NODE_DECTOR(x) \
+    virtual ~x() \
+
 namespace January::Engine::Node {
     struct InPin;
     struct OutPin;
 
+    enum class NodeType {
+        COMP, SCRIPT, SHADER
+    };
+
     class NodeBase {
     public:
-        NodeBase();
+        NodeBase(NodeType _type, std::string _title, std::string _path);
         virtual ~NodeBase();
 
         virtual void PreDraw(int32_t& uniqueId);
@@ -45,14 +58,23 @@ namespace January::Engine::Node {
         bool get_type_out(int32_t index, std::string& result);
         bool get_value_out(int32_t index, std::string& result);
 
+        NodeType GetNodeType() { return node_type; }
     protected:
         int32_t get_pin_count_in();
         bool get_type_in(int32_t index, std::string& result);
         bool get_value_in(int32_t index, std::string& result);
 
         std::string title;
+        std::vector<std::string> paths;
         std::vector<struct InPin*> inpins;
         std::vector<struct OutPin*> outpins;
+    
+    private:
+        NodeType node_type = NodeType::COMP;
+    };
+
+    class NodeManager {
+
     };
 }
 #endif
