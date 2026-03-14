@@ -26,6 +26,10 @@ include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ${IMGUI_DIR}/misc/cpp)
 set(Node_DIR third-party/node-editor)
 include_directories(${Node_DIR})
 
+# libcurl
+set(LIBCURL_DIR third-party/libcurl)
+add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)
+
 # asio
 set(ASIO_DIR third-party/asio)
 include_directories(${ASIO_DIR}/include)
@@ -87,10 +91,25 @@ add_executable(january
   ${Node_DIR}/crude_json.cpp
   ${Node_DIR}/imgui_canvas.cpp
   ${Node_DIR}/imgui_node_editor.cpp
-  ${Node_DIR}/imgui_node_editor_api.cpp)
-target_link_libraries(january PRIVATE glfw;Vulkan::Vulkan SDL3::SDL3)
-target_include_directories(january PUBLIC ${SDL3_INCLUDE_DIRS})
-target_include_directories(january PUBLIC ${LOG_DIR}/src)
+  ${Node_DIR}/imgui_node_editor_api.cpp
+)
+
+target_include_directories(january PUBLIC 
+  ${LOG_DIR}/src
+  ${SDL3_INCLUDE_DIRS}
+  ${LIBCURL_DIR}/include
+)
+
+target_link_directories(january PRIVATE 
+  
+)
+target_link_libraries(january PRIVATE 
+  glfw
+  Vulkan::Vulkan 
+  SDL3::SDL3
+  CURL::libcurl
+)
+
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

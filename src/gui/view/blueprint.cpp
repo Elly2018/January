@@ -25,14 +25,11 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include <imgui.h>
 #include <imgui_node_editor.h>
-#include <utilities/builders.h>
-#include <utilities/widgets.h>
 #include "../../engine/utility/path.h"
 #include "../nodes/nodebase.h"
 #include "../nodes/edgebase.h"
 
 namespace ed = ax::NodeEditor;
-namespace util = ax::NodeEditor::Utilities;
 
 namespace January::Engine::View {
     ImTextureID m_HeaderBackground;
@@ -42,9 +39,9 @@ namespace January::Engine::View {
     void JViewBlueprint::Init(){
         spdlog::info("Loaded View: Blueprint");
         CreateTempConfig();
-        m_HeaderBackground = LoadTexture("data/BlueprintBackground.png");
-        m_SaveIcon         = LoadTexture("data/ic_save_white_24dp.png");
-        m_RestoreIcon      = LoadTexture("data/ic_restore_white_24dp.png");
+        //m_HeaderBackground = LoadTexture("data/BlueprintBackground.png");
+        //m_SaveIcon         = LoadTexture("data/ic_save_white_24dp.png");
+        //m_RestoreIcon      = LoadTexture("data/ic_restore_white_24dp.png");
     }
     void JViewBlueprint::Update(){
 
@@ -74,7 +71,7 @@ namespace January::Engine::View {
         ed::Begin("Blueprint Editor");
         {
             ImVec2 cursorTopLeft = ImGui::GetCursorScreenPos();
-            util::BlueprintNodeBuilder builder(m_HeaderBackground, GetTextureWidth(m_HeaderBackground), GetTextureHeight(m_HeaderBackground));
+            //util::BlueprintNodeBuilder builder(m_HeaderBackground, GetTextureWidth(m_HeaderBackground), GetTextureHeight(m_HeaderBackground));
             int32_t uniqueId = 1;
 
             for(auto& n : bo.nodes){
