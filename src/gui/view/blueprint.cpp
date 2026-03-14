@@ -25,16 +25,26 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include <imgui.h>
 #include <imgui_node_editor.h>
+#include <utilities/builders.h>
+#include <utilities/widgets.h>
 #include "../../engine/utility/path.h"
 #include "../nodes/nodebase.h"
 #include "../nodes/edgebase.h"
 
 namespace ed = ax::NodeEditor;
+namespace util = ax::NodeEditor::Utilities;
 
 namespace January::Engine::View {
+    ImTextureID m_HeaderBackground;
+    ImTextureID m_SaveIcon;
+    ImTextureID m_RestoreIcon;
+
     void JViewBlueprint::Init(){
         spdlog::info("Loaded View: Blueprint");
         CreateTempConfig();
+        m_HeaderBackground = LoadTexture("data/BlueprintBackground.png");
+        m_SaveIcon         = LoadTexture("data/ic_save_white_24dp.png");
+        m_RestoreIcon      = LoadTexture("data/ic_restore_white_24dp.png");
     }
     void JViewBlueprint::Update(){
 
@@ -62,14 +72,19 @@ namespace January::Engine::View {
     void JViewBlueprint::DrawBlueprint(BlueprintObject& bo){
         ed::SetCurrentEditor(bo.ctx);
         ed::Begin("Blueprint Editor");
-        int32_t uniqueId = 1;
-        for(auto& n : bo.nodes){
-            n->PreDraw(uniqueId);
-            n->Draw();
-            n->PostDraw();
-        }
-        for(auto& e : bo.edges){
-            
+        {
+            ImVec2 cursorTopLeft = ImGui::GetCursorScreenPos();
+            util::BlueprintNodeBuilder builder(m_HeaderBackground, GetTextureWidth(m_HeaderBackground), GetTextureHeight(m_HeaderBackground));
+            int32_t uniqueId = 1;
+
+            for(auto& n : bo.nodes){
+                n->PreDraw(uniqueId);
+                n->Draw();
+                n->PostDraw();
+            }
+            for(auto& e : bo.edges){
+
+            }
         }
         ed::End();
         ed::SetCurrentEditor(nullptr);
