@@ -29,8 +29,10 @@ SOFTWARE.
 #include <ctime>
 #include <utility>
 #include <string>
+#include "nlohmann/json.hpp"
 
 namespace sc = std::chrono;
+using json = nlohmann::json;
 
 namespace January::Engine {
     struct AppConfigRecent {
@@ -48,6 +50,7 @@ namespace January::Engine {
         std::vector<std::pair<int64_t, bool>> j_views_enable     = std::vector<std::pair<int64_t, bool>>();
         std::vector<std::string> j_workspace                     = std::vector<std::string>();
         std::vector<std::string> j_favorite                      = std::vector<std::string>();
+        json j_project_setting                                   = json::object();
     };
 }
 #endif

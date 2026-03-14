@@ -166,6 +166,7 @@ namespace January::Engine::View {
 
     fs::path JViewExplorer::CurrentFolder(){
         fs::path p = jengine.context->project_path;
+        p /= "Assets";
         p /= path;
         return p;
     }

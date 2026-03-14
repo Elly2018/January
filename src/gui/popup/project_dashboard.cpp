@@ -145,6 +145,15 @@ namespace January::Engine::View {
         }
         jengine.context->project_path = r;
         jengine.context->load_project = true;
+
+        fs::path assets = r;
+        assets /= "Assets";
+        fs::create_directory(assets);
+
+        fs::path temp = r;
+        temp /= "Temp";
+        fs::create_directory(temp);
+
         SetEnable(false);
         spdlog::info("Project path successfully load: {}", r.c_str());
     }
