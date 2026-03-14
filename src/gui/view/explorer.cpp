@@ -47,7 +47,7 @@ namespace January::Engine::View {
                 if(!fs::exists(pp)){
                     spdlog::warn("\tPath does not exist: {}, So we change back to project root instead", pp.c_str());
                     pp = fs::path(jengine.context->project_path.c_str());
-                    path = "/";
+                    path = CurrentFolder();
                 }
                 if(watcher != nullptr){
                     delete watcher;
