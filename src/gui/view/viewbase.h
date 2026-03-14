@@ -27,10 +27,12 @@ SOFTWARE.
 #include <cinttypes>
 #include <string>
 
+// Quick way to create view subclass constructor
 #define DEFAULT_VIEW_CTOR(x) \
 x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) :  \
 JViewBase(_title, _type, _subtype, _win, _engine) \
 
+// Quick way to create view subclass deconstructor
 #define DEFAULT_VIEW_DECTOR(x) \
     virtual ~x() \
 
@@ -46,18 +48,30 @@ namespace January {
             public:
                 JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine);
                 virtual ~JViewBase();
+                // When view is shows up
                 virtual void OnEnable() {};
+                // When view is closes down
                 virtual void OnDisable() {};
+                // Constrctor called, when engine is up
                 virtual void Init() {}
+                // Release resource, when engine is down
                 virtual void DeInit() {}
+                // Application editor window focus event call
                 virtual void Focus(bool value) {}
+                // Every frame update
                 virtual void Update() {}
+                // Editor view before content draw
                 virtual bool PreDraw();
+                // The content of this view
                 virtual void Draw() {}
+                // Editor view after content draw
                 virtual void PostDraw();
 
+                // Check view is show up currently or not
                 bool IsEnable() { return enable; }
+                // Get category ID, (type + subtype)
                 int64_t GetID();
+                // View show call
                 void SetEnable(bool value);
             public:
                 std::string         title           = "";
