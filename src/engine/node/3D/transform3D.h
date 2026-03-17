@@ -22,32 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_STRUCT_SCENE_H
-#define ENGINE_STRUCT_SCENE_H
-#include <cinttypes>
-#include <vector>
-#include <unordered_map>
+#ifndef ENGINE_NODE_3D_TRANSFORM_H
+#define ENGINE_NODE_3D_TRANSFORM_H
 #include <string>
+#include <glm/glm.hpp>
+#include "../ecs.h"
 
-namespace January::Engine {
-    struct JSystem;
-    struct JComponent;
+namespace January::Engine::Node {
+    struct transform3D_component {
+        glm::vec3 position;
+        glm::vec3 rotation;
+        glm::vec3 scale;
+    };
 
-    class JScene {
-    public:
-        JScene();
-        virtual ~JScene();
+    class transform3D_system : public JSystem<transform3D_component> {
 
-        // entity uuid to components
-        std::unordered_map<std::string, std::vector<struct JComponent*>> entity_component_map;
-        // system uuid to components
-        std::unordered_map<std::string, std::vector<struct JComponent*>> system_component_map;
-        std::vector<struct JSystem*> systems;
-        // Array of uuid
-        std::vector<std::string> entities;
-        std::vector<struct JComponent*> components;
-
-        struct JSystem* GetSystemByPath(std::string path);
     };
 }
 
