@@ -33,31 +33,40 @@ SOFTWARE.
 
 using json = nlohmann::json;
 
-namespace January::Engine {
+namespace January::Engine::Node {
     struct JComponent {
         virtual json Serialization() { return json::object(); }
         virtual void DeSerialization(json data) {}
     };
 
     class JSystemBase {
-        
+    public:
+        JSystemBase(std::string _type_name) {
+            type_name = _type_name;
+        }
+        virtual ~JSystemBase() {}
+
+        virtual void RemoveComponent(std::string entity);
+        const std::string GetTypeName() { return type_name; }
+    private:
+        std::string type_name;
     };
 
     template<typename T> // Component type
     class JSystem : public JSystemBase {
     public:
-        JSystem(){
+        JSystem() : JSystemBase(typeid(T).name()){
             static_assert(std::is_base_of_v<JComponent, T>, "T must derive from JComponent");
         }
-        virtual ~JSystem(){
-
-        }
-        virtual void Update();
+        virtual ~JSystem(){}
+        virtual void Update() {}
         void AddComponent(std::string entity, T instance);
-        void RemoveComponent(std::string entity);
+        void ReplaceComponent(std::string entity, T instance);
+        bool GetComponent(std::string entity, T& data);
+        void RemoveComponent(std::string entity) override;
 
     protected:
-        std::unordered_map<std::string, T> components;
+        std::unordered_map<std::string, T> components = std::unordered_map<std::string, T>();
     };
 
     class JECS {
@@ -66,7 +75,7 @@ namespace January::Engine {
         void RegisterSystem(JSystem<T> system);
 
         std::string CreateEntity();
-        void DeleteEntity(std::string id);
+        void DeleteEntity(const std::string id);
 
         template<typename T> // Component type
         bool RegisterComponent(std::string id, T comp);
@@ -75,8 +84,8 @@ namespace January::Engine {
         bool UnRegisterComponent(std::string id);
 
     private:
-        std::vector<std::string> entites;
-        std::vector<JSystemBase> systems;
+        std::vector<std::string> entites = std::vector<std::string>();
+        std::vector<JSystemBase> systems = std::vector<JSystemBase>();
     };
 }
 
