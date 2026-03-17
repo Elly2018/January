@@ -32,6 +32,21 @@ namespace January::Engine::Node {
     struct tree_component : public JComponent {
         std::string path;
         int32_t index;
+
+        json Serialization() override { 
+            json j = json::object();
+            j["path"] = path;
+            j["index"] = index;
+            return j; 
+        }
+        void DeSerialization(json data) override {
+            if(data["path"].is_string()){
+                path = data["path"].get<std::string>();
+            }
+            if(data["index"].is_number_integer()){
+                index = data["index"].get<int32_t>();
+            }
+        }
     };
 }
 

@@ -22,24 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_NODE_COMMON_TAG_H
-#define ENGINE_NODE_COMMON_TAG_H
+#ifndef ENGINE_NODE_3D_RENDER_H
+#define ENGINE_NODE_3D_RENDER_H
 #include <string>
 #include <glm/glm.hpp>
 #include "../ecs.h"
+#include "transform3D.h"
 
 namespace January::Engine::Node {
-    struct tag_component : public JComponent {
-        std::string tag;
 
-        json Serialization() override { 
-            json j = json::object();
-            j["tag"] = tag;
-            return j; 
-        }
-        void DeSerialization(json data) override {
-            if(data["tag"].is_string()){
-                tag = data["tag"].get<std::string>();
+    struct render_component : public JComponent {
+        
+    };
+
+    class render_system : public JSystem {
+    public:
+        void Update(std::vector<std::string> ids) override {
+            JComponentDB<transform3D_component>& t3d = GetComponentDB<transform3D_component>();
+            transform3D_component t3d_data = transform3D_component();
+            for(auto& id : ids){
+                bool have_t3d = t3d.GetComponent(id, t3d_data);
             }
         }
     };

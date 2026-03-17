@@ -34,10 +34,6 @@ namespace January::Engine::Node {
         glm::vec3 rotation;
         glm::vec3 scale;
     };
-
-    class transform3D_system : public JSystem<transform3D_component> {
-
-    };
 }
 
 #endif

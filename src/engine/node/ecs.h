@@ -34,31 +34,34 @@ SOFTWARE.
 using json = nlohmann::json;
 
 namespace January::Engine::Node {
+
+    class JECS;
+
     struct JComponent {
         virtual json Serialization() { return json::object(); }
         virtual void DeSerialization(json data) {}
     };
 
-    class JSystemBase {
+    class JComponentDBBase {
     public:
-        JSystemBase(std::string _type_name) {
+        JComponentDBBase(std::string _type_name) {
             type_name = _type_name;
         }
-        virtual ~JSystemBase() {}
+        virtual ~JComponentDBBase() {}
 
-        virtual void RemoveComponent(std::string entity);
+        virtual void RemoveComponent(std::string entity) {}
         const std::string GetTypeName() { return type_name; }
     private:
         std::string type_name;
     };
 
     template<typename T> // Component type
-    class JSystem : public JSystemBase {
+    class JComponentDB : public JComponentDBBase {
     public:
-        JSystem() : JSystemBase(typeid(T).name()){
+        JComponentDB() : JComponentDBBase(typeid(T).name()){
             static_assert(std::is_base_of_v<JComponent, T>, "T must derive from JComponent");
         }
-        virtual ~JSystem(){}
+        virtual ~JComponentDB(){}
         virtual void Update() {}
         void AddComponent(std::string entity, T instance);
         void ReplaceComponent(std::string entity, T instance);
@@ -69,10 +72,29 @@ namespace January::Engine::Node {
         std::unordered_map<std::string, T> components = std::unordered_map<std::string, T>();
     };
 
+    class JSystem {
+    public:
+        JSystem(int32_t _weight, JECS* _ecs) {
+            weight = _weight;
+            ecs = _ecs;
+        }
+        virtual ~JSystem() {}
+
+        virtual void Update(std::vector<std::string> ids) {}
+        
+        int32_t weight;
+    protected:
+        template<typename T>
+        JComponentDB<T>& GetComponentDB();
+
+    protected:
+        JECS* ecs;
+    };
+
     class JECS {
     public:
         template<typename T> // Component type
-        void RegisterSystem(JSystem<T> system);
+        void RegisterDB(JComponentDB<T> db);
 
         std::string CreateEntity();
         void DeleteEntity(const std::string id);
@@ -83,9 +105,17 @@ namespace January::Engine::Node {
         template<typename T> // Component type
         bool UnRegisterComponent(std::string id);
 
+        void RegisterSystem(JSystem system);
+
+        void ExecuteAll();
+
     private:
+        // All exist entites
         std::vector<std::string> entites = std::vector<std::string>();
-        std::vector<JSystemBase> systems = std::vector<JSystemBase>();
+        // All component db
+        std::vector<JComponentDBBase> dbs = std::vector<JComponentDBBase>();
+        // All system
+        std::vector<JSystem> systems = std::vector<JSystem>();
     };
 }
 

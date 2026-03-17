@@ -5,33 +5,42 @@ namespace January::Engine::Node {
     UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
 
     template<typename T>
-    void JSystem<T>::AddComponent(std::string entity, T instance){
+    void JComponentDB<T>::AddComponent(std::string entity, T instance){
         if(components.count(entity)) return;
         components.insert(std::pair<std::string, T>(entity, instance));
     }
 
     template<typename T>
-    void JSystem<T>::ReplaceComponent(std::string entity, T instance){
+    void JComponentDB<T>::ReplaceComponent(std::string entity, T instance){
         components.insert_or_assign(std::pair<std::string, T>(entity, instance));
     }
 
     template<typename T>
-    bool JSystem<T>::GetComponent(std::string entity, T& data){
+    bool JComponentDB<T>::GetComponent(std::string entity, T& data){
         if(!components.count(entity)) return false;
         data = components.at(entity);
         return true;
     }
 
     template<typename T>
-    void JSystem<T>::RemoveComponent(std::string entity){
+    void JComponentDB<T>::RemoveComponent(std::string entity){
 
     }
 
+    template<typename T>
+    JComponentDB<T>& JSystem::GetComponentDB(){
+        for(auto& db : ecs->dbs){
+            if(db.type_name == typeid(T).name()){
+                return (JComponentDB<T>)db;
+            }
+        }
+    }
+
     template<typename T> // Component type
-    void JECS::RegisterSystem(JSystem<T> system){
-        auto it = std::find(systems.begin(), systems.end(), system);
-        if(it == systems.end()) return;
-        systems.push_back(system);
+    void JECS::RegisterDB(JComponentDB<T> db){
+        auto it = std::find(dbs.begin(), dbs.end(), system);
+        if(it == dbs.end()) return;
+        dbs.push_back(system);
     }
 
     std::string JECS::CreateEntity() {
@@ -51,8 +60,8 @@ namespace January::Engine::Node {
     void JECS::DeleteEntity(const std::string id){
         auto it = std::find(entites.begin(), entites.end(), id);
         if(it == entites.end()) return;
-        for(auto& sy : systems){
-            sy.RemoveComponent(id);
+        for(auto& db : dbs){
+            db.RemoveComponent(id);
         }
         entites.erase(it);
     }
@@ -65,5 +74,20 @@ namespace January::Engine::Node {
     template<typename T> // Component type
     bool JECS::UnRegisterComponent(std::string id){
 
+    }
+
+    void JECS::RegisterSystem(JSystem system){
+        auto it = std::find(systems.begin(), systems.end(), system);
+        if(it == systems.end()) return;
+        systems.push_back(system);
+        std::sort(systems.begin(), systems.end(), [](JSystem a, JSystem b){
+            return a.weight > b.weight;
+        });
+    }
+
+    void JECS::ExecuteAll(){
+        for(auto& system : systems){
+            
+        }
     }
 }
