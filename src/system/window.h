@@ -32,6 +32,7 @@ SOFTWARE.
 #include <stdlib.h>         // abort
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
+#include "../config.h"
 
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
