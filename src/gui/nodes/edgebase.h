@@ -31,6 +31,7 @@ struct ImColor;
 namespace ax::NodeEditor {
     struct NodeId;
     struct PinId;
+    struct LinkId;
 }
 
 namespace January::Engine::Node {

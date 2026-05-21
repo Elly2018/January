@@ -38,9 +38,9 @@ namespace January::Engine::Node {
 
     template<typename T> // Component type
     void JECS::RegisterDB(JComponentDB<T> db){
-        auto it = std::find(dbs.begin(), dbs.end(), system);
+        auto it = std::find(dbs.begin(), dbs.end(), db);
         if(it == dbs.end()) return;
-        dbs.push_back(system);
+        dbs.push_back(db);
     }
 
     std::string JECS::CreateEntity() {
@@ -68,18 +68,18 @@ namespace January::Engine::Node {
 
     template<typename T> // Component type
     bool JECS::RegisterComponent(std::string id, T comp){
-
+        return false;
     }
 
     template<typename T> // Component type
     bool JECS::UnRegisterComponent(std::string id){
-
+        return false;
     }
 
-    void JECS::RegisterSystem(JSystem system){
-        auto it = std::find(systems.begin(), systems.end(), system);
+    void JECS::RegisterSystem(JSystem sys){
+        auto it = std::find(systems.begin(), systems.end(), sys);
         if(it == systems.end()) return;
-        systems.push_back(system);
+        systems.push_back(sys);
         std::sort(systems.begin(), systems.end(), [](JSystem a, JSystem b){
             return a.weight > b.weight;
         });

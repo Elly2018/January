@@ -83,6 +83,8 @@ namespace January::Engine::Node {
         virtual void Update(std::vector<std::string> ids) {}
         
         int32_t weight;
+
+        bool operator==(const JSystem&) const = default;
     protected:
         template<typename T>
         JComponentDB<T>& GetComponentDB();
@@ -105,7 +107,7 @@ namespace January::Engine::Node {
         template<typename T> // Component type
         bool UnRegisterComponent(std::string id);
 
-        void RegisterSystem(JSystem system);
+        void RegisterSystem(JSystem sys);
 
         void ExecuteAll();
 

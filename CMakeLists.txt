@@ -94,6 +94,8 @@ add_executable(january
   ${Node_DIR}/imgui_node_editor_api.cpp
 )
 
+target_compile_options(january PRIVATE -mavx2)
+
 target_include_directories(january PUBLIC 
   ${LOG_DIR}/src
   ${SDL3_INCLUDE_DIRS}
