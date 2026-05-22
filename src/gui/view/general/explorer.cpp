@@ -47,7 +47,7 @@ namespace January::Engine::View {
     void JViewExplorer::Init() {
         JViewBase::Init();
         spdlog::info("Loaded View: Explorer");
-        Assets.name = "Assets";
+        folder_node.name = "Assets";
         path = "Assets";
         path_node.clear();
         path_node.push_back("Assets");

@@ -83,23 +83,39 @@ namespace January::Engine::View {
         void Focus(bool value) override;
 
     protected:
+        // Drawing path actions
+        // 0: Return last travel folder
+        // 1: Go to parent folder
+        // 2: Go to root folder, which is project path + "Assets"
         void DrawPathAction();
+        // Drawing path bar, with a row of folder button for quick travel
         void DrawPathBar();
+        // Left panel and right panel require splitter
+        // And this function is that splitter
+        // ImGui::SameLine is included, no need to write it
         void DrawMiddleHandle();
+        // Drawing left panel content
         void DrawLeftSide();
+        // Drawing right panel content
         void DrawRightSide();
+        // Handle item tooltip event
         void DrawItemTooltip(JFileContent& target);
+        // Handle item event, such as right click or double click
         void DrawItemEvent(JFileContent& target);
+        // Handle right panel background context menu event
         void DrawRightSide_Event();
-
+        // Update the folder list, this should get called when "path" variable changed
         void UpdatePathNode();
 
     public:
+        // Reset it
+        // Should be called when load a project
         void ReloadProject();
         // You will get project + Assets
         fs::path CurrentFolder();
         // The relative path base on project root folder
         std::string path = "Assets";
+        // Use for render path bar (The top bar with list of folder button for quick traval)
         std::vector<std::string> path_node;
 
     private:
@@ -111,6 +127,8 @@ namespace January::Engine::View {
         // Init will be the trigger
         // Define if the first event call is on.
         std::atomic_bool init = false;
+        // Because left right panel is using splitter
+        // The left width is dynamic which required a variable to record it
         std::atomic<float> leftWidth = 0;
         // The slider
         // Range [0 - 10]
@@ -118,10 +136,16 @@ namespace January::Engine::View {
         // 0: Line text display
         // 1-10: Grid item display
         std::atomic_int32_t imgSize = 1;
+        // Folder watcher extension worker
         filewatch::FileWatch<std::string>* watcher = nullptr;
-        std::mutex files_mtx;
+        // Right side files data
         std::vector<JFileContent> files = std::vector<JFileContent>();
-        JFolderContent Assets = JFolderContent();
+        std::mutex files_mtx;
+        // The left side folder tree structure
+        JFolderContent folder_node = JFolderContent();
+        std::mutex folder_node_mtx;
+        // Remember the travel history
+        // In order to make return last history button works
         std::stack<std::string> travel_record;
         std::mutex travel_record_mtx;
     };
