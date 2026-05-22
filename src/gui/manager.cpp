@@ -53,6 +53,7 @@ namespace January::Engine::View {
         vm.views.push_back(vm.blueprint);
         vm.views.push_back(vm.console);
         vm.views.push_back(vm.explorer);
+        vm.views.push_back(vm.hierarchy);
         vm.views.push_back(vm.inspector);
         vm.views.push_back(vm.preview);
         vm.views.push_back(vm.profiler);
