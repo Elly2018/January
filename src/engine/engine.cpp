@@ -153,6 +153,30 @@ namespace January::Engine {
         ImGui::MergeIconsWithLatestFont(16.f, false);
         jengine.context->emoji_font = io.Fonts->AddFontFromFileTTF("NotoEmoji-VariableFont_wght.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
+#ifdef _WIN32
+        io.Fonts->AddFontFromFileTTF("SourceHanSans-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+        io.Fonts->AddFontFromFileTTF("SourceHanSansK-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+        io.Fonts->AddFontFromFileTTF("SourceHanSansTC-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+#else
+        if(fs::exists("SourceHanSans-Medium.otf")) io.Fonts->AddFontFromFileTTF("SourceHanSans-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+        else io.Fonts->AddFontFromFileTTF("/usr/share/fonts/truetype/SourceHanSans-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+        
+        if(fs::exists("SourceHanSansK-Medium.otf")) io.Fonts->AddFontFromFileTTF("SourceHanSansK-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+        else io.Fonts->AddFontFromFileTTF("/usr/share/fonts/truetype/SourceHanSansK-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+
+        if(fs::exists("SourceHanSansTC-Medium.otf")) io.Fonts->AddFontFromFileTTF("SourceHanSansTC-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+        else io.Fonts->AddFontFromFileTTF("/usr/share/fonts/truetype/SourceHanSansTC-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+
+        {
+            ImFontConfig font_cfg;
+            font_cfg.FontDataOwnedByAtlas = false;
+            io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
+
+            // Initialize notify
+            ImGui::MergeIconsWithLatestFont(16.f, false);
+        }
+#endif
+
         // Initialize notify
         io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
