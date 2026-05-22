@@ -1,12 +1,14 @@
 #!/bin/bash
 
 # Create build directory
+mkdir -p bin
 mkdir -p build
-cd build
+cd bin
 
 cp ../res/*.ttf .
 cp ../res/*.otf .
 
+cd ../build
 # Configure CMake
 cmake .. -DCMAKE_BUILD_TYPE=Release
 
