@@ -35,20 +35,42 @@ SOFTWARE.
 namespace fs = std::filesystem;
 
 namespace January::Engine::View {
+    //
+    // This content the file detail description
+    //
     struct JFileContent {
+        // File unique uuid for engine
         UUIDv4::UUID uuid;
+        // File title, normally should be filename or foldername without extension
         std::string title;
+        // Absolute path for this file or folder
         fs::path path;
+        // File or Folder
         bool is_dir;
+        // The size of the file
         uintmax_t filesize;
     };
 
+    //
+    // Folder tree node structure
+    // This use for the left side of the panel
+    //
     struct JFolderContent {
+        // Display label on the gui
         std::string name;
+        // Is user open this folder or not
         bool is_open;
+        // Children of the folder node
         std::vector<JFolderContent*> children;
+        // Destroy all the children recursivily
+        void CleanChildren();
     };
 
+    //
+    // The asset browser view
+    // Handle files and folder etc...
+    // Should only show the project "Assets" relative folder content
+    //
     class JViewExplorer : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewExplorer) {}
@@ -70,16 +92,24 @@ namespace January::Engine::View {
 
     public:
         fs::path CurrentFolder();
-        // The relative path base on project path
+        // The relative path base on project "Assets" folder
         std::string path = "";
 
     private:
+        // Modify by tyhe file watcher worker callback
         // Does user change the path by input or enter folder etc...
+        // When changed is true
+        // It will re-generate the "files" variables
         bool changed = false;
         // Init will be the trigger
         // Define if the first event call is on.
         bool init = false;
         float leftWidth = 0;
+        // The slider
+        // Range [0 - 10]
+        // Display mode will change base on variable is 0 or not
+        // 0: Line text display
+        // 1-10: Grid item display
         int32_t imgSize = 1;
         int32_t selection = 0;
         filewatch::FileWatch<std::string>* watcher = nullptr;

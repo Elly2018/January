@@ -34,6 +34,15 @@ SOFTWARE.
 namespace fs = std::filesystem;
 
 namespace January::Engine::View {
+
+    void JFolderContent::CleanChildren(){
+        for(auto c : children){
+            c->CleanChildren();
+            delete c;
+        }
+        children.clear();
+    }
+
     void JViewExplorer::Init() {
         JViewBase::Init();
         spdlog::info("Loaded View: Explorer");
