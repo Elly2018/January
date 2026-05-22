@@ -121,9 +121,9 @@ namespace January::Engine::View {
             {
                 ImGui::BeginChild("ViewExplorer_Right", ImVec2(rightWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
                 DrawRightSide();
+                DrawRightSide_Event();
                 ImGui::EndChild();
             }
-            DrawRightSide_Event();
         }else{
             ImGui::Text("You need to choose path fist");
         }
@@ -191,7 +191,8 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawItemEvent(JFileContent& target){
-        if(ImGui::BeginPopupContextItem("ViewExplorer_Right_ContextItem")){
+        std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + target.path.string();
+        if(ImGui::BeginPopupContextItem(popup_id.c_str())){
             if (ImGui::Selectable("Delete")){
                 
             }
@@ -200,7 +201,9 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawRightSide_Event(){
-        if(ImGui::BeginPopupContextItem("ViewExplorer_Right_ContextItem")){
+        ImGuiPopupFlags background_flags = ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
+
+        if(ImGui::BeginPopupContextWindow("ViewExplorer_Right_ContextItem", background_flags)){
             if (ImGui::Selectable("Create Folder")){
                 
             }
@@ -211,7 +214,7 @@ namespace January::Engine::View {
                 
             }
             if (ImGui::Selectable("Refresh")){
-                
+                changed = true;
             }
             ImGui::EndPopup();
         }
