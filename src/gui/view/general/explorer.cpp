@@ -174,6 +174,7 @@ namespace January::Engine::View {
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
+        ImGui::BeginDisabled(path == "Assets");
         if(ImGui::Button("\uf015")){ // Home
             changed = true;
             travel_record.push(path);
@@ -181,6 +182,7 @@ namespace January::Engine::View {
             spdlog::debug("Asset browse {}", path);
             UpdatePathNode();
         }
+        ImGui::EndDisabled();
         ImGui::PopFont();
     }
 
