@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "manager.h"
-#include <nfd.h>
 #include "view/allview.h"
 #include "popup/project_dashboard.h"
 #include "../engine/engine.h"
@@ -34,7 +33,6 @@ SOFTWARE.
 
 namespace January::Engine::View {
     void VInit(ViewManager& vm, struct System::JSystem& jsystem){
-        NFD_Init();
         vm.application = new JViewApplication(std::string("Application##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::APPLICATION, *jsystem.window, *jsystem.engine);
         vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
         vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);

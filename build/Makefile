@@ -48,27 +48,47 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/bin/cmake
+CMAKE_COMMAND = /usr/local/bin/cmake
 
 # The command to remove a file.
-RM = /usr/bin/cmake -E rm -f
+RM = /usr/local/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /media/zhuelly/Project/Developer/January
+CMAKE_SOURCE_DIR = /home/funique0807/dev/January
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /media/zhuelly/Project/Developer/January/build
+CMAKE_BINARY_DIR = /home/funique0807/dev/January/build
 
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target package
+package: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Run CPack packaging tool..."
+	/usr/local/bin/cpack --config ./CPackConfig.cmake
+.PHONY : package
+
+# Special rule for the target package
+package/fast: package
+.PHONY : package/fast
+
+# Special rule for the target package_source
+package_source:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Run CPack packaging tool for source..."
+	/usr/local/bin/cpack --config ./CPackSourceConfig.cmake
+.PHONY : package_source
+
+# Special rule for the target package_source
+package_source/fast: package_source
+.PHONY : package_source/fast
+
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
+	/usr/local/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -78,19 +98,71 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/local/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/local/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/local/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/zhuelly/Project/Developer/January/build/CMakeFiles /media/zhuelly/Project/Developer/January/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/funique0807/dev/January/build/CMakeFiles /home/funique0807/dev/January/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/zhuelly/Project/Developer/January/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/funique0807/dev/January/build/CMakeFiles 0
 .PHONY : all
+
+# The main codegen target
+codegen: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/funique0807/dev/January/build/CMakeFiles /home/funique0807/dev/January/build//CMakeFiles/progress.marks
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 codegen
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/funique0807/dev/January/build/CMakeFiles 0
+.PHONY : codegen
 
 # The main clean target
 clean:
@@ -113,6 +185,7 @@ preinstall/fast:
 
 # clear depends
 depend:
+	$(CMAKE_COMMAND) -P /home/funique0807/dev/January/build/CMakeFiles/VerifyGlobs.cmake
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
@@ -128,6 +201,2801 @@ january: cmake_check_build_system
 january/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/build
 .PHONY : january/fast
+
+#=============================================================================
+# Target rules for targets named DiligentCore-static
+
+# Build rule for target.
+DiligentCore-static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 DiligentCore-static
+.PHONY : DiligentCore-static
+
+# fast build rule for target.
+DiligentCore-static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/CMakeFiles/DiligentCore-static.dir/build.make third-party/diligent_engine/DiligentCore/CMakeFiles/DiligentCore-static.dir/build
+.PHONY : DiligentCore-static/fast
+
+#=============================================================================
+# Target rules for targets named glew-static
+
+# Build rule for target.
+glew-static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glew-static
+.PHONY : glew-static
+
+# fast build rule for target.
+glew-static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/glew/CMakeFiles/glew-static.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/glew/CMakeFiles/glew-static.dir/build
+.PHONY : glew-static/fast
+
+#=============================================================================
+# Target rules for targets named spirv-tools-pkg-config
+
+# Build rule for target.
+spirv-tools-pkg-config: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-tools-pkg-config
+.PHONY : spirv-tools-pkg-config
+
+# fast build rule for target.
+spirv-tools-pkg-config/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/CMakeFiles/spirv-tools-pkg-config.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/CMakeFiles/spirv-tools-pkg-config.dir/build
+.PHONY : spirv-tools-pkg-config/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-spv-amd-sevp
+
+# Build rule for target.
+spv-tools-spv-amd-sevp: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-spv-amd-sevp
+.PHONY : spv-tools-spv-amd-sevp
+
+# fast build rule for target.
+spv-tools-spv-amd-sevp/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-sevp.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-sevp.dir/build
+.PHONY : spv-tools-spv-amd-sevp/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-spv-amd-stm
+
+# Build rule for target.
+spv-tools-spv-amd-stm: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-spv-amd-stm
+.PHONY : spv-tools-spv-amd-stm
+
+# fast build rule for target.
+spv-tools-spv-amd-stm/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-stm.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-stm.dir/build
+.PHONY : spv-tools-spv-amd-stm/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-spv-amd-gs
+
+# Build rule for target.
+spv-tools-spv-amd-gs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-spv-amd-gs
+.PHONY : spv-tools-spv-amd-gs
+
+# fast build rule for target.
+spv-tools-spv-amd-gs/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-gs.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-gs.dir/build
+.PHONY : spv-tools-spv-amd-gs/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-spv-amd-sb
+
+# Build rule for target.
+spv-tools-spv-amd-sb: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-spv-amd-sb
+.PHONY : spv-tools-spv-amd-sb
+
+# fast build rule for target.
+spv-tools-spv-amd-sb/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-sb.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-spv-amd-sb.dir/build
+.PHONY : spv-tools-spv-amd-sb/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-debuginfo
+
+# Build rule for target.
+spv-tools-debuginfo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-debuginfo
+.PHONY : spv-tools-debuginfo
+
+# fast build rule for target.
+spv-tools-debuginfo/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-debuginfo.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-debuginfo.dir/build
+.PHONY : spv-tools-debuginfo/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-cldi100
+
+# Build rule for target.
+spv-tools-cldi100: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-cldi100
+.PHONY : spv-tools-cldi100
+
+# fast build rule for target.
+spv-tools-cldi100/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-cldi100.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-cldi100.dir/build
+.PHONY : spv-tools-cldi100/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-shdi100
+
+# Build rule for target.
+spv-tools-shdi100: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-shdi100
+.PHONY : spv-tools-shdi100
+
+# fast build rule for target.
+spv-tools-shdi100/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-shdi100.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-shdi100.dir/build
+.PHONY : spv-tools-shdi100/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-clspvreflection
+
+# Build rule for target.
+spv-tools-clspvreflection: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-clspvreflection
+.PHONY : spv-tools-clspvreflection
+
+# fast build rule for target.
+spv-tools-clspvreflection/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-clspvreflection.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-clspvreflection.dir/build
+.PHONY : spv-tools-clspvreflection/fast
+
+#=============================================================================
+# Target rules for targets named spv-tools-vkspreflection
+
+# Build rule for target.
+spv-tools-vkspreflection: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spv-tools-vkspreflection
+.PHONY : spv-tools-vkspreflection
+
+# fast build rule for target.
+spv-tools-vkspreflection/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-vkspreflection.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spv-tools-vkspreflection.dir/build
+.PHONY : spv-tools-vkspreflection/fast
+
+#=============================================================================
+# Target rules for targets named spirv-tools-header-DebugInfo
+
+# Build rule for target.
+spirv-tools-header-DebugInfo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-tools-header-DebugInfo
+.PHONY : spirv-tools-header-DebugInfo
+
+# fast build rule for target.
+spirv-tools-header-DebugInfo/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-header-DebugInfo.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-header-DebugInfo.dir/build
+.PHONY : spirv-tools-header-DebugInfo/fast
+
+#=============================================================================
+# Target rules for targets named spirv-tools-header-OpenCLDebugInfo100
+
+# Build rule for target.
+spirv-tools-header-OpenCLDebugInfo100: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-tools-header-OpenCLDebugInfo100
+.PHONY : spirv-tools-header-OpenCLDebugInfo100
+
+# fast build rule for target.
+spirv-tools-header-OpenCLDebugInfo100/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-header-OpenCLDebugInfo100.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-header-OpenCLDebugInfo100.dir/build
+.PHONY : spirv-tools-header-OpenCLDebugInfo100/fast
+
+#=============================================================================
+# Target rules for targets named spirv-tools-header-NonSemanticShaderDebugInfo100
+
+# Build rule for target.
+spirv-tools-header-NonSemanticShaderDebugInfo100: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-tools-header-NonSemanticShaderDebugInfo100
+.PHONY : spirv-tools-header-NonSemanticShaderDebugInfo100
+
+# fast build rule for target.
+spirv-tools-header-NonSemanticShaderDebugInfo100/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-header-NonSemanticShaderDebugInfo100.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-header-NonSemanticShaderDebugInfo100.dir/build
+.PHONY : spirv-tools-header-NonSemanticShaderDebugInfo100/fast
+
+#=============================================================================
+# Target rules for targets named spirv-tools-vimsyntax
+
+# Build rule for target.
+spirv-tools-vimsyntax: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-tools-vimsyntax
+.PHONY : spirv-tools-vimsyntax
+
+# fast build rule for target.
+spirv-tools-vimsyntax/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-vimsyntax.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-vimsyntax.dir/build
+.PHONY : spirv-tools-vimsyntax/fast
+
+#=============================================================================
+# Target rules for targets named core_tables
+
+# Build rule for target.
+core_tables: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 core_tables
+.PHONY : core_tables
+
+# fast build rule for target.
+core_tables/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/core_tables.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/core_tables.dir/build
+.PHONY : core_tables/fast
+
+#=============================================================================
+# Target rules for targets named enum_string_mapping
+
+# Build rule for target.
+enum_string_mapping: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 enum_string_mapping
+.PHONY : enum_string_mapping
+
+# fast build rule for target.
+enum_string_mapping/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/enum_string_mapping.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/enum_string_mapping.dir/build
+.PHONY : enum_string_mapping/fast
+
+#=============================================================================
+# Target rules for targets named extinst_tables
+
+# Build rule for target.
+extinst_tables: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 extinst_tables
+.PHONY : extinst_tables
+
+# fast build rule for target.
+extinst_tables/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/extinst_tables.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/extinst_tables.dir/build
+.PHONY : extinst_tables/fast
+
+#=============================================================================
+# Target rules for targets named spirv-tools-build-version
+
+# Build rule for target.
+spirv-tools-build-version: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-tools-build-version
+.PHONY : spirv-tools-build-version
+
+# fast build rule for target.
+spirv-tools-build-version/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-build-version.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/spirv-tools-build-version.dir/build
+.PHONY : spirv-tools-build-version/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV-Tools-shared
+
+# Build rule for target.
+SPIRV-Tools-shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV-Tools-shared
+.PHONY : SPIRV-Tools-shared
+
+# fast build rule for target.
+SPIRV-Tools-shared/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/SPIRV-Tools-shared.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/SPIRV-Tools-shared.dir/build
+.PHONY : SPIRV-Tools-shared/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV-Tools-static
+
+# Build rule for target.
+SPIRV-Tools-static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV-Tools-static
+.PHONY : SPIRV-Tools-static
+
+# fast build rule for target.
+SPIRV-Tools-static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/SPIRV-Tools-static.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/SPIRV-Tools-static.dir/build
+.PHONY : SPIRV-Tools-static/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV-Tools-opt
+
+# Build rule for target.
+SPIRV-Tools-opt: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV-Tools-opt
+.PHONY : SPIRV-Tools-opt
+
+# fast build rule for target.
+SPIRV-Tools-opt/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/opt/CMakeFiles/SPIRV-Tools-opt.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/opt/CMakeFiles/SPIRV-Tools-opt.dir/build
+.PHONY : SPIRV-Tools-opt/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV-Tools-reduce
+
+# Build rule for target.
+SPIRV-Tools-reduce: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV-Tools-reduce
+.PHONY : SPIRV-Tools-reduce
+
+# fast build rule for target.
+SPIRV-Tools-reduce/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/reduce/CMakeFiles/SPIRV-Tools-reduce.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/reduce/CMakeFiles/SPIRV-Tools-reduce.dir/build
+.PHONY : SPIRV-Tools-reduce/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV-Tools-link
+
+# Build rule for target.
+SPIRV-Tools-link: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV-Tools-link
+.PHONY : SPIRV-Tools-link
+
+# fast build rule for target.
+SPIRV-Tools-link/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/link/CMakeFiles/SPIRV-Tools-link.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/link/CMakeFiles/SPIRV-Tools-link.dir/build
+.PHONY : SPIRV-Tools-link/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV-Tools-lint
+
+# Build rule for target.
+SPIRV-Tools-lint: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV-Tools-lint
+.PHONY : SPIRV-Tools-lint
+
+# fast build rule for target.
+SPIRV-Tools-lint/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/lint/CMakeFiles/SPIRV-Tools-lint.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/lint/CMakeFiles/SPIRV-Tools-lint.dir/build
+.PHONY : SPIRV-Tools-lint/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV-Tools-diff
+
+# Build rule for target.
+SPIRV-Tools-diff: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV-Tools-diff
+.PHONY : SPIRV-Tools-diff
+
+# fast build rule for target.
+SPIRV-Tools-diff/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/diff/CMakeFiles/SPIRV-Tools-diff.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Tools/source/diff/CMakeFiles/SPIRV-Tools-diff.dir/build
+.PHONY : SPIRV-Tools-diff/fast
+
+#=============================================================================
+# Target rules for targets named GenericCodeGen
+
+# Build rule for target.
+GenericCodeGen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 GenericCodeGen
+.PHONY : GenericCodeGen
+
+# fast build rule for target.
+GenericCodeGen/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/GenericCodeGen.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/GenericCodeGen.dir/build
+.PHONY : GenericCodeGen/fast
+
+#=============================================================================
+# Target rules for targets named MachineIndependent
+
+# Build rule for target.
+MachineIndependent: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MachineIndependent
+.PHONY : MachineIndependent
+
+# fast build rule for target.
+MachineIndependent/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/MachineIndependent.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/MachineIndependent.dir/build
+.PHONY : MachineIndependent/fast
+
+#=============================================================================
+# Target rules for targets named glslang
+
+# Build rule for target.
+glslang: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glslang
+.PHONY : glslang
+
+# fast build rule for target.
+glslang/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/glslang.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/glslang.dir/build
+.PHONY : glslang/fast
+
+#=============================================================================
+# Target rules for targets named glslang-default-resource-limits
+
+# Build rule for target.
+glslang-default-resource-limits: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 glslang-default-resource-limits
+.PHONY : glslang-default-resource-limits
+
+# fast build rule for target.
+glslang-default-resource-limits/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/glslang-default-resource-limits.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/CMakeFiles/glslang-default-resource-limits.dir/build
+.PHONY : glslang-default-resource-limits/fast
+
+#=============================================================================
+# Target rules for targets named OSDependent
+
+# Build rule for target.
+OSDependent: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 OSDependent
+.PHONY : OSDependent
+
+# fast build rule for target.
+OSDependent/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/OSDependent/Unix/CMakeFiles/OSDependent.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/glslang/glslang/OSDependent/Unix/CMakeFiles/OSDependent.dir/build
+.PHONY : OSDependent/fast
+
+#=============================================================================
+# Target rules for targets named SPIRV
+
+# Build rule for target.
+SPIRV: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SPIRV
+.PHONY : SPIRV
+
+# fast build rule for target.
+SPIRV/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/glslang/SPIRV/CMakeFiles/SPIRV.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/glslang/SPIRV/CMakeFiles/SPIRV.dir/build
+.PHONY : SPIRV/fast
+
+#=============================================================================
+# Target rules for targets named spirv-cross-core
+
+# Build rule for target.
+spirv-cross-core: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-cross-core
+.PHONY : spirv-cross-core
+
+# fast build rule for target.
+spirv-cross-core/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Cross/CMakeFiles/spirv-cross-core.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Cross/CMakeFiles/spirv-cross-core.dir/build
+.PHONY : spirv-cross-core/fast
+
+#=============================================================================
+# Target rules for targets named spirv-cross-glsl
+
+# Build rule for target.
+spirv-cross-glsl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 spirv-cross-glsl
+.PHONY : spirv-cross-glsl
+
+# fast build rule for target.
+spirv-cross-glsl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Cross/CMakeFiles/spirv-cross-glsl.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/SPIRV-Cross/CMakeFiles/spirv-cross-glsl.dir/build
+.PHONY : spirv-cross-glsl/fast
+
+#=============================================================================
+# Target rules for targets named xxhash
+
+# Build rule for target.
+xxhash: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 xxhash
+.PHONY : xxhash
+
+# fast build rule for target.
+xxhash/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/ThirdParty/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/build.make third-party/diligent_engine/DiligentCore/ThirdParty/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/build
+.PHONY : xxhash/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-Primitives
+
+# Build rule for target.
+Diligent-Primitives: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-Primitives
+.PHONY : Diligent-Primitives
+
+# fast build rule for target.
+Diligent-Primitives/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Primitives/CMakeFiles/Diligent-Primitives.dir/build.make third-party/diligent_engine/DiligentCore/Primitives/CMakeFiles/Diligent-Primitives.dir/build
+.PHONY : Diligent-Primitives/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-BasicPlatform
+
+# Build rule for target.
+Diligent-BasicPlatform: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-BasicPlatform
+.PHONY : Diligent-BasicPlatform
+
+# fast build rule for target.
+Diligent-BasicPlatform/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Platforms/Basic/CMakeFiles/Diligent-BasicPlatform.dir/build.make third-party/diligent_engine/DiligentCore/Platforms/Basic/CMakeFiles/Diligent-BasicPlatform.dir/build
+.PHONY : Diligent-BasicPlatform/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-LinuxPlatform
+
+# Build rule for target.
+Diligent-LinuxPlatform: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-LinuxPlatform
+.PHONY : Diligent-LinuxPlatform
+
+# fast build rule for target.
+Diligent-LinuxPlatform/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Platforms/Linux/CMakeFiles/Diligent-LinuxPlatform.dir/build.make third-party/diligent_engine/DiligentCore/Platforms/Linux/CMakeFiles/Diligent-LinuxPlatform.dir/build
+.PHONY : Diligent-LinuxPlatform/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-Common
+
+# Build rule for target.
+Diligent-Common: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-Common
+.PHONY : Diligent-Common
+
+# fast build rule for target.
+Diligent-Common/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Common/CMakeFiles/Diligent-Common.dir/build.make third-party/diligent_engine/DiligentCore/Common/CMakeFiles/Diligent-Common.dir/build
+.PHONY : Diligent-Common/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsAccessories
+
+# Build rule for target.
+Diligent-GraphicsAccessories: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsAccessories
+.PHONY : Diligent-GraphicsAccessories
+
+# fast build rule for target.
+Diligent-GraphicsAccessories/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsAccessories/CMakeFiles/Diligent-GraphicsAccessories.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsAccessories/CMakeFiles/Diligent-GraphicsAccessories.dir/build
+.PHONY : Diligent-GraphicsAccessories/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsEngine
+
+# Build rule for target.
+Diligent-GraphicsEngine: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsEngine
+.PHONY : Diligent-GraphicsEngine
+
+# fast build rule for target.
+Diligent-GraphicsEngine/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngine/CMakeFiles/Diligent-GraphicsEngine.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngine/CMakeFiles/Diligent-GraphicsEngine.dir/build
+.PHONY : Diligent-GraphicsEngine/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-HLSL2GLSLConverterLib
+
+# Build rule for target.
+Diligent-HLSL2GLSLConverterLib: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-HLSL2GLSLConverterLib
+.PHONY : Diligent-HLSL2GLSLConverterLib
+
+# fast build rule for target.
+Diligent-HLSL2GLSLConverterLib/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/HLSL2GLSLConverterLib/CMakeFiles/Diligent-HLSL2GLSLConverterLib.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/HLSL2GLSLConverterLib/CMakeFiles/Diligent-HLSL2GLSLConverterLib.dir/build
+.PHONY : Diligent-HLSL2GLSLConverterLib/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-ShaderTools
+
+# Build rule for target.
+Diligent-ShaderTools: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-ShaderTools
+.PHONY : Diligent-ShaderTools
+
+# fast build rule for target.
+Diligent-ShaderTools/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/ShaderTools/CMakeFiles/Diligent-ShaderTools.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/ShaderTools/CMakeFiles/Diligent-ShaderTools.dir/build
+.PHONY : Diligent-ShaderTools/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsEngineNextGenBase
+
+# Build rule for target.
+Diligent-GraphicsEngineNextGenBase: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsEngineNextGenBase
+.PHONY : Diligent-GraphicsEngineNextGenBase
+
+# fast build rule for target.
+Diligent-GraphicsEngineNextGenBase/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineNextGenBase/CMakeFiles/Diligent-GraphicsEngineNextGenBase.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineNextGenBase/CMakeFiles/Diligent-GraphicsEngineNextGenBase.dir/build
+.PHONY : Diligent-GraphicsEngineNextGenBase/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsEngineVk-static
+
+# Build rule for target.
+Diligent-GraphicsEngineVk-static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsEngineVk-static
+.PHONY : Diligent-GraphicsEngineVk-static
+
+# fast build rule for target.
+Diligent-GraphicsEngineVk-static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineVulkan/CMakeFiles/Diligent-GraphicsEngineVk-static.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineVulkan/CMakeFiles/Diligent-GraphicsEngineVk-static.dir/build
+.PHONY : Diligent-GraphicsEngineVk-static/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsEngineVk-shared
+
+# Build rule for target.
+Diligent-GraphicsEngineVk-shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsEngineVk-shared
+.PHONY : Diligent-GraphicsEngineVk-shared
+
+# fast build rule for target.
+Diligent-GraphicsEngineVk-shared/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineVulkan/CMakeFiles/Diligent-GraphicsEngineVk-shared.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineVulkan/CMakeFiles/Diligent-GraphicsEngineVk-shared.dir/build
+.PHONY : Diligent-GraphicsEngineVk-shared/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsEngineOpenGL-static
+
+# Build rule for target.
+Diligent-GraphicsEngineOpenGL-static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsEngineOpenGL-static
+.PHONY : Diligent-GraphicsEngineOpenGL-static
+
+# fast build rule for target.
+Diligent-GraphicsEngineOpenGL-static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineOpenGL/CMakeFiles/Diligent-GraphicsEngineOpenGL-static.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineOpenGL/CMakeFiles/Diligent-GraphicsEngineOpenGL-static.dir/build
+.PHONY : Diligent-GraphicsEngineOpenGL-static/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsEngineOpenGL-shared
+
+# Build rule for target.
+Diligent-GraphicsEngineOpenGL-shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsEngineOpenGL-shared
+.PHONY : Diligent-GraphicsEngineOpenGL-shared
+
+# fast build rule for target.
+Diligent-GraphicsEngineOpenGL-shared/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineOpenGL/CMakeFiles/Diligent-GraphicsEngineOpenGL-shared.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineOpenGL/CMakeFiles/Diligent-GraphicsEngineOpenGL-shared.dir/build
+.PHONY : Diligent-GraphicsEngineOpenGL-shared/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GLAdapterSelector
+
+# Build rule for target.
+Diligent-GLAdapterSelector: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GLAdapterSelector
+.PHONY : Diligent-GLAdapterSelector
+
+# fast build rule for target.
+Diligent-GLAdapterSelector/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineOpenGL/CMakeFiles/Diligent-GLAdapterSelector.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsEngineOpenGL/CMakeFiles/Diligent-GLAdapterSelector.dir/build
+.PHONY : Diligent-GLAdapterSelector/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-Archiver-static
+
+# Build rule for target.
+Diligent-Archiver-static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-Archiver-static
+.PHONY : Diligent-Archiver-static
+
+# fast build rule for target.
+Diligent-Archiver-static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/Archiver/CMakeFiles/Diligent-Archiver-static.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/Archiver/CMakeFiles/Diligent-Archiver-static.dir/build
+.PHONY : Diligent-Archiver-static/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-Archiver-shared
+
+# Build rule for target.
+Diligent-Archiver-shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-Archiver-shared
+.PHONY : Diligent-Archiver-shared
+
+# fast build rule for target.
+Diligent-Archiver-shared/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/Archiver/CMakeFiles/Diligent-Archiver-shared.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/Archiver/CMakeFiles/Diligent-Archiver-shared.dir/build
+.PHONY : Diligent-Archiver-shared/fast
+
+#=============================================================================
+# Target rules for targets named Diligent-GraphicsTools
+
+# Build rule for target.
+Diligent-GraphicsTools: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Diligent-GraphicsTools
+.PHONY : Diligent-GraphicsTools
+
+# fast build rule for target.
+Diligent-GraphicsTools/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/diligent_engine/DiligentCore/Graphics/GraphicsTools/CMakeFiles/Diligent-GraphicsTools.dir/build.make third-party/diligent_engine/DiligentCore/Graphics/GraphicsTools/CMakeFiles/Diligent-GraphicsTools.dir/build
+.PHONY : Diligent-GraphicsTools/fast
+
+#=============================================================================
+# Target rules for targets named SDL3-static
+
+# Build rule for target.
+SDL3-static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SDL3-static
+.PHONY : SDL3-static
+
+# fast build rule for target.
+SDL3-static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/SDL3/CMakeFiles/SDL3-static.dir/build.make third-party/SDL3/CMakeFiles/SDL3-static.dir/build
+.PHONY : SDL3-static/fast
+
+#=============================================================================
+# Target rules for targets named SDL3_test
+
+# Build rule for target.
+SDL3_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SDL3_test
+.PHONY : SDL3_test
+
+# fast build rule for target.
+SDL3_test/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/SDL3/CMakeFiles/SDL3_test.dir/build.make third-party/SDL3/CMakeFiles/SDL3_test.dir/build
+.PHONY : SDL3_test/fast
+
+#=============================================================================
+# Target rules for targets named curl-ca-bundle
+
+# Build rule for target.
+curl-ca-bundle: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-ca-bundle
+.PHONY : curl-ca-bundle
+
+# fast build rule for target.
+curl-ca-bundle/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/CMakeFiles/curl-ca-bundle.dir/build.make third-party/libcurl/CMakeFiles/curl-ca-bundle.dir/build
+.PHONY : curl-ca-bundle/fast
+
+#=============================================================================
+# Target rules for targets named curl-ca-firefox
+
+# Build rule for target.
+curl-ca-firefox: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-ca-firefox
+.PHONY : curl-ca-firefox
+
+# fast build rule for target.
+curl-ca-firefox/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/CMakeFiles/curl-ca-firefox.dir/build.make third-party/libcurl/CMakeFiles/curl-ca-firefox.dir/build
+.PHONY : curl-ca-firefox/fast
+
+#=============================================================================
+# Target rules for targets named curl-lint
+
+# Build rule for target.
+curl-lint: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-lint
+.PHONY : curl-lint
+
+# fast build rule for target.
+curl-lint/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/CMakeFiles/curl-lint.dir/build.make third-party/libcurl/CMakeFiles/curl-lint.dir/build
+.PHONY : curl-lint/fast
+
+#=============================================================================
+# Target rules for targets named curl_uninstall
+
+# Build rule for target.
+curl_uninstall: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl_uninstall
+.PHONY : curl_uninstall
+
+# fast build rule for target.
+curl_uninstall/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/CMakeFiles/curl_uninstall.dir/build.make third-party/libcurl/CMakeFiles/curl_uninstall.dir/build
+.PHONY : curl_uninstall/fast
+
+#=============================================================================
+# Target rules for targets named curl-generate-curl-config.1
+
+# Build rule for target.
+curl-generate-curl-config.1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-generate-curl-config.1
+.PHONY : curl-generate-curl-config.1
+
+# fast build rule for target.
+curl-generate-curl-config.1/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/CMakeFiles/curl-generate-curl-config.1.dir/build.make third-party/libcurl/docs/CMakeFiles/curl-generate-curl-config.1.dir/build
+.PHONY : curl-generate-curl-config.1/fast
+
+#=============================================================================
+# Target rules for targets named curl-generate-mk-ca-bundle.1
+
+# Build rule for target.
+curl-generate-mk-ca-bundle.1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-generate-mk-ca-bundle.1
+.PHONY : curl-generate-mk-ca-bundle.1
+
+# fast build rule for target.
+curl-generate-mk-ca-bundle.1/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/CMakeFiles/curl-generate-mk-ca-bundle.1.dir/build.make third-party/libcurl/docs/CMakeFiles/curl-generate-mk-ca-bundle.1.dir/build
+.PHONY : curl-generate-mk-ca-bundle.1/fast
+
+#=============================================================================
+# Target rules for targets named curl-generate-wcurl.1
+
+# Build rule for target.
+curl-generate-wcurl.1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-generate-wcurl.1
+.PHONY : curl-generate-wcurl.1
+
+# fast build rule for target.
+curl-generate-wcurl.1/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/CMakeFiles/curl-generate-wcurl.1.dir/build.make third-party/libcurl/docs/CMakeFiles/curl-generate-wcurl.1.dir/build
+.PHONY : curl-generate-wcurl.1/fast
+
+#=============================================================================
+# Target rules for targets named curl-generate-runtests.1
+
+# Build rule for target.
+curl-generate-runtests.1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-generate-runtests.1
+.PHONY : curl-generate-runtests.1
+
+# fast build rule for target.
+curl-generate-runtests.1/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/CMakeFiles/curl-generate-runtests.1.dir/build.make third-party/libcurl/docs/CMakeFiles/curl-generate-runtests.1.dir/build
+.PHONY : curl-generate-runtests.1/fast
+
+#=============================================================================
+# Target rules for targets named curl-generate-testcurl.1
+
+# Build rule for target.
+curl-generate-testcurl.1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-generate-testcurl.1
+.PHONY : curl-generate-testcurl.1
+
+# fast build rule for target.
+curl-generate-testcurl.1/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/CMakeFiles/curl-generate-testcurl.1.dir/build.make third-party/libcurl/docs/CMakeFiles/curl-generate-testcurl.1.dir/build
+.PHONY : curl-generate-testcurl.1/fast
+
+#=============================================================================
+# Target rules for targets named curl-man
+
+# Build rule for target.
+curl-man: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-man
+.PHONY : curl-man
+
+# fast build rule for target.
+curl-man/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/libcurl/CMakeFiles/curl-man.dir/build.make third-party/libcurl/docs/libcurl/CMakeFiles/curl-man.dir/build
+.PHONY : curl-man/fast
+
+#=============================================================================
+# Target rules for targets named curl-opts-man
+
+# Build rule for target.
+curl-opts-man: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-opts-man
+.PHONY : curl-opts-man
+
+# fast build rule for target.
+curl-opts-man/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/libcurl/opts/CMakeFiles/curl-opts-man.dir/build.make third-party/libcurl/docs/libcurl/opts/CMakeFiles/curl-opts-man.dir/build
+.PHONY : curl-opts-man/fast
+
+#=============================================================================
+# Target rules for targets named generate-curl.1
+
+# Build rule for target.
+generate-curl.1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 generate-curl.1
+.PHONY : generate-curl.1
+
+# fast build rule for target.
+generate-curl.1/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/cmdline-opts/CMakeFiles/generate-curl.1.dir/build.make third-party/libcurl/docs/cmdline-opts/CMakeFiles/generate-curl.1.dir/build
+.PHONY : generate-curl.1/fast
+
+#=============================================================================
+# Target rules for targets named curl-listhelp
+
+# Build rule for target.
+curl-listhelp: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-listhelp
+.PHONY : curl-listhelp
+
+# fast build rule for target.
+curl-listhelp/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/cmdline-opts/CMakeFiles/curl-listhelp.dir/build.make third-party/libcurl/docs/cmdline-opts/CMakeFiles/curl-listhelp.dir/build
+.PHONY : curl-listhelp/fast
+
+#=============================================================================
+# Target rules for targets named curl-listcats
+
+# Build rule for target.
+curl-listcats: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-listcats
+.PHONY : curl-listcats
+
+# fast build rule for target.
+curl-listcats/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/cmdline-opts/CMakeFiles/curl-listcats.dir/build.make third-party/libcurl/docs/cmdline-opts/CMakeFiles/curl-listcats.dir/build
+.PHONY : curl-listcats/fast
+
+#=============================================================================
+# Target rules for targets named curlu
+
+# Build rule for target.
+curlu: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curlu
+.PHONY : curlu
+
+# fast build rule for target.
+curlu/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/lib/CMakeFiles/curlu.dir/build.make third-party/libcurl/lib/CMakeFiles/curlu.dir/build
+.PHONY : curlu/fast
+
+#=============================================================================
+# Target rules for targets named curlu-unitprotos
+
+# Build rule for target.
+curlu-unitprotos: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curlu-unitprotos
+.PHONY : curlu-unitprotos
+
+# fast build rule for target.
+curlu-unitprotos/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/lib/CMakeFiles/curlu-unitprotos.dir/build.make third-party/libcurl/lib/CMakeFiles/curlu-unitprotos.dir/build
+.PHONY : curlu-unitprotos/fast
+
+#=============================================================================
+# Target rules for targets named libcurl_static
+
+# Build rule for target.
+libcurl_static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libcurl_static
+.PHONY : libcurl_static
+
+# fast build rule for target.
+libcurl_static/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/lib/CMakeFiles/libcurl_static.dir/build.make third-party/libcurl/lib/CMakeFiles/libcurl_static.dir/build
+.PHONY : libcurl_static/fast
+
+#=============================================================================
+# Target rules for targets named curl-optiontable
+
+# Build rule for target.
+curl-optiontable: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-optiontable
+.PHONY : curl-optiontable
+
+# fast build rule for target.
+curl-optiontable/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/lib/CMakeFiles/curl-optiontable.dir/build.make third-party/libcurl/lib/CMakeFiles/curl-optiontable.dir/build
+.PHONY : curl-optiontable/fast
+
+#=============================================================================
+# Target rules for targets named curl
+
+# Build rule for target.
+curl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl
+.PHONY : curl
+
+# fast build rule for target.
+curl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/src/CMakeFiles/curl.dir/build.make third-party/libcurl/src/CMakeFiles/curl.dir/build
+.PHONY : curl/fast
+
+#=============================================================================
+# Target rules for targets named curlinfo
+
+# Build rule for target.
+curlinfo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curlinfo
+.PHONY : curlinfo
+
+# fast build rule for target.
+curlinfo/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/src/CMakeFiles/curlinfo.dir/build.make third-party/libcurl/src/CMakeFiles/curlinfo.dir/build
+.PHONY : curlinfo/fast
+
+#=============================================================================
+# Target rules for targets named curltool
+
+# Build rule for target.
+curltool: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curltool
+.PHONY : curltool
+
+# fast build rule for target.
+curltool/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/src/CMakeFiles/curltool.dir/build.make third-party/libcurl/src/CMakeFiles/curltool.dir/build
+.PHONY : curltool/fast
+
+#=============================================================================
+# Target rules for targets named curl-examples
+
+# Build rule for target.
+curl-examples: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-examples
+.PHONY : curl-examples
+
+# fast build rule for target.
+curl-examples/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-examples.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-examples.dir/build
+.PHONY : curl-examples/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-cacertinmem
+
+# Build rule for target.
+curl-example-cacertinmem: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-cacertinmem
+.PHONY : curl-example-cacertinmem
+
+# fast build rule for target.
+curl-example-cacertinmem/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-cacertinmem.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-cacertinmem.dir/build
+.PHONY : curl-example-cacertinmem/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-threaded
+
+# Build rule for target.
+curl-example-threaded: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-threaded
+.PHONY : curl-example-threaded
+
+# fast build rule for target.
+curl-example-threaded/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-threaded.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-threaded.dir/build
+.PHONY : curl-example-threaded/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-usercertinmem
+
+# Build rule for target.
+curl-example-usercertinmem: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-usercertinmem
+.PHONY : curl-example-usercertinmem
+
+# fast build rule for target.
+curl-example-usercertinmem/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-usercertinmem.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-usercertinmem.dir/build
+.PHONY : curl-example-usercertinmem/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-10-at-a-time
+
+# Build rule for target.
+curl-example-10-at-a-time: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-10-at-a-time
+.PHONY : curl-example-10-at-a-time
+
+# fast build rule for target.
+curl-example-10-at-a-time/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-10-at-a-time.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-10-at-a-time.dir/build
+.PHONY : curl-example-10-at-a-time/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-address-scope
+
+# Build rule for target.
+curl-example-address-scope: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-address-scope
+.PHONY : curl-example-address-scope
+
+# fast build rule for target.
+curl-example-address-scope/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-address-scope.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-address-scope.dir/build
+.PHONY : curl-example-address-scope/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-altsvc
+
+# Build rule for target.
+curl-example-altsvc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-altsvc
+.PHONY : curl-example-altsvc
+
+# fast build rule for target.
+curl-example-altsvc/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-altsvc.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-altsvc.dir/build
+.PHONY : curl-example-altsvc/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-anyauthput
+
+# Build rule for target.
+curl-example-anyauthput: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-anyauthput
+.PHONY : curl-example-anyauthput
+
+# fast build rule for target.
+curl-example-anyauthput/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-anyauthput.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-anyauthput.dir/build
+.PHONY : curl-example-anyauthput/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-block_ip
+
+# Build rule for target.
+curl-example-block_ip: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-block_ip
+.PHONY : curl-example-block_ip
+
+# fast build rule for target.
+curl-example-block_ip/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-block_ip.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-block_ip.dir/build
+.PHONY : curl-example-block_ip/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-certinfo
+
+# Build rule for target.
+curl-example-certinfo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-certinfo
+.PHONY : curl-example-certinfo
+
+# fast build rule for target.
+curl-example-certinfo/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-certinfo.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-certinfo.dir/build
+.PHONY : curl-example-certinfo/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-chkspeed
+
+# Build rule for target.
+curl-example-chkspeed: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-chkspeed
+.PHONY : curl-example-chkspeed
+
+# fast build rule for target.
+curl-example-chkspeed/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-chkspeed.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-chkspeed.dir/build
+.PHONY : curl-example-chkspeed/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-connect-to
+
+# Build rule for target.
+curl-example-connect-to: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-connect-to
+.PHONY : curl-example-connect-to
+
+# fast build rule for target.
+curl-example-connect-to/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-connect-to.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-connect-to.dir/build
+.PHONY : curl-example-connect-to/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-cookie_interface
+
+# Build rule for target.
+curl-example-cookie_interface: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-cookie_interface
+.PHONY : curl-example-cookie_interface
+
+# fast build rule for target.
+curl-example-cookie_interface/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-cookie_interface.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-cookie_interface.dir/build
+.PHONY : curl-example-cookie_interface/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-debug
+
+# Build rule for target.
+curl-example-debug: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-debug
+.PHONY : curl-example-debug
+
+# fast build rule for target.
+curl-example-debug/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-debug.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-debug.dir/build
+.PHONY : curl-example-debug/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-default-scheme
+
+# Build rule for target.
+curl-example-default-scheme: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-default-scheme
+.PHONY : curl-example-default-scheme
+
+# fast build rule for target.
+curl-example-default-scheme/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-default-scheme.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-default-scheme.dir/build
+.PHONY : curl-example-default-scheme/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-externalsocket
+
+# Build rule for target.
+curl-example-externalsocket: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-externalsocket
+.PHONY : curl-example-externalsocket
+
+# fast build rule for target.
+curl-example-externalsocket/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-externalsocket.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-externalsocket.dir/build
+.PHONY : curl-example-externalsocket/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-fileupload
+
+# Build rule for target.
+curl-example-fileupload: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-fileupload
+.PHONY : curl-example-fileupload
+
+# fast build rule for target.
+curl-example-fileupload/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-fileupload.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-fileupload.dir/build
+.PHONY : curl-example-fileupload/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftp-delete
+
+# Build rule for target.
+curl-example-ftp-delete: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftp-delete
+.PHONY : curl-example-ftp-delete
+
+# fast build rule for target.
+curl-example-ftp-delete/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftp-delete.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftp-delete.dir/build
+.PHONY : curl-example-ftp-delete/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftp-wildcard
+
+# Build rule for target.
+curl-example-ftp-wildcard: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftp-wildcard
+.PHONY : curl-example-ftp-wildcard
+
+# fast build rule for target.
+curl-example-ftp-wildcard/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftp-wildcard.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftp-wildcard.dir/build
+.PHONY : curl-example-ftp-wildcard/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftpget
+
+# Build rule for target.
+curl-example-ftpget: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftpget
+.PHONY : curl-example-ftpget
+
+# fast build rule for target.
+curl-example-ftpget/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpget.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpget.dir/build
+.PHONY : curl-example-ftpget/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftpgetinfo
+
+# Build rule for target.
+curl-example-ftpgetinfo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftpgetinfo
+.PHONY : curl-example-ftpgetinfo
+
+# fast build rule for target.
+curl-example-ftpgetinfo/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpgetinfo.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpgetinfo.dir/build
+.PHONY : curl-example-ftpgetinfo/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftpgetresp
+
+# Build rule for target.
+curl-example-ftpgetresp: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftpgetresp
+.PHONY : curl-example-ftpgetresp
+
+# fast build rule for target.
+curl-example-ftpgetresp/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpgetresp.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpgetresp.dir/build
+.PHONY : curl-example-ftpgetresp/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftpsget
+
+# Build rule for target.
+curl-example-ftpsget: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftpsget
+.PHONY : curl-example-ftpsget
+
+# fast build rule for target.
+curl-example-ftpsget/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpsget.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpsget.dir/build
+.PHONY : curl-example-ftpsget/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftpupload
+
+# Build rule for target.
+curl-example-ftpupload: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftpupload
+.PHONY : curl-example-ftpupload
+
+# fast build rule for target.
+curl-example-ftpupload/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpupload.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpupload.dir/build
+.PHONY : curl-example-ftpupload/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftpuploadfrommem
+
+# Build rule for target.
+curl-example-ftpuploadfrommem: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftpuploadfrommem
+.PHONY : curl-example-ftpuploadfrommem
+
+# fast build rule for target.
+curl-example-ftpuploadfrommem/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpuploadfrommem.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpuploadfrommem.dir/build
+.PHONY : curl-example-ftpuploadfrommem/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ftpuploadresume
+
+# Build rule for target.
+curl-example-ftpuploadresume: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ftpuploadresume
+.PHONY : curl-example-ftpuploadresume
+
+# fast build rule for target.
+curl-example-ftpuploadresume/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpuploadresume.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ftpuploadresume.dir/build
+.PHONY : curl-example-ftpuploadresume/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-getinfo
+
+# Build rule for target.
+curl-example-getinfo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-getinfo
+.PHONY : curl-example-getinfo
+
+# fast build rule for target.
+curl-example-getinfo/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-getinfo.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-getinfo.dir/build
+.PHONY : curl-example-getinfo/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-getinmemory
+
+# Build rule for target.
+curl-example-getinmemory: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-getinmemory
+.PHONY : curl-example-getinmemory
+
+# fast build rule for target.
+curl-example-getinmemory/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-getinmemory.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-getinmemory.dir/build
+.PHONY : curl-example-getinmemory/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-getredirect
+
+# Build rule for target.
+curl-example-getredirect: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-getredirect
+.PHONY : curl-example-getredirect
+
+# fast build rule for target.
+curl-example-getredirect/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-getredirect.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-getredirect.dir/build
+.PHONY : curl-example-getredirect/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-getreferrer
+
+# Build rule for target.
+curl-example-getreferrer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-getreferrer
+.PHONY : curl-example-getreferrer
+
+# fast build rule for target.
+curl-example-getreferrer/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-getreferrer.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-getreferrer.dir/build
+.PHONY : curl-example-getreferrer/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-headerapi
+
+# Build rule for target.
+curl-example-headerapi: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-headerapi
+.PHONY : curl-example-headerapi
+
+# fast build rule for target.
+curl-example-headerapi/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-headerapi.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-headerapi.dir/build
+.PHONY : curl-example-headerapi/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-hsts-preload
+
+# Build rule for target.
+curl-example-hsts-preload: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-hsts-preload
+.PHONY : curl-example-hsts-preload
+
+# fast build rule for target.
+curl-example-hsts-preload/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-hsts-preload.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-hsts-preload.dir/build
+.PHONY : curl-example-hsts-preload/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http-options
+
+# Build rule for target.
+curl-example-http-options: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http-options
+.PHONY : curl-example-http-options
+
+# fast build rule for target.
+curl-example-http-options/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http-options.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http-options.dir/build
+.PHONY : curl-example-http-options/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http-post
+
+# Build rule for target.
+curl-example-http-post: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http-post
+.PHONY : curl-example-http-post
+
+# fast build rule for target.
+curl-example-http-post/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http-post.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http-post.dir/build
+.PHONY : curl-example-http-post/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http2-download
+
+# Build rule for target.
+curl-example-http2-download: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http2-download
+.PHONY : curl-example-http2-download
+
+# fast build rule for target.
+curl-example-http2-download/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-download.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-download.dir/build
+.PHONY : curl-example-http2-download/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http2-pushinmemory
+
+# Build rule for target.
+curl-example-http2-pushinmemory: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http2-pushinmemory
+.PHONY : curl-example-http2-pushinmemory
+
+# fast build rule for target.
+curl-example-http2-pushinmemory/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-pushinmemory.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-pushinmemory.dir/build
+.PHONY : curl-example-http2-pushinmemory/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http2-serverpush
+
+# Build rule for target.
+curl-example-http2-serverpush: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http2-serverpush
+.PHONY : curl-example-http2-serverpush
+
+# fast build rule for target.
+curl-example-http2-serverpush/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-serverpush.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-serverpush.dir/build
+.PHONY : curl-example-http2-serverpush/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http2-upload
+
+# Build rule for target.
+curl-example-http2-upload: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http2-upload
+.PHONY : curl-example-http2-upload
+
+# fast build rule for target.
+curl-example-http2-upload/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-upload.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http2-upload.dir/build
+.PHONY : curl-example-http2-upload/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http3
+
+# Build rule for target.
+curl-example-http3: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http3
+.PHONY : curl-example-http3
+
+# fast build rule for target.
+curl-example-http3/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http3.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http3.dir/build
+.PHONY : curl-example-http3/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-http3-present
+
+# Build rule for target.
+curl-example-http3-present: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-http3-present
+.PHONY : curl-example-http3-present
+
+# fast build rule for target.
+curl-example-http3-present/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-http3-present.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-http3-present.dir/build
+.PHONY : curl-example-http3-present/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-httpcustomheader
+
+# Build rule for target.
+curl-example-httpcustomheader: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-httpcustomheader
+.PHONY : curl-example-httpcustomheader
+
+# fast build rule for target.
+curl-example-httpcustomheader/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-httpcustomheader.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-httpcustomheader.dir/build
+.PHONY : curl-example-httpcustomheader/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-httpput
+
+# Build rule for target.
+curl-example-httpput: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-httpput
+.PHONY : curl-example-httpput
+
+# fast build rule for target.
+curl-example-httpput/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-httpput.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-httpput.dir/build
+.PHONY : curl-example-httpput/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-httpput-postfields
+
+# Build rule for target.
+curl-example-httpput-postfields: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-httpput-postfields
+.PHONY : curl-example-httpput-postfields
+
+# fast build rule for target.
+curl-example-httpput-postfields/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-httpput-postfields.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-httpput-postfields.dir/build
+.PHONY : curl-example-httpput-postfields/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-https
+
+# Build rule for target.
+curl-example-https: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-https
+.PHONY : curl-example-https
+
+# fast build rule for target.
+curl-example-https/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-https.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-https.dir/build
+.PHONY : curl-example-https/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-append
+
+# Build rule for target.
+curl-example-imap-append: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-append
+.PHONY : curl-example-imap-append
+
+# fast build rule for target.
+curl-example-imap-append/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-append.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-append.dir/build
+.PHONY : curl-example-imap-append/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-authzid
+
+# Build rule for target.
+curl-example-imap-authzid: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-authzid
+.PHONY : curl-example-imap-authzid
+
+# fast build rule for target.
+curl-example-imap-authzid/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-authzid.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-authzid.dir/build
+.PHONY : curl-example-imap-authzid/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-copy
+
+# Build rule for target.
+curl-example-imap-copy: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-copy
+.PHONY : curl-example-imap-copy
+
+# fast build rule for target.
+curl-example-imap-copy/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-copy.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-copy.dir/build
+.PHONY : curl-example-imap-copy/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-create
+
+# Build rule for target.
+curl-example-imap-create: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-create
+.PHONY : curl-example-imap-create
+
+# fast build rule for target.
+curl-example-imap-create/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-create.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-create.dir/build
+.PHONY : curl-example-imap-create/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-delete
+
+# Build rule for target.
+curl-example-imap-delete: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-delete
+.PHONY : curl-example-imap-delete
+
+# fast build rule for target.
+curl-example-imap-delete/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-delete.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-delete.dir/build
+.PHONY : curl-example-imap-delete/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-examine
+
+# Build rule for target.
+curl-example-imap-examine: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-examine
+.PHONY : curl-example-imap-examine
+
+# fast build rule for target.
+curl-example-imap-examine/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-examine.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-examine.dir/build
+.PHONY : curl-example-imap-examine/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-fetch
+
+# Build rule for target.
+curl-example-imap-fetch: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-fetch
+.PHONY : curl-example-imap-fetch
+
+# fast build rule for target.
+curl-example-imap-fetch/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-fetch.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-fetch.dir/build
+.PHONY : curl-example-imap-fetch/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-list
+
+# Build rule for target.
+curl-example-imap-list: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-list
+.PHONY : curl-example-imap-list
+
+# fast build rule for target.
+curl-example-imap-list/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-list.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-list.dir/build
+.PHONY : curl-example-imap-list/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-lsub
+
+# Build rule for target.
+curl-example-imap-lsub: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-lsub
+.PHONY : curl-example-imap-lsub
+
+# fast build rule for target.
+curl-example-imap-lsub/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-lsub.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-lsub.dir/build
+.PHONY : curl-example-imap-lsub/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-multi
+
+# Build rule for target.
+curl-example-imap-multi: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-multi
+.PHONY : curl-example-imap-multi
+
+# fast build rule for target.
+curl-example-imap-multi/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-multi.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-multi.dir/build
+.PHONY : curl-example-imap-multi/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-noop
+
+# Build rule for target.
+curl-example-imap-noop: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-noop
+.PHONY : curl-example-imap-noop
+
+# fast build rule for target.
+curl-example-imap-noop/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-noop.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-noop.dir/build
+.PHONY : curl-example-imap-noop/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-search
+
+# Build rule for target.
+curl-example-imap-search: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-search
+.PHONY : curl-example-imap-search
+
+# fast build rule for target.
+curl-example-imap-search/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-search.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-search.dir/build
+.PHONY : curl-example-imap-search/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-ssl
+
+# Build rule for target.
+curl-example-imap-ssl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-ssl
+.PHONY : curl-example-imap-ssl
+
+# fast build rule for target.
+curl-example-imap-ssl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-ssl.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-ssl.dir/build
+.PHONY : curl-example-imap-ssl/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-store
+
+# Build rule for target.
+curl-example-imap-store: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-store
+.PHONY : curl-example-imap-store
+
+# fast build rule for target.
+curl-example-imap-store/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-store.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-store.dir/build
+.PHONY : curl-example-imap-store/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-imap-tls
+
+# Build rule for target.
+curl-example-imap-tls: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-imap-tls
+.PHONY : curl-example-imap-tls
+
+# fast build rule for target.
+curl-example-imap-tls/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-tls.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-imap-tls.dir/build
+.PHONY : curl-example-imap-tls/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-interface
+
+# Build rule for target.
+curl-example-interface: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-interface
+.PHONY : curl-example-interface
+
+# fast build rule for target.
+curl-example-interface/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-interface.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-interface.dir/build
+.PHONY : curl-example-interface/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-ipv6
+
+# Build rule for target.
+curl-example-ipv6: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-ipv6
+.PHONY : curl-example-ipv6
+
+# fast build rule for target.
+curl-example-ipv6/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-ipv6.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-ipv6.dir/build
+.PHONY : curl-example-ipv6/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-keepalive
+
+# Build rule for target.
+curl-example-keepalive: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-keepalive
+.PHONY : curl-example-keepalive
+
+# fast build rule for target.
+curl-example-keepalive/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-keepalive.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-keepalive.dir/build
+.PHONY : curl-example-keepalive/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-localport
+
+# Build rule for target.
+curl-example-localport: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-localport
+.PHONY : curl-example-localport
+
+# fast build rule for target.
+curl-example-localport/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-localport.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-localport.dir/build
+.PHONY : curl-example-localport/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-log_failed_transfers
+
+# Build rule for target.
+curl-example-log_failed_transfers: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-log_failed_transfers
+.PHONY : curl-example-log_failed_transfers
+
+# fast build rule for target.
+curl-example-log_failed_transfers/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-log_failed_transfers.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-log_failed_transfers.dir/build
+.PHONY : curl-example-log_failed_transfers/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-maxconnects
+
+# Build rule for target.
+curl-example-maxconnects: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-maxconnects
+.PHONY : curl-example-maxconnects
+
+# fast build rule for target.
+curl-example-maxconnects/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-maxconnects.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-maxconnects.dir/build
+.PHONY : curl-example-maxconnects/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-multi-app
+
+# Build rule for target.
+curl-example-multi-app: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-multi-app
+.PHONY : curl-example-multi-app
+
+# fast build rule for target.
+curl-example-multi-app/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-app.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-app.dir/build
+.PHONY : curl-example-multi-app/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-multi-debugcallback
+
+# Build rule for target.
+curl-example-multi-debugcallback: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-multi-debugcallback
+.PHONY : curl-example-multi-debugcallback
+
+# fast build rule for target.
+curl-example-multi-debugcallback/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-debugcallback.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-debugcallback.dir/build
+.PHONY : curl-example-multi-debugcallback/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-multi-double
+
+# Build rule for target.
+curl-example-multi-double: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-multi-double
+.PHONY : curl-example-multi-double
+
+# fast build rule for target.
+curl-example-multi-double/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-double.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-double.dir/build
+.PHONY : curl-example-multi-double/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-multi-formadd
+
+# Build rule for target.
+curl-example-multi-formadd: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-multi-formadd
+.PHONY : curl-example-multi-formadd
+
+# fast build rule for target.
+curl-example-multi-formadd/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-formadd.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-formadd.dir/build
+.PHONY : curl-example-multi-formadd/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-multi-legacy
+
+# Build rule for target.
+curl-example-multi-legacy: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-multi-legacy
+.PHONY : curl-example-multi-legacy
+
+# fast build rule for target.
+curl-example-multi-legacy/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-legacy.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-legacy.dir/build
+.PHONY : curl-example-multi-legacy/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-multi-post
+
+# Build rule for target.
+curl-example-multi-post: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-multi-post
+.PHONY : curl-example-multi-post
+
+# fast build rule for target.
+curl-example-multi-post/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-post.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-post.dir/build
+.PHONY : curl-example-multi-post/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-multi-single
+
+# Build rule for target.
+curl-example-multi-single: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-multi-single
+.PHONY : curl-example-multi-single
+
+# fast build rule for target.
+curl-example-multi-single/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-single.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-multi-single.dir/build
+.PHONY : curl-example-multi-single/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-netrc
+
+# Build rule for target.
+curl-example-netrc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-netrc
+.PHONY : curl-example-netrc
+
+# fast build rule for target.
+curl-example-netrc/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-netrc.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-netrc.dir/build
+.PHONY : curl-example-netrc/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-parseurl
+
+# Build rule for target.
+curl-example-parseurl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-parseurl
+.PHONY : curl-example-parseurl
+
+# fast build rule for target.
+curl-example-parseurl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-parseurl.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-parseurl.dir/build
+.PHONY : curl-example-parseurl/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-persistent
+
+# Build rule for target.
+curl-example-persistent: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-persistent
+.PHONY : curl-example-persistent
+
+# fast build rule for target.
+curl-example-persistent/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-persistent.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-persistent.dir/build
+.PHONY : curl-example-persistent/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-authzid
+
+# Build rule for target.
+curl-example-pop3-authzid: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-authzid
+.PHONY : curl-example-pop3-authzid
+
+# fast build rule for target.
+curl-example-pop3-authzid/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-authzid.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-authzid.dir/build
+.PHONY : curl-example-pop3-authzid/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-dele
+
+# Build rule for target.
+curl-example-pop3-dele: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-dele
+.PHONY : curl-example-pop3-dele
+
+# fast build rule for target.
+curl-example-pop3-dele/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-dele.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-dele.dir/build
+.PHONY : curl-example-pop3-dele/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-list
+
+# Build rule for target.
+curl-example-pop3-list: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-list
+.PHONY : curl-example-pop3-list
+
+# fast build rule for target.
+curl-example-pop3-list/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-list.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-list.dir/build
+.PHONY : curl-example-pop3-list/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-multi
+
+# Build rule for target.
+curl-example-pop3-multi: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-multi
+.PHONY : curl-example-pop3-multi
+
+# fast build rule for target.
+curl-example-pop3-multi/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-multi.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-multi.dir/build
+.PHONY : curl-example-pop3-multi/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-noop
+
+# Build rule for target.
+curl-example-pop3-noop: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-noop
+.PHONY : curl-example-pop3-noop
+
+# fast build rule for target.
+curl-example-pop3-noop/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-noop.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-noop.dir/build
+.PHONY : curl-example-pop3-noop/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-retr
+
+# Build rule for target.
+curl-example-pop3-retr: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-retr
+.PHONY : curl-example-pop3-retr
+
+# fast build rule for target.
+curl-example-pop3-retr/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-retr.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-retr.dir/build
+.PHONY : curl-example-pop3-retr/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-ssl
+
+# Build rule for target.
+curl-example-pop3-ssl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-ssl
+.PHONY : curl-example-pop3-ssl
+
+# fast build rule for target.
+curl-example-pop3-ssl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-ssl.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-ssl.dir/build
+.PHONY : curl-example-pop3-ssl/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-stat
+
+# Build rule for target.
+curl-example-pop3-stat: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-stat
+.PHONY : curl-example-pop3-stat
+
+# fast build rule for target.
+curl-example-pop3-stat/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-stat.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-stat.dir/build
+.PHONY : curl-example-pop3-stat/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-tls
+
+# Build rule for target.
+curl-example-pop3-tls: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-tls
+.PHONY : curl-example-pop3-tls
+
+# fast build rule for target.
+curl-example-pop3-tls/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-tls.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-tls.dir/build
+.PHONY : curl-example-pop3-tls/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-top
+
+# Build rule for target.
+curl-example-pop3-top: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-top
+.PHONY : curl-example-pop3-top
+
+# fast build rule for target.
+curl-example-pop3-top/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-top.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-top.dir/build
+.PHONY : curl-example-pop3-top/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-pop3-uidl
+
+# Build rule for target.
+curl-example-pop3-uidl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-pop3-uidl
+.PHONY : curl-example-pop3-uidl
+
+# fast build rule for target.
+curl-example-pop3-uidl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-uidl.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-pop3-uidl.dir/build
+.PHONY : curl-example-pop3-uidl/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-post-callback
+
+# Build rule for target.
+curl-example-post-callback: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-post-callback
+.PHONY : curl-example-post-callback
+
+# fast build rule for target.
+curl-example-post-callback/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-post-callback.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-post-callback.dir/build
+.PHONY : curl-example-post-callback/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-postinmemory
+
+# Build rule for target.
+curl-example-postinmemory: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-postinmemory
+.PHONY : curl-example-postinmemory
+
+# fast build rule for target.
+curl-example-postinmemory/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-postinmemory.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-postinmemory.dir/build
+.PHONY : curl-example-postinmemory/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-postit2
+
+# Build rule for target.
+curl-example-postit2: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-postit2
+.PHONY : curl-example-postit2
+
+# fast build rule for target.
+curl-example-postit2/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-postit2.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-postit2.dir/build
+.PHONY : curl-example-postit2/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-postit2-formadd
+
+# Build rule for target.
+curl-example-postit2-formadd: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-postit2-formadd
+.PHONY : curl-example-postit2-formadd
+
+# fast build rule for target.
+curl-example-postit2-formadd/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-postit2-formadd.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-postit2-formadd.dir/build
+.PHONY : curl-example-postit2-formadd/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-progressfunc
+
+# Build rule for target.
+curl-example-progressfunc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-progressfunc
+.PHONY : curl-example-progressfunc
+
+# fast build rule for target.
+curl-example-progressfunc/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-progressfunc.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-progressfunc.dir/build
+.PHONY : curl-example-progressfunc/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-protofeats
+
+# Build rule for target.
+curl-example-protofeats: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-protofeats
+.PHONY : curl-example-protofeats
+
+# fast build rule for target.
+curl-example-protofeats/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-protofeats.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-protofeats.dir/build
+.PHONY : curl-example-protofeats/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-range
+
+# Build rule for target.
+curl-example-range: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-range
+.PHONY : curl-example-range
+
+# fast build rule for target.
+curl-example-range/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-range.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-range.dir/build
+.PHONY : curl-example-range/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-resolve
+
+# Build rule for target.
+curl-example-resolve: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-resolve
+.PHONY : curl-example-resolve
+
+# fast build rule for target.
+curl-example-resolve/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-resolve.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-resolve.dir/build
+.PHONY : curl-example-resolve/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-rtsp-options
+
+# Build rule for target.
+curl-example-rtsp-options: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-rtsp-options
+.PHONY : curl-example-rtsp-options
+
+# fast build rule for target.
+curl-example-rtsp-options/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-rtsp-options.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-rtsp-options.dir/build
+.PHONY : curl-example-rtsp-options/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-sendrecv
+
+# Build rule for target.
+curl-example-sendrecv: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-sendrecv
+.PHONY : curl-example-sendrecv
+
+# fast build rule for target.
+curl-example-sendrecv/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-sendrecv.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-sendrecv.dir/build
+.PHONY : curl-example-sendrecv/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-sepheaders
+
+# Build rule for target.
+curl-example-sepheaders: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-sepheaders
+.PHONY : curl-example-sepheaders
+
+# fast build rule for target.
+curl-example-sepheaders/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-sepheaders.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-sepheaders.dir/build
+.PHONY : curl-example-sepheaders/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-sftpget
+
+# Build rule for target.
+curl-example-sftpget: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-sftpget
+.PHONY : curl-example-sftpget
+
+# fast build rule for target.
+curl-example-sftpget/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-sftpget.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-sftpget.dir/build
+.PHONY : curl-example-sftpget/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-sftpuploadresume
+
+# Build rule for target.
+curl-example-sftpuploadresume: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-sftpuploadresume
+.PHONY : curl-example-sftpuploadresume
+
+# fast build rule for target.
+curl-example-sftpuploadresume/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-sftpuploadresume.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-sftpuploadresume.dir/build
+.PHONY : curl-example-sftpuploadresume/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-shared-connection-cache
+
+# Build rule for target.
+curl-example-shared-connection-cache: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-shared-connection-cache
+.PHONY : curl-example-shared-connection-cache
+
+# fast build rule for target.
+curl-example-shared-connection-cache/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-shared-connection-cache.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-shared-connection-cache.dir/build
+.PHONY : curl-example-shared-connection-cache/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-simple
+
+# Build rule for target.
+curl-example-simple: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-simple
+.PHONY : curl-example-simple
+
+# fast build rule for target.
+curl-example-simple/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-simple.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-simple.dir/build
+.PHONY : curl-example-simple/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-simplepost
+
+# Build rule for target.
+curl-example-simplepost: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-simplepost
+.PHONY : curl-example-simplepost
+
+# fast build rule for target.
+curl-example-simplepost/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-simplepost.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-simplepost.dir/build
+.PHONY : curl-example-simplepost/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-simplessl
+
+# Build rule for target.
+curl-example-simplessl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-simplessl
+.PHONY : curl-example-simplessl
+
+# fast build rule for target.
+curl-example-simplessl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-simplessl.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-simplessl.dir/build
+.PHONY : curl-example-simplessl/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-authzid
+
+# Build rule for target.
+curl-example-smtp-authzid: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-authzid
+.PHONY : curl-example-smtp-authzid
+
+# fast build rule for target.
+curl-example-smtp-authzid/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-authzid.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-authzid.dir/build
+.PHONY : curl-example-smtp-authzid/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-expn
+
+# Build rule for target.
+curl-example-smtp-expn: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-expn
+.PHONY : curl-example-smtp-expn
+
+# fast build rule for target.
+curl-example-smtp-expn/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-expn.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-expn.dir/build
+.PHONY : curl-example-smtp-expn/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-mail
+
+# Build rule for target.
+curl-example-smtp-mail: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-mail
+.PHONY : curl-example-smtp-mail
+
+# fast build rule for target.
+curl-example-smtp-mail/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-mail.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-mail.dir/build
+.PHONY : curl-example-smtp-mail/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-mime
+
+# Build rule for target.
+curl-example-smtp-mime: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-mime
+.PHONY : curl-example-smtp-mime
+
+# fast build rule for target.
+curl-example-smtp-mime/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-mime.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-mime.dir/build
+.PHONY : curl-example-smtp-mime/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-multi
+
+# Build rule for target.
+curl-example-smtp-multi: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-multi
+.PHONY : curl-example-smtp-multi
+
+# fast build rule for target.
+curl-example-smtp-multi/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-multi.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-multi.dir/build
+.PHONY : curl-example-smtp-multi/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-ssl
+
+# Build rule for target.
+curl-example-smtp-ssl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-ssl
+.PHONY : curl-example-smtp-ssl
+
+# fast build rule for target.
+curl-example-smtp-ssl/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-ssl.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-ssl.dir/build
+.PHONY : curl-example-smtp-ssl/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-tls
+
+# Build rule for target.
+curl-example-smtp-tls: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-tls
+.PHONY : curl-example-smtp-tls
+
+# fast build rule for target.
+curl-example-smtp-tls/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-tls.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-tls.dir/build
+.PHONY : curl-example-smtp-tls/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-smtp-vrfy
+
+# Build rule for target.
+curl-example-smtp-vrfy: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-smtp-vrfy
+.PHONY : curl-example-smtp-vrfy
+
+# fast build rule for target.
+curl-example-smtp-vrfy/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-vrfy.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-smtp-vrfy.dir/build
+.PHONY : curl-example-smtp-vrfy/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-sslbackend
+
+# Build rule for target.
+curl-example-sslbackend: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-sslbackend
+.PHONY : curl-example-sslbackend
+
+# fast build rule for target.
+curl-example-sslbackend/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-sslbackend.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-sslbackend.dir/build
+.PHONY : curl-example-sslbackend/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-synctime
+
+# Build rule for target.
+curl-example-synctime: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-synctime
+.PHONY : curl-example-synctime
+
+# fast build rule for target.
+curl-example-synctime/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-synctime.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-synctime.dir/build
+.PHONY : curl-example-synctime/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-unixsocket
+
+# Build rule for target.
+curl-example-unixsocket: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-unixsocket
+.PHONY : curl-example-unixsocket
+
+# fast build rule for target.
+curl-example-unixsocket/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-unixsocket.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-unixsocket.dir/build
+.PHONY : curl-example-unixsocket/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-url2file
+
+# Build rule for target.
+curl-example-url2file: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-url2file
+.PHONY : curl-example-url2file
+
+# fast build rule for target.
+curl-example-url2file/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-url2file.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-url2file.dir/build
+.PHONY : curl-example-url2file/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-urlapi
+
+# Build rule for target.
+curl-example-urlapi: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-urlapi
+.PHONY : curl-example-urlapi
+
+# fast build rule for target.
+curl-example-urlapi/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-urlapi.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-urlapi.dir/build
+.PHONY : curl-example-urlapi/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-websocket
+
+# Build rule for target.
+curl-example-websocket: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-websocket
+.PHONY : curl-example-websocket
+
+# fast build rule for target.
+curl-example-websocket/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-websocket.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-websocket.dir/build
+.PHONY : curl-example-websocket/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-websocket-cb
+
+# Build rule for target.
+curl-example-websocket-cb: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-websocket-cb
+.PHONY : curl-example-websocket-cb
+
+# fast build rule for target.
+curl-example-websocket-cb/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-websocket-cb.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-websocket-cb.dir/build
+.PHONY : curl-example-websocket-cb/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-websocket-updown
+
+# Build rule for target.
+curl-example-websocket-updown: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-websocket-updown
+.PHONY : curl-example-websocket-updown
+
+# fast build rule for target.
+curl-example-websocket-updown/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-websocket-updown.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-websocket-updown.dir/build
+.PHONY : curl-example-websocket-updown/fast
+
+#=============================================================================
+# Target rules for targets named curl-example-all
+
+# Build rule for target.
+curl-example-all: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-example-all
+.PHONY : curl-example-all
+
+# fast build rule for target.
+curl-example-all/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-example-all.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-example-all.dir/build
+.PHONY : curl-example-all/fast
+
+#=============================================================================
+# Target rules for targets named curl-examples-build
+
+# Build rule for target.
+curl-examples-build: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-examples-build
+.PHONY : curl-examples-build
+
+# fast build rule for target.
+curl-examples-build/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/docs/examples/CMakeFiles/curl-examples-build.dir/build.make third-party/libcurl/docs/examples/CMakeFiles/curl-examples-build.dir/build
+.PHONY : curl-examples-build/fast
+
+#=============================================================================
+# Target rules for targets named tt
+
+# Build rule for target.
+tt: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tt
+.PHONY : tt
+
+# fast build rule for target.
+tt/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/tt.dir/build.make third-party/libcurl/tests/CMakeFiles/tt.dir/build
+.PHONY : tt/fast
+
+#=============================================================================
+# Target rules for targets named testdeps
+
+# Build rule for target.
+testdeps: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 testdeps
+.PHONY : testdeps
+
+# fast build rule for target.
+testdeps/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/testdeps.dir/build.make third-party/libcurl/tests/CMakeFiles/testdeps.dir/build
+.PHONY : testdeps/fast
+
+#=============================================================================
+# Target rules for targets named tests
+
+# Build rule for target.
+tests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests
+.PHONY : tests
+
+# fast build rule for target.
+tests/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/tests.dir/build.make third-party/libcurl/tests/CMakeFiles/tests.dir/build
+.PHONY : tests/fast
+
+#=============================================================================
+# Target rules for targets named test-quiet
+
+# Build rule for target.
+test-quiet: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-quiet
+.PHONY : test-quiet
+
+# fast build rule for target.
+test-quiet/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/test-quiet.dir/build.make third-party/libcurl/tests/CMakeFiles/test-quiet.dir/build
+.PHONY : test-quiet/fast
+
+#=============================================================================
+# Target rules for targets named test-am
+
+# Build rule for target.
+test-am: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-am
+.PHONY : test-am
+
+# fast build rule for target.
+test-am/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/test-am.dir/build.make third-party/libcurl/tests/CMakeFiles/test-am.dir/build
+.PHONY : test-am/fast
+
+#=============================================================================
+# Target rules for targets named test-full
+
+# Build rule for target.
+test-full: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-full
+.PHONY : test-full
+
+# fast build rule for target.
+test-full/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/test-full.dir/build.make third-party/libcurl/tests/CMakeFiles/test-full.dir/build
+.PHONY : test-full/fast
+
+#=============================================================================
+# Target rules for targets named test-nonflaky
+
+# Build rule for target.
+test-nonflaky: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-nonflaky
+.PHONY : test-nonflaky
+
+# fast build rule for target.
+test-nonflaky/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/test-nonflaky.dir/build.make third-party/libcurl/tests/CMakeFiles/test-nonflaky.dir/build
+.PHONY : test-nonflaky/fast
+
+#=============================================================================
+# Target rules for targets named test-ci
+
+# Build rule for target.
+test-ci: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-ci
+.PHONY : test-ci
+
+# fast build rule for target.
+test-ci/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/test-ci.dir/build.make third-party/libcurl/tests/CMakeFiles/test-ci.dir/build
+.PHONY : test-ci/fast
+
+#=============================================================================
+# Target rules for targets named test-torture
+
+# Build rule for target.
+test-torture: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-torture
+.PHONY : test-torture
+
+# fast build rule for target.
+test-torture/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/test-torture.dir/build.make third-party/libcurl/tests/CMakeFiles/test-torture.dir/build
+.PHONY : test-torture/fast
+
+#=============================================================================
+# Target rules for targets named test-event
+
+# Build rule for target.
+test-event: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-event
+.PHONY : test-event
+
+# fast build rule for target.
+test-event/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/test-event.dir/build.make third-party/libcurl/tests/CMakeFiles/test-event.dir/build
+.PHONY : test-event/fast
+
+#=============================================================================
+# Target rules for targets named curl-pytest
+
+# Build rule for target.
+curl-pytest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-pytest
+.PHONY : curl-pytest
+
+# fast build rule for target.
+curl-pytest/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/curl-pytest.dir/build.make third-party/libcurl/tests/CMakeFiles/curl-pytest.dir/build
+.PHONY : curl-pytest/fast
+
+#=============================================================================
+# Target rules for targets named curl-pytest-ci
+
+# Build rule for target.
+curl-pytest-ci: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 curl-pytest-ci
+.PHONY : curl-pytest-ci
+
+# fast build rule for target.
+curl-pytest-ci/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/CMakeFiles/curl-pytest-ci.dir/build.make third-party/libcurl/tests/CMakeFiles/curl-pytest-ci.dir/build
+.PHONY : curl-pytest-ci/fast
+
+#=============================================================================
+# Target rules for targets named servers
+
+# Build rule for target.
+servers: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 servers
+.PHONY : servers
+
+# fast build rule for target.
+servers/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/server/CMakeFiles/servers.dir/build.make third-party/libcurl/tests/server/CMakeFiles/servers.dir/build
+.PHONY : servers/fast
+
+#=============================================================================
+# Target rules for targets named libtests
+
+# Build rule for target.
+libtests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libtests
+.PHONY : libtests
+
+# fast build rule for target.
+libtests/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/libtest/CMakeFiles/libtests.dir/build.make third-party/libcurl/tests/libtest/CMakeFiles/libtests.dir/build
+.PHONY : libtests/fast
+
+#=============================================================================
+# Target rules for targets named tunits
+
+# Build rule for target.
+tunits: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tunits
+.PHONY : tunits
+
+# fast build rule for target.
+tunits/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/tunit/CMakeFiles/tunits.dir/build.make third-party/libcurl/tests/tunit/CMakeFiles/tunits.dir/build
+.PHONY : tunits/fast
+
+#=============================================================================
+# Target rules for targets named units
+
+# Build rule for target.
+units: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 units
+.PHONY : units
+
+# fast build rule for target.
+units/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/unit/CMakeFiles/units.dir/build.make third-party/libcurl/tests/unit/CMakeFiles/units.dir/build
+.PHONY : units/fast
+
+#=============================================================================
+# Target rules for targets named build-certs
+
+# Build rule for target.
+build-certs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 build-certs
+.PHONY : build-certs
+
+# fast build rule for target.
+build-certs/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/certs/CMakeFiles/build-certs.dir/build.make third-party/libcurl/tests/certs/CMakeFiles/build-certs.dir/build
+.PHONY : build-certs/fast
+
+#=============================================================================
+# Target rules for targets named clean-certs
+
+# Build rule for target.
+clean-certs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean-certs
+.PHONY : clean-certs
+
+# fast build rule for target.
+clean-certs/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/certs/CMakeFiles/clean-certs.dir/build.make third-party/libcurl/tests/certs/CMakeFiles/clean-certs.dir/build
+.PHONY : clean-certs/fast
 
 src/engine/engine.o: src/engine/engine.cpp.o
 .PHONY : src/engine/engine.o
@@ -153,197 +3021,77 @@ src/engine/engine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/engine.cpp.s
 .PHONY : src/engine/engine.cpp.s
 
-src/engine/gui/mainframe.o: src/engine/gui/mainframe.cpp.o
-.PHONY : src/engine/gui/mainframe.o
+src/engine/node/ecs.o: src/engine/node/ecs.cpp.o
+.PHONY : src/engine/node/ecs.o
 
 # target to build an object file
-src/engine/gui/mainframe.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/mainframe.cpp.o
-.PHONY : src/engine/gui/mainframe.cpp.o
+src/engine/node/ecs.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/ecs.cpp.o
+.PHONY : src/engine/node/ecs.cpp.o
 
-src/engine/gui/mainframe.i: src/engine/gui/mainframe.cpp.i
-.PHONY : src/engine/gui/mainframe.i
+src/engine/node/ecs.i: src/engine/node/ecs.cpp.i
+.PHONY : src/engine/node/ecs.i
 
 # target to preprocess a source file
-src/engine/gui/mainframe.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/mainframe.cpp.i
-.PHONY : src/engine/gui/mainframe.cpp.i
+src/engine/node/ecs.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/ecs.cpp.i
+.PHONY : src/engine/node/ecs.cpp.i
 
-src/engine/gui/mainframe.s: src/engine/gui/mainframe.cpp.s
-.PHONY : src/engine/gui/mainframe.s
+src/engine/node/ecs.s: src/engine/node/ecs.cpp.s
+.PHONY : src/engine/node/ecs.s
 
 # target to generate assembly for a file
-src/engine/gui/mainframe.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/mainframe.cpp.s
-.PHONY : src/engine/gui/mainframe.cpp.s
+src/engine/node/ecs.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/ecs.cpp.s
+.PHONY : src/engine/node/ecs.cpp.s
 
-src/engine/gui/view/blueprint.o: src/engine/gui/view/blueprint.cpp.o
-.PHONY : src/engine/gui/view/blueprint.o
+src/engine/node/register.o: src/engine/node/register.cpp.o
+.PHONY : src/engine/node/register.o
 
 # target to build an object file
-src/engine/gui/view/blueprint.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/blueprint.cpp.o
-.PHONY : src/engine/gui/view/blueprint.cpp.o
+src/engine/node/register.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/register.cpp.o
+.PHONY : src/engine/node/register.cpp.o
 
-src/engine/gui/view/blueprint.i: src/engine/gui/view/blueprint.cpp.i
-.PHONY : src/engine/gui/view/blueprint.i
+src/engine/node/register.i: src/engine/node/register.cpp.i
+.PHONY : src/engine/node/register.i
 
 # target to preprocess a source file
-src/engine/gui/view/blueprint.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/blueprint.cpp.i
-.PHONY : src/engine/gui/view/blueprint.cpp.i
+src/engine/node/register.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/register.cpp.i
+.PHONY : src/engine/node/register.cpp.i
 
-src/engine/gui/view/blueprint.s: src/engine/gui/view/blueprint.cpp.s
-.PHONY : src/engine/gui/view/blueprint.s
+src/engine/node/register.s: src/engine/node/register.cpp.s
+.PHONY : src/engine/node/register.s
 
 # target to generate assembly for a file
-src/engine/gui/view/blueprint.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/blueprint.cpp.s
-.PHONY : src/engine/gui/view/blueprint.cpp.s
+src/engine/node/register.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/register.cpp.s
+.PHONY : src/engine/node/register.cpp.s
 
-src/engine/gui/view/explorer.o: src/engine/gui/view/explorer.cpp.o
-.PHONY : src/engine/gui/view/explorer.o
+src/engine/utility/command.o: src/engine/utility/command.cpp.o
+.PHONY : src/engine/utility/command.o
 
 # target to build an object file
-src/engine/gui/view/explorer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/explorer.cpp.o
-.PHONY : src/engine/gui/view/explorer.cpp.o
+src/engine/utility/command.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/command.cpp.o
+.PHONY : src/engine/utility/command.cpp.o
 
-src/engine/gui/view/explorer.i: src/engine/gui/view/explorer.cpp.i
-.PHONY : src/engine/gui/view/explorer.i
-
-# target to preprocess a source file
-src/engine/gui/view/explorer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/explorer.cpp.i
-.PHONY : src/engine/gui/view/explorer.cpp.i
-
-src/engine/gui/view/explorer.s: src/engine/gui/view/explorer.cpp.s
-.PHONY : src/engine/gui/view/explorer.s
-
-# target to generate assembly for a file
-src/engine/gui/view/explorer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/explorer.cpp.s
-.PHONY : src/engine/gui/view/explorer.cpp.s
-
-src/engine/gui/view/inspector.o: src/engine/gui/view/inspector.cpp.o
-.PHONY : src/engine/gui/view/inspector.o
-
-# target to build an object file
-src/engine/gui/view/inspector.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/inspector.cpp.o
-.PHONY : src/engine/gui/view/inspector.cpp.o
-
-src/engine/gui/view/inspector.i: src/engine/gui/view/inspector.cpp.i
-.PHONY : src/engine/gui/view/inspector.i
+src/engine/utility/command.i: src/engine/utility/command.cpp.i
+.PHONY : src/engine/utility/command.i
 
 # target to preprocess a source file
-src/engine/gui/view/inspector.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/inspector.cpp.i
-.PHONY : src/engine/gui/view/inspector.cpp.i
+src/engine/utility/command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/command.cpp.i
+.PHONY : src/engine/utility/command.cpp.i
 
-src/engine/gui/view/inspector.s: src/engine/gui/view/inspector.cpp.s
-.PHONY : src/engine/gui/view/inspector.s
-
-# target to generate assembly for a file
-src/engine/gui/view/inspector.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/inspector.cpp.s
-.PHONY : src/engine/gui/view/inspector.cpp.s
-
-src/engine/gui/view/preview.o: src/engine/gui/view/preview.cpp.o
-.PHONY : src/engine/gui/view/preview.o
-
-# target to build an object file
-src/engine/gui/view/preview.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/preview.cpp.o
-.PHONY : src/engine/gui/view/preview.cpp.o
-
-src/engine/gui/view/preview.i: src/engine/gui/view/preview.cpp.i
-.PHONY : src/engine/gui/view/preview.i
-
-# target to preprocess a source file
-src/engine/gui/view/preview.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/preview.cpp.i
-.PHONY : src/engine/gui/view/preview.cpp.i
-
-src/engine/gui/view/preview.s: src/engine/gui/view/preview.cpp.s
-.PHONY : src/engine/gui/view/preview.s
+src/engine/utility/command.s: src/engine/utility/command.cpp.s
+.PHONY : src/engine/utility/command.s
 
 # target to generate assembly for a file
-src/engine/gui/view/preview.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/preview.cpp.s
-.PHONY : src/engine/gui/view/preview.cpp.s
-
-src/engine/gui/view/script.o: src/engine/gui/view/script.cpp.o
-.PHONY : src/engine/gui/view/script.o
-
-# target to build an object file
-src/engine/gui/view/script.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/script.cpp.o
-.PHONY : src/engine/gui/view/script.cpp.o
-
-src/engine/gui/view/script.i: src/engine/gui/view/script.cpp.i
-.PHONY : src/engine/gui/view/script.i
-
-# target to preprocess a source file
-src/engine/gui/view/script.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/script.cpp.i
-.PHONY : src/engine/gui/view/script.cpp.i
-
-src/engine/gui/view/script.s: src/engine/gui/view/script.cpp.s
-.PHONY : src/engine/gui/view/script.s
-
-# target to generate assembly for a file
-src/engine/gui/view/script.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/script.cpp.s
-.PHONY : src/engine/gui/view/script.cpp.s
-
-src/engine/gui/view/timeline.o: src/engine/gui/view/timeline.cpp.o
-.PHONY : src/engine/gui/view/timeline.o
-
-# target to build an object file
-src/engine/gui/view/timeline.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/timeline.cpp.o
-.PHONY : src/engine/gui/view/timeline.cpp.o
-
-src/engine/gui/view/timeline.i: src/engine/gui/view/timeline.cpp.i
-.PHONY : src/engine/gui/view/timeline.i
-
-# target to preprocess a source file
-src/engine/gui/view/timeline.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/timeline.cpp.i
-.PHONY : src/engine/gui/view/timeline.cpp.i
-
-src/engine/gui/view/timeline.s: src/engine/gui/view/timeline.cpp.s
-.PHONY : src/engine/gui/view/timeline.s
-
-# target to generate assembly for a file
-src/engine/gui/view/timeline.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/timeline.cpp.s
-.PHONY : src/engine/gui/view/timeline.cpp.s
-
-src/engine/gui/view/volumn.o: src/engine/gui/view/volumn.cpp.o
-.PHONY : src/engine/gui/view/volumn.o
-
-# target to build an object file
-src/engine/gui/view/volumn.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/volumn.cpp.o
-.PHONY : src/engine/gui/view/volumn.cpp.o
-
-src/engine/gui/view/volumn.i: src/engine/gui/view/volumn.cpp.i
-.PHONY : src/engine/gui/view/volumn.i
-
-# target to preprocess a source file
-src/engine/gui/view/volumn.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/volumn.cpp.i
-.PHONY : src/engine/gui/view/volumn.cpp.i
-
-src/engine/gui/view/volumn.s: src/engine/gui/view/volumn.cpp.s
-.PHONY : src/engine/gui/view/volumn.s
-
-# target to generate assembly for a file
-src/engine/gui/view/volumn.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/gui/view/volumn.cpp.s
-.PHONY : src/engine/gui/view/volumn.cpp.s
+src/engine/utility/command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/command.cpp.s
+.PHONY : src/engine/utility/command.cpp.s
 
 src/engine/utility/path.o: src/engine/utility/path.cpp.o
 .PHONY : src/engine/utility/path.o
@@ -368,6 +3116,414 @@ src/engine/utility/path.s: src/engine/utility/path.cpp.s
 src/engine/utility/path.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/path.cpp.s
 .PHONY : src/engine/utility/path.cpp.s
+
+src/gui/manager.o: src/gui/manager.cpp.o
+.PHONY : src/gui/manager.o
+
+# target to build an object file
+src/gui/manager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/manager.cpp.o
+.PHONY : src/gui/manager.cpp.o
+
+src/gui/manager.i: src/gui/manager.cpp.i
+.PHONY : src/gui/manager.i
+
+# target to preprocess a source file
+src/gui/manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/manager.cpp.i
+.PHONY : src/gui/manager.cpp.i
+
+src/gui/manager.s: src/gui/manager.cpp.s
+.PHONY : src/gui/manager.s
+
+# target to generate assembly for a file
+src/gui/manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/manager.cpp.s
+.PHONY : src/gui/manager.cpp.s
+
+src/gui/nodes/edgebase.o: src/gui/nodes/edgebase.cpp.o
+.PHONY : src/gui/nodes/edgebase.o
+
+# target to build an object file
+src/gui/nodes/edgebase.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/nodes/edgebase.cpp.o
+.PHONY : src/gui/nodes/edgebase.cpp.o
+
+src/gui/nodes/edgebase.i: src/gui/nodes/edgebase.cpp.i
+.PHONY : src/gui/nodes/edgebase.i
+
+# target to preprocess a source file
+src/gui/nodes/edgebase.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/nodes/edgebase.cpp.i
+.PHONY : src/gui/nodes/edgebase.cpp.i
+
+src/gui/nodes/edgebase.s: src/gui/nodes/edgebase.cpp.s
+.PHONY : src/gui/nodes/edgebase.s
+
+# target to generate assembly for a file
+src/gui/nodes/edgebase.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/nodes/edgebase.cpp.s
+.PHONY : src/gui/nodes/edgebase.cpp.s
+
+src/gui/nodes/nodebase.o: src/gui/nodes/nodebase.cpp.o
+.PHONY : src/gui/nodes/nodebase.o
+
+# target to build an object file
+src/gui/nodes/nodebase.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/nodes/nodebase.cpp.o
+.PHONY : src/gui/nodes/nodebase.cpp.o
+
+src/gui/nodes/nodebase.i: src/gui/nodes/nodebase.cpp.i
+.PHONY : src/gui/nodes/nodebase.i
+
+# target to preprocess a source file
+src/gui/nodes/nodebase.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/nodes/nodebase.cpp.i
+.PHONY : src/gui/nodes/nodebase.cpp.i
+
+src/gui/nodes/nodebase.s: src/gui/nodes/nodebase.cpp.s
+.PHONY : src/gui/nodes/nodebase.s
+
+# target to generate assembly for a file
+src/gui/nodes/nodebase.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/nodes/nodebase.cpp.s
+.PHONY : src/gui/nodes/nodebase.cpp.s
+
+src/gui/popup/popupbase.o: src/gui/popup/popupbase.cpp.o
+.PHONY : src/gui/popup/popupbase.o
+
+# target to build an object file
+src/gui/popup/popupbase.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/popupbase.cpp.o
+.PHONY : src/gui/popup/popupbase.cpp.o
+
+src/gui/popup/popupbase.i: src/gui/popup/popupbase.cpp.i
+.PHONY : src/gui/popup/popupbase.i
+
+# target to preprocess a source file
+src/gui/popup/popupbase.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/popupbase.cpp.i
+.PHONY : src/gui/popup/popupbase.cpp.i
+
+src/gui/popup/popupbase.s: src/gui/popup/popupbase.cpp.s
+.PHONY : src/gui/popup/popupbase.s
+
+# target to generate assembly for a file
+src/gui/popup/popupbase.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/popupbase.cpp.s
+.PHONY : src/gui/popup/popupbase.cpp.s
+
+src/gui/popup/project_dashboard.o: src/gui/popup/project_dashboard.cpp.o
+.PHONY : src/gui/popup/project_dashboard.o
+
+# target to build an object file
+src/gui/popup/project_dashboard.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/project_dashboard.cpp.o
+.PHONY : src/gui/popup/project_dashboard.cpp.o
+
+src/gui/popup/project_dashboard.i: src/gui/popup/project_dashboard.cpp.i
+.PHONY : src/gui/popup/project_dashboard.i
+
+# target to preprocess a source file
+src/gui/popup/project_dashboard.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/project_dashboard.cpp.i
+.PHONY : src/gui/popup/project_dashboard.cpp.i
+
+src/gui/popup/project_dashboard.s: src/gui/popup/project_dashboard.cpp.s
+.PHONY : src/gui/popup/project_dashboard.s
+
+# target to generate assembly for a file
+src/gui/popup/project_dashboard.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/project_dashboard.cpp.s
+.PHONY : src/gui/popup/project_dashboard.cpp.s
+
+src/gui/view/animation/timeline.o: src/gui/view/animation/timeline.cpp.o
+.PHONY : src/gui/view/animation/timeline.o
+
+# target to build an object file
+src/gui/view/animation/timeline.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/animation/timeline.cpp.o
+.PHONY : src/gui/view/animation/timeline.cpp.o
+
+src/gui/view/animation/timeline.i: src/gui/view/animation/timeline.cpp.i
+.PHONY : src/gui/view/animation/timeline.i
+
+# target to preprocess a source file
+src/gui/view/animation/timeline.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/animation/timeline.cpp.i
+.PHONY : src/gui/view/animation/timeline.cpp.i
+
+src/gui/view/animation/timeline.s: src/gui/view/animation/timeline.cpp.s
+.PHONY : src/gui/view/animation/timeline.s
+
+# target to generate assembly for a file
+src/gui/view/animation/timeline.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/animation/timeline.cpp.s
+.PHONY : src/gui/view/animation/timeline.cpp.s
+
+src/gui/view/audio/volumn.o: src/gui/view/audio/volumn.cpp.o
+.PHONY : src/gui/view/audio/volumn.o
+
+# target to build an object file
+src/gui/view/audio/volumn.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/audio/volumn.cpp.o
+.PHONY : src/gui/view/audio/volumn.cpp.o
+
+src/gui/view/audio/volumn.i: src/gui/view/audio/volumn.cpp.i
+.PHONY : src/gui/view/audio/volumn.i
+
+# target to preprocess a source file
+src/gui/view/audio/volumn.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/audio/volumn.cpp.i
+.PHONY : src/gui/view/audio/volumn.cpp.i
+
+src/gui/view/audio/volumn.s: src/gui/view/audio/volumn.cpp.s
+.PHONY : src/gui/view/audio/volumn.s
+
+# target to generate assembly for a file
+src/gui/view/audio/volumn.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/audio/volumn.cpp.s
+.PHONY : src/gui/view/audio/volumn.cpp.s
+
+src/gui/view/debug/profiler.o: src/gui/view/debug/profiler.cpp.o
+.PHONY : src/gui/view/debug/profiler.o
+
+# target to build an object file
+src/gui/view/debug/profiler.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/debug/profiler.cpp.o
+.PHONY : src/gui/view/debug/profiler.cpp.o
+
+src/gui/view/debug/profiler.i: src/gui/view/debug/profiler.cpp.i
+.PHONY : src/gui/view/debug/profiler.i
+
+# target to preprocess a source file
+src/gui/view/debug/profiler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/debug/profiler.cpp.i
+.PHONY : src/gui/view/debug/profiler.cpp.i
+
+src/gui/view/debug/profiler.s: src/gui/view/debug/profiler.cpp.s
+.PHONY : src/gui/view/debug/profiler.s
+
+# target to generate assembly for a file
+src/gui/view/debug/profiler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/debug/profiler.cpp.s
+.PHONY : src/gui/view/debug/profiler.cpp.s
+
+src/gui/view/general/application.o: src/gui/view/general/application.cpp.o
+.PHONY : src/gui/view/general/application.o
+
+# target to build an object file
+src/gui/view/general/application.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/application.cpp.o
+.PHONY : src/gui/view/general/application.cpp.o
+
+src/gui/view/general/application.i: src/gui/view/general/application.cpp.i
+.PHONY : src/gui/view/general/application.i
+
+# target to preprocess a source file
+src/gui/view/general/application.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/application.cpp.i
+.PHONY : src/gui/view/general/application.cpp.i
+
+src/gui/view/general/application.s: src/gui/view/general/application.cpp.s
+.PHONY : src/gui/view/general/application.s
+
+# target to generate assembly for a file
+src/gui/view/general/application.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/application.cpp.s
+.PHONY : src/gui/view/general/application.cpp.s
+
+src/gui/view/general/blueprint.o: src/gui/view/general/blueprint.cpp.o
+.PHONY : src/gui/view/general/blueprint.o
+
+# target to build an object file
+src/gui/view/general/blueprint.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/blueprint.cpp.o
+.PHONY : src/gui/view/general/blueprint.cpp.o
+
+src/gui/view/general/blueprint.i: src/gui/view/general/blueprint.cpp.i
+.PHONY : src/gui/view/general/blueprint.i
+
+# target to preprocess a source file
+src/gui/view/general/blueprint.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/blueprint.cpp.i
+.PHONY : src/gui/view/general/blueprint.cpp.i
+
+src/gui/view/general/blueprint.s: src/gui/view/general/blueprint.cpp.s
+.PHONY : src/gui/view/general/blueprint.s
+
+# target to generate assembly for a file
+src/gui/view/general/blueprint.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/blueprint.cpp.s
+.PHONY : src/gui/view/general/blueprint.cpp.s
+
+src/gui/view/general/console.o: src/gui/view/general/console.cpp.o
+.PHONY : src/gui/view/general/console.o
+
+# target to build an object file
+src/gui/view/general/console.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/console.cpp.o
+.PHONY : src/gui/view/general/console.cpp.o
+
+src/gui/view/general/console.i: src/gui/view/general/console.cpp.i
+.PHONY : src/gui/view/general/console.i
+
+# target to preprocess a source file
+src/gui/view/general/console.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/console.cpp.i
+.PHONY : src/gui/view/general/console.cpp.i
+
+src/gui/view/general/console.s: src/gui/view/general/console.cpp.s
+.PHONY : src/gui/view/general/console.s
+
+# target to generate assembly for a file
+src/gui/view/general/console.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/console.cpp.s
+.PHONY : src/gui/view/general/console.cpp.s
+
+src/gui/view/general/explorer.o: src/gui/view/general/explorer.cpp.o
+.PHONY : src/gui/view/general/explorer.o
+
+# target to build an object file
+src/gui/view/general/explorer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/explorer.cpp.o
+.PHONY : src/gui/view/general/explorer.cpp.o
+
+src/gui/view/general/explorer.i: src/gui/view/general/explorer.cpp.i
+.PHONY : src/gui/view/general/explorer.i
+
+# target to preprocess a source file
+src/gui/view/general/explorer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/explorer.cpp.i
+.PHONY : src/gui/view/general/explorer.cpp.i
+
+src/gui/view/general/explorer.s: src/gui/view/general/explorer.cpp.s
+.PHONY : src/gui/view/general/explorer.s
+
+# target to generate assembly for a file
+src/gui/view/general/explorer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/explorer.cpp.s
+.PHONY : src/gui/view/general/explorer.cpp.s
+
+src/gui/view/general/hierarchy.o: src/gui/view/general/hierarchy.cpp.o
+.PHONY : src/gui/view/general/hierarchy.o
+
+# target to build an object file
+src/gui/view/general/hierarchy.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/hierarchy.cpp.o
+.PHONY : src/gui/view/general/hierarchy.cpp.o
+
+src/gui/view/general/hierarchy.i: src/gui/view/general/hierarchy.cpp.i
+.PHONY : src/gui/view/general/hierarchy.i
+
+# target to preprocess a source file
+src/gui/view/general/hierarchy.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/hierarchy.cpp.i
+.PHONY : src/gui/view/general/hierarchy.cpp.i
+
+src/gui/view/general/hierarchy.s: src/gui/view/general/hierarchy.cpp.s
+.PHONY : src/gui/view/general/hierarchy.s
+
+# target to generate assembly for a file
+src/gui/view/general/hierarchy.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/hierarchy.cpp.s
+.PHONY : src/gui/view/general/hierarchy.cpp.s
+
+src/gui/view/general/inspector.o: src/gui/view/general/inspector.cpp.o
+.PHONY : src/gui/view/general/inspector.o
+
+# target to build an object file
+src/gui/view/general/inspector.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/inspector.cpp.o
+.PHONY : src/gui/view/general/inspector.cpp.o
+
+src/gui/view/general/inspector.i: src/gui/view/general/inspector.cpp.i
+.PHONY : src/gui/view/general/inspector.i
+
+# target to preprocess a source file
+src/gui/view/general/inspector.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/inspector.cpp.i
+.PHONY : src/gui/view/general/inspector.cpp.i
+
+src/gui/view/general/inspector.s: src/gui/view/general/inspector.cpp.s
+.PHONY : src/gui/view/general/inspector.s
+
+# target to generate assembly for a file
+src/gui/view/general/inspector.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/general/inspector.cpp.s
+.PHONY : src/gui/view/general/inspector.cpp.s
+
+src/gui/view/render/preview.o: src/gui/view/render/preview.cpp.o
+.PHONY : src/gui/view/render/preview.o
+
+# target to build an object file
+src/gui/view/render/preview.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/render/preview.cpp.o
+.PHONY : src/gui/view/render/preview.cpp.o
+
+src/gui/view/render/preview.i: src/gui/view/render/preview.cpp.i
+.PHONY : src/gui/view/render/preview.i
+
+# target to preprocess a source file
+src/gui/view/render/preview.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/render/preview.cpp.i
+.PHONY : src/gui/view/render/preview.cpp.i
+
+src/gui/view/render/preview.s: src/gui/view/render/preview.cpp.s
+.PHONY : src/gui/view/render/preview.s
+
+# target to generate assembly for a file
+src/gui/view/render/preview.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/render/preview.cpp.s
+.PHONY : src/gui/view/render/preview.cpp.s
+
+src/gui/view/script/script.o: src/gui/view/script/script.cpp.o
+.PHONY : src/gui/view/script/script.o
+
+# target to build an object file
+src/gui/view/script/script.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/script/script.cpp.o
+.PHONY : src/gui/view/script/script.cpp.o
+
+src/gui/view/script/script.i: src/gui/view/script/script.cpp.i
+.PHONY : src/gui/view/script/script.i
+
+# target to preprocess a source file
+src/gui/view/script/script.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/script/script.cpp.i
+.PHONY : src/gui/view/script/script.cpp.i
+
+src/gui/view/script/script.s: src/gui/view/script/script.cpp.s
+.PHONY : src/gui/view/script/script.s
+
+# target to generate assembly for a file
+src/gui/view/script/script.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/script/script.cpp.s
+.PHONY : src/gui/view/script/script.cpp.s
+
+src/gui/view/viewbase.o: src/gui/view/viewbase.cpp.o
+.PHONY : src/gui/view/viewbase.o
+
+# target to build an object file
+src/gui/view/viewbase.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/viewbase.cpp.o
+.PHONY : src/gui/view/viewbase.cpp.o
+
+src/gui/view/viewbase.i: src/gui/view/viewbase.cpp.i
+.PHONY : src/gui/view/viewbase.i
+
+# target to preprocess a source file
+src/gui/view/viewbase.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/viewbase.cpp.i
+.PHONY : src/gui/view/viewbase.cpp.i
+
+src/gui/view/viewbase.s: src/gui/view/viewbase.cpp.s
+.PHONY : src/gui/view/viewbase.s
+
+# target to generate assembly for a file
+src/gui/view/viewbase.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/view/viewbase.cpp.s
+.PHONY : src/gui/view/viewbase.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -416,6 +3572,30 @@ src/system/cli.s: src/system/cli.cpp.s
 src/system/cli.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/cli.cpp.s
 .PHONY : src/system/cli.cpp.s
+
+src/system/system.o: src/system/system.cpp.o
+.PHONY : src/system/system.o
+
+# target to build an object file
+src/system/system.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/system.cpp.o
+.PHONY : src/system/system.cpp.o
+
+src/system/system.i: src/system/system.cpp.i
+.PHONY : src/system/system.i
+
+# target to preprocess a source file
+src/system/system.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/system.cpp.i
+.PHONY : src/system/system.cpp.i
+
+src/system/system.s: src/system/system.cpp.s
+.PHONY : src/system/system.s
+
+# target to generate assembly for a file
+src/system/system.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/system/system.cpp.s
+.PHONY : src/system/system.cpp.s
 
 src/system/window.o: src/system/window.cpp.o
 .PHONY : src/system/window.o
@@ -609,6 +3789,30 @@ third-party/imgui/imgui_widgets.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/imgui/imgui_widgets.cpp.s
 .PHONY : third-party/imgui/imgui_widgets.cpp.s
 
+third-party/imgui/misc/cpp/imgui_stdlib.o: third-party/imgui/misc/cpp/imgui_stdlib.cpp.o
+.PHONY : third-party/imgui/misc/cpp/imgui_stdlib.o
+
+# target to build an object file
+third-party/imgui/misc/cpp/imgui_stdlib.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/imgui/misc/cpp/imgui_stdlib.cpp.o
+.PHONY : third-party/imgui/misc/cpp/imgui_stdlib.cpp.o
+
+third-party/imgui/misc/cpp/imgui_stdlib.i: third-party/imgui/misc/cpp/imgui_stdlib.cpp.i
+.PHONY : third-party/imgui/misc/cpp/imgui_stdlib.i
+
+# target to preprocess a source file
+third-party/imgui/misc/cpp/imgui_stdlib.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/imgui/misc/cpp/imgui_stdlib.cpp.i
+.PHONY : third-party/imgui/misc/cpp/imgui_stdlib.cpp.i
+
+third-party/imgui/misc/cpp/imgui_stdlib.s: third-party/imgui/misc/cpp/imgui_stdlib.cpp.s
+.PHONY : third-party/imgui/misc/cpp/imgui_stdlib.s
+
+# target to generate assembly for a file
+third-party/imgui/misc/cpp/imgui_stdlib.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/third-party/imgui/misc/cpp/imgui_stdlib.cpp.s
+.PHONY : third-party/imgui/misc/cpp/imgui_stdlib.cpp.s
+
 third-party/node-editor/crude_json.o: third-party/node-editor/crude_json.cpp.o
 .PHONY : third-party/node-editor/crude_json.o
 
@@ -711,45 +3915,306 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... codegen"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
+	@echo "... package"
+	@echo "... package_source"
 	@echo "... rebuild_cache"
+	@echo "... DiligentCore-static"
+	@echo "... build-certs"
+	@echo "... clean-certs"
+	@echo "... core_tables"
+	@echo "... curl-ca-bundle"
+	@echo "... curl-ca-firefox"
+	@echo "... curl-examples"
+	@echo "... curl-examples-build"
+	@echo "... curl-generate-curl-config.1"
+	@echo "... curl-generate-mk-ca-bundle.1"
+	@echo "... curl-generate-runtests.1"
+	@echo "... curl-generate-testcurl.1"
+	@echo "... curl-generate-wcurl.1"
+	@echo "... curl-lint"
+	@echo "... curl-listcats"
+	@echo "... curl-listhelp"
+	@echo "... curl-man"
+	@echo "... curl-optiontable"
+	@echo "... curl-opts-man"
+	@echo "... curl-pytest"
+	@echo "... curl-pytest-ci"
+	@echo "... curl_uninstall"
+	@echo "... curlu-unitprotos"
+	@echo "... enum_string_mapping"
+	@echo "... extinst_tables"
+	@echo "... generate-curl.1"
+	@echo "... spirv-tools-build-version"
+	@echo "... spirv-tools-header-DebugInfo"
+	@echo "... spirv-tools-header-NonSemanticShaderDebugInfo100"
+	@echo "... spirv-tools-header-OpenCLDebugInfo100"
+	@echo "... spirv-tools-pkg-config"
+	@echo "... spirv-tools-vimsyntax"
+	@echo "... spv-tools-cldi100"
+	@echo "... spv-tools-clspvreflection"
+	@echo "... spv-tools-debuginfo"
+	@echo "... spv-tools-shdi100"
+	@echo "... spv-tools-spv-amd-gs"
+	@echo "... spv-tools-spv-amd-sb"
+	@echo "... spv-tools-spv-amd-sevp"
+	@echo "... spv-tools-spv-amd-stm"
+	@echo "... spv-tools-vkspreflection"
+	@echo "... test-am"
+	@echo "... test-ci"
+	@echo "... test-event"
+	@echo "... test-full"
+	@echo "... test-nonflaky"
+	@echo "... test-quiet"
+	@echo "... test-torture"
+	@echo "... testdeps"
+	@echo "... tests"
+	@echo "... tt"
+	@echo "... Diligent-Archiver-shared"
+	@echo "... Diligent-Archiver-static"
+	@echo "... Diligent-BasicPlatform"
+	@echo "... Diligent-Common"
+	@echo "... Diligent-GLAdapterSelector"
+	@echo "... Diligent-GraphicsAccessories"
+	@echo "... Diligent-GraphicsEngine"
+	@echo "... Diligent-GraphicsEngineNextGenBase"
+	@echo "... Diligent-GraphicsEngineOpenGL-shared"
+	@echo "... Diligent-GraphicsEngineOpenGL-static"
+	@echo "... Diligent-GraphicsEngineVk-shared"
+	@echo "... Diligent-GraphicsEngineVk-static"
+	@echo "... Diligent-GraphicsTools"
+	@echo "... Diligent-HLSL2GLSLConverterLib"
+	@echo "... Diligent-LinuxPlatform"
+	@echo "... Diligent-Primitives"
+	@echo "... Diligent-ShaderTools"
+	@echo "... GenericCodeGen"
+	@echo "... MachineIndependent"
+	@echo "... OSDependent"
+	@echo "... SDL3-static"
+	@echo "... SDL3_test"
+	@echo "... SPIRV"
+	@echo "... SPIRV-Tools-diff"
+	@echo "... SPIRV-Tools-link"
+	@echo "... SPIRV-Tools-lint"
+	@echo "... SPIRV-Tools-opt"
+	@echo "... SPIRV-Tools-reduce"
+	@echo "... SPIRV-Tools-shared"
+	@echo "... SPIRV-Tools-static"
+	@echo "... curl"
+	@echo "... curl-example-10-at-a-time"
+	@echo "... curl-example-address-scope"
+	@echo "... curl-example-all"
+	@echo "... curl-example-altsvc"
+	@echo "... curl-example-anyauthput"
+	@echo "... curl-example-block_ip"
+	@echo "... curl-example-cacertinmem"
+	@echo "... curl-example-certinfo"
+	@echo "... curl-example-chkspeed"
+	@echo "... curl-example-connect-to"
+	@echo "... curl-example-cookie_interface"
+	@echo "... curl-example-debug"
+	@echo "... curl-example-default-scheme"
+	@echo "... curl-example-externalsocket"
+	@echo "... curl-example-fileupload"
+	@echo "... curl-example-ftp-delete"
+	@echo "... curl-example-ftp-wildcard"
+	@echo "... curl-example-ftpget"
+	@echo "... curl-example-ftpgetinfo"
+	@echo "... curl-example-ftpgetresp"
+	@echo "... curl-example-ftpsget"
+	@echo "... curl-example-ftpupload"
+	@echo "... curl-example-ftpuploadfrommem"
+	@echo "... curl-example-ftpuploadresume"
+	@echo "... curl-example-getinfo"
+	@echo "... curl-example-getinmemory"
+	@echo "... curl-example-getredirect"
+	@echo "... curl-example-getreferrer"
+	@echo "... curl-example-headerapi"
+	@echo "... curl-example-hsts-preload"
+	@echo "... curl-example-http-options"
+	@echo "... curl-example-http-post"
+	@echo "... curl-example-http2-download"
+	@echo "... curl-example-http2-pushinmemory"
+	@echo "... curl-example-http2-serverpush"
+	@echo "... curl-example-http2-upload"
+	@echo "... curl-example-http3"
+	@echo "... curl-example-http3-present"
+	@echo "... curl-example-httpcustomheader"
+	@echo "... curl-example-httpput"
+	@echo "... curl-example-httpput-postfields"
+	@echo "... curl-example-https"
+	@echo "... curl-example-imap-append"
+	@echo "... curl-example-imap-authzid"
+	@echo "... curl-example-imap-copy"
+	@echo "... curl-example-imap-create"
+	@echo "... curl-example-imap-delete"
+	@echo "... curl-example-imap-examine"
+	@echo "... curl-example-imap-fetch"
+	@echo "... curl-example-imap-list"
+	@echo "... curl-example-imap-lsub"
+	@echo "... curl-example-imap-multi"
+	@echo "... curl-example-imap-noop"
+	@echo "... curl-example-imap-search"
+	@echo "... curl-example-imap-ssl"
+	@echo "... curl-example-imap-store"
+	@echo "... curl-example-imap-tls"
+	@echo "... curl-example-interface"
+	@echo "... curl-example-ipv6"
+	@echo "... curl-example-keepalive"
+	@echo "... curl-example-localport"
+	@echo "... curl-example-log_failed_transfers"
+	@echo "... curl-example-maxconnects"
+	@echo "... curl-example-multi-app"
+	@echo "... curl-example-multi-debugcallback"
+	@echo "... curl-example-multi-double"
+	@echo "... curl-example-multi-formadd"
+	@echo "... curl-example-multi-legacy"
+	@echo "... curl-example-multi-post"
+	@echo "... curl-example-multi-single"
+	@echo "... curl-example-netrc"
+	@echo "... curl-example-parseurl"
+	@echo "... curl-example-persistent"
+	@echo "... curl-example-pop3-authzid"
+	@echo "... curl-example-pop3-dele"
+	@echo "... curl-example-pop3-list"
+	@echo "... curl-example-pop3-multi"
+	@echo "... curl-example-pop3-noop"
+	@echo "... curl-example-pop3-retr"
+	@echo "... curl-example-pop3-ssl"
+	@echo "... curl-example-pop3-stat"
+	@echo "... curl-example-pop3-tls"
+	@echo "... curl-example-pop3-top"
+	@echo "... curl-example-pop3-uidl"
+	@echo "... curl-example-post-callback"
+	@echo "... curl-example-postinmemory"
+	@echo "... curl-example-postit2"
+	@echo "... curl-example-postit2-formadd"
+	@echo "... curl-example-progressfunc"
+	@echo "... curl-example-protofeats"
+	@echo "... curl-example-range"
+	@echo "... curl-example-resolve"
+	@echo "... curl-example-rtsp-options"
+	@echo "... curl-example-sendrecv"
+	@echo "... curl-example-sepheaders"
+	@echo "... curl-example-sftpget"
+	@echo "... curl-example-sftpuploadresume"
+	@echo "... curl-example-shared-connection-cache"
+	@echo "... curl-example-simple"
+	@echo "... curl-example-simplepost"
+	@echo "... curl-example-simplessl"
+	@echo "... curl-example-smtp-authzid"
+	@echo "... curl-example-smtp-expn"
+	@echo "... curl-example-smtp-mail"
+	@echo "... curl-example-smtp-mime"
+	@echo "... curl-example-smtp-multi"
+	@echo "... curl-example-smtp-ssl"
+	@echo "... curl-example-smtp-tls"
+	@echo "... curl-example-smtp-vrfy"
+	@echo "... curl-example-sslbackend"
+	@echo "... curl-example-synctime"
+	@echo "... curl-example-threaded"
+	@echo "... curl-example-unixsocket"
+	@echo "... curl-example-url2file"
+	@echo "... curl-example-urlapi"
+	@echo "... curl-example-usercertinmem"
+	@echo "... curl-example-websocket"
+	@echo "... curl-example-websocket-cb"
+	@echo "... curl-example-websocket-updown"
+	@echo "... curlinfo"
+	@echo "... curltool"
+	@echo "... curlu"
+	@echo "... glew-static"
+	@echo "... glslang"
+	@echo "... glslang-default-resource-limits"
 	@echo "... january"
+	@echo "... libcurl_static"
+	@echo "... libtests"
+	@echo "... servers"
+	@echo "... spirv-cross-core"
+	@echo "... spirv-cross-glsl"
+	@echo "... tunits"
+	@echo "... units"
+	@echo "... xxhash"
 	@echo "... src/engine/engine.o"
 	@echo "... src/engine/engine.i"
 	@echo "... src/engine/engine.s"
-	@echo "... src/engine/gui/mainframe.o"
-	@echo "... src/engine/gui/mainframe.i"
-	@echo "... src/engine/gui/mainframe.s"
-	@echo "... src/engine/gui/view/blueprint.o"
-	@echo "... src/engine/gui/view/blueprint.i"
-	@echo "... src/engine/gui/view/blueprint.s"
-	@echo "... src/engine/gui/view/explorer.o"
-	@echo "... src/engine/gui/view/explorer.i"
-	@echo "... src/engine/gui/view/explorer.s"
-	@echo "... src/engine/gui/view/inspector.o"
-	@echo "... src/engine/gui/view/inspector.i"
-	@echo "... src/engine/gui/view/inspector.s"
-	@echo "... src/engine/gui/view/preview.o"
-	@echo "... src/engine/gui/view/preview.i"
-	@echo "... src/engine/gui/view/preview.s"
-	@echo "... src/engine/gui/view/script.o"
-	@echo "... src/engine/gui/view/script.i"
-	@echo "... src/engine/gui/view/script.s"
-	@echo "... src/engine/gui/view/timeline.o"
-	@echo "... src/engine/gui/view/timeline.i"
-	@echo "... src/engine/gui/view/timeline.s"
-	@echo "... src/engine/gui/view/volumn.o"
-	@echo "... src/engine/gui/view/volumn.i"
-	@echo "... src/engine/gui/view/volumn.s"
+	@echo "... src/engine/node/ecs.o"
+	@echo "... src/engine/node/ecs.i"
+	@echo "... src/engine/node/ecs.s"
+	@echo "... src/engine/node/register.o"
+	@echo "... src/engine/node/register.i"
+	@echo "... src/engine/node/register.s"
+	@echo "... src/engine/utility/command.o"
+	@echo "... src/engine/utility/command.i"
+	@echo "... src/engine/utility/command.s"
 	@echo "... src/engine/utility/path.o"
 	@echo "... src/engine/utility/path.i"
 	@echo "... src/engine/utility/path.s"
+	@echo "... src/gui/manager.o"
+	@echo "... src/gui/manager.i"
+	@echo "... src/gui/manager.s"
+	@echo "... src/gui/nodes/edgebase.o"
+	@echo "... src/gui/nodes/edgebase.i"
+	@echo "... src/gui/nodes/edgebase.s"
+	@echo "... src/gui/nodes/nodebase.o"
+	@echo "... src/gui/nodes/nodebase.i"
+	@echo "... src/gui/nodes/nodebase.s"
+	@echo "... src/gui/popup/popupbase.o"
+	@echo "... src/gui/popup/popupbase.i"
+	@echo "... src/gui/popup/popupbase.s"
+	@echo "... src/gui/popup/project_dashboard.o"
+	@echo "... src/gui/popup/project_dashboard.i"
+	@echo "... src/gui/popup/project_dashboard.s"
+	@echo "... src/gui/view/animation/timeline.o"
+	@echo "... src/gui/view/animation/timeline.i"
+	@echo "... src/gui/view/animation/timeline.s"
+	@echo "... src/gui/view/audio/volumn.o"
+	@echo "... src/gui/view/audio/volumn.i"
+	@echo "... src/gui/view/audio/volumn.s"
+	@echo "... src/gui/view/debug/profiler.o"
+	@echo "... src/gui/view/debug/profiler.i"
+	@echo "... src/gui/view/debug/profiler.s"
+	@echo "... src/gui/view/general/application.o"
+	@echo "... src/gui/view/general/application.i"
+	@echo "... src/gui/view/general/application.s"
+	@echo "... src/gui/view/general/blueprint.o"
+	@echo "... src/gui/view/general/blueprint.i"
+	@echo "... src/gui/view/general/blueprint.s"
+	@echo "... src/gui/view/general/console.o"
+	@echo "... src/gui/view/general/console.i"
+	@echo "... src/gui/view/general/console.s"
+	@echo "... src/gui/view/general/explorer.o"
+	@echo "... src/gui/view/general/explorer.i"
+	@echo "... src/gui/view/general/explorer.s"
+	@echo "... src/gui/view/general/hierarchy.o"
+	@echo "... src/gui/view/general/hierarchy.i"
+	@echo "... src/gui/view/general/hierarchy.s"
+	@echo "... src/gui/view/general/inspector.o"
+	@echo "... src/gui/view/general/inspector.i"
+	@echo "... src/gui/view/general/inspector.s"
+	@echo "... src/gui/view/render/preview.o"
+	@echo "... src/gui/view/render/preview.i"
+	@echo "... src/gui/view/render/preview.s"
+	@echo "... src/gui/view/script/script.o"
+	@echo "... src/gui/view/script/script.i"
+	@echo "... src/gui/view/script/script.s"
+	@echo "... src/gui/view/viewbase.o"
+	@echo "... src/gui/view/viewbase.i"
+	@echo "... src/gui/view/viewbase.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
 	@echo "... src/system/cli.o"
 	@echo "... src/system/cli.i"
 	@echo "... src/system/cli.s"
+	@echo "... src/system/system.o"
+	@echo "... src/system/system.i"
+	@echo "... src/system/system.s"
 	@echo "... src/system/window.o"
 	@echo "... src/system/window.i"
 	@echo "... src/system/window.s"
@@ -774,6 +4239,9 @@ help:
 	@echo "... third-party/imgui/imgui_widgets.o"
 	@echo "... third-party/imgui/imgui_widgets.i"
 	@echo "... third-party/imgui/imgui_widgets.s"
+	@echo "... third-party/imgui/misc/cpp/imgui_stdlib.o"
+	@echo "... third-party/imgui/misc/cpp/imgui_stdlib.i"
+	@echo "... third-party/imgui/misc/cpp/imgui_stdlib.s"
 	@echo "... third-party/node-editor/crude_json.o"
 	@echo "... third-party/node-editor/crude_json.i"
 	@echo "... third-party/node-editor/crude_json.s"
@@ -797,6 +4265,7 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
+	$(CMAKE_COMMAND) -P /home/funique0807/dev/January/build/CMakeFiles/VerifyGlobs.cmake
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

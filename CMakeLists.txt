@@ -10,8 +10,22 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DVK_PROTOTYPES")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_PROTOTYPES")
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_compile_definitions(VK_PROTOTYPES)
+
+# diligent_engine
+set(DILIGENT_BUILD_SAMPLES OFF CACHE BOOL "Disable Diligent samples" FORCE)
+set(DILIGENT_BUILD_TOOLS OFF CACHE BOOL "Disable Diligent tools" FORCE)
+set(DILIGENT_BUILD_FX OFF CACHE BOOL "Disable DiligentFX framework" FORCE)
+set(DILIGENT_NO_FORMAT_VALIDATION ON CACHE BOOL "Disable format validation" FORCE)
+set(DILIGENT_DIR third-party/diligent_engine)
+add_subdirectory(${DILIGENT_DIR} EXCLUDE_FROM_ALL)
+
 # SDL3
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
+
+# libcurl
+set(LIBCURL_DIR third-party/libcurl)
+add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)
 
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
@@ -24,10 +38,6 @@ include_directories(${CR_DIR}/cr)
 # Node editorc
 set(Node_DIR third-party/node-editor)
 include_directories(${Node_DIR})
-
-# libcurl
-set(LIBCURL_DIR third-party/libcurl)
-add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)
 
 # asio
 set(ASIO_DIR third-party/asio)
@@ -49,10 +59,6 @@ include_directories(${CMD_DIR})
 set(JSON_DIR third-party/json)
 include_directories(${JSON_DIR})
 
-# nativefiledialog
-set(NFD_DIR third-party/nativefiledialog)
-add_subdirectory(${NFD_DIR})
-
 # ini
 set(INI_DIR third-party/mINI)
 include_directories(${INI_DIR}/src/mini)
@@ -71,13 +77,6 @@ include_directories(${Notify_DIR})
 
 # Libraries
 find_package(Vulkan REQUIRED)
-#find_library(VULKAN_LIBRARY
-  #NAMES vulkan vulkan-1)
-#set(LIBRARIES "glfw;${VULKAN_LIBRARY}")
-# FIXME: Linux needs linking with "X11" as well?
-
-# Use vulkan headers from glfw:
-include_directories(${GLFW_DIR}/deps)
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
 
@@ -106,15 +105,37 @@ target_include_directories(january PUBLIC
 )
 
 target_link_directories(january PRIVATE 
-  
+  ${DILIGENT_DIR}/DiligentCore
 )
-target_link_libraries(january PRIVATE 
-  glfw
-  Vulkan::Vulkan 
-  SDL3::SDL3
-  CURL::libcurl
-  nfd
-)
+
+if(WIN32)
+    target_link_libraries(january PRIVATE 
+        glfw
+        Vulkan::Vulkan 
+        SDL3::SDL3
+        CURL::libcurl
+        Diligent-GraphicsEngineD3D11-static
+        Diligent-GraphicsEngineD3D12-static
+        Diligent-GraphicsEngineVk-static
+    )
+elseif(APPLE)
+    target_link_libraries(january PRIVATE 
+        glfw
+        Vulkan::Vulkan 
+        SDL3::SDL3
+        CURL::libcurl
+        Diligent-GraphicsEngineMetal-static
+    )
+else() # Linux
+    target_link_libraries(january PRIVATE 
+        glfw
+        Vulkan::Vulkan 
+        SDL3::SDL3
+        CURL::libcurl
+        Diligent-GraphicsEngineVk-static
+        Diligent-GraphicsEngineOpenGL-static
+    )
+endif()
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
 
