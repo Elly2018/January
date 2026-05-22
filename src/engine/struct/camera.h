@@ -24,30 +24,27 @@ SOFTWARE.
 #pragma once
 #ifndef ENGINE_STRUCT_SCENE_H
 #define ENGINE_STRUCT_SCENE_H
-#include <cinttypes>
-#include <vector>
-#include <unordered_map>
-#include <string>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 namespace January::Engine {
-    struct JSystem;
-    struct JComponent;
-
     //
-    // The scene structure
+    // Basic 
     //
-    struct JScene {
-        // entity uuid to components
-        std::unordered_map<std::string, std::vector<struct JComponent*>> entity_component_map;
-        // system uuid to components
-        std::unordered_map<std::string, std::vector<struct JComponent*>> system_component_map;
-        std::vector<struct JSystem*> systems;
-        // Array of uuid
-        std::vector<std::string> entities;
-        std::vector<struct JComponent*> components;
+    struct JCamera {
+        enum class MODE {
+            PERSPECTIVE,
+            ORTHOGRAPHIC,
+            CUSTOM
+        };
+        
+        glm::vec3 pos;
+        glm::vec3 rot;
+        float fov;
+        glm::mat4 projection;
 
-        struct JSystem* GetSystemByPath(std::string path);
+        glm::mat4 GetViewMatrix();
+        glm::mat4 GetProjectionMatrix();
     };
 }
-
 #endif
