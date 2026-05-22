@@ -23,16 +23,7 @@ SOFTWARE.
 */
 #include "manager.h"
 #include <nfd.h>
-#include "view/action.h"
-#include "view/blueprint.h"
-#include "view/console.h"
-#include "view/explorer.h"
-#include "view/inspector.h"
-#include "view/preview.h"
-#include "view/profiler.h"
-#include "view/script.h"
-#include "view/timeline.h"
-#include "view/volumn.h"
+#include "view/allview.h"
 #include "popup/project_dashboard.h"
 #include "../engine/engine.h"
 #include "../engine/struct/config.h"

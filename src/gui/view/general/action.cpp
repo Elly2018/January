@@ -1,9 +1,9 @@
 #include "action.h"
 #include <imgui.h>
 #include <spdlog/spdlog.h>
-#include "../../engine/engine.h"
-#include "../../engine/struct/config.h"
-#include "../../engine/struct/context.h"
+#include "../../../engine/engine.h"
+#include "../../../engine/struct/config.h"
+#include "../../../engine/struct/context.h"
 
 namespace January::Engine::View {
     void JViewAction::Init(){

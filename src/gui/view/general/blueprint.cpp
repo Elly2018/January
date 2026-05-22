@@ -25,9 +25,9 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include <imgui.h>
 #include <imgui_node_editor.h>
-#include "../../engine/utility/path.h"
-#include "../nodes/nodebase.h"
-#include "../nodes/edgebase.h"
+#include "../../../engine/utility/path.h"
+#include "../../nodes/nodebase.h"
+#include "../../nodes/edgebase.h"
 
 namespace ed = ax::NodeEditor;
 

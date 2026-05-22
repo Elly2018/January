@@ -1,8 +1,8 @@
 #include "console.h"
 #include <imgui.h>
 #include <imgui_stdlib.h>
-#include "../../engine/engine.h"
-#include "../../engine/struct/context.h"
+#include "../../../engine/engine.h"
+#include "../../../engine/struct/context.h"
 
 namespace January::Engine::View {
     void JViewConsole::Init() {

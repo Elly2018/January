@@ -22,41 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef GUI_VIEW_ACTION_H
-#define GUI_VIEW_ACTION_H
-#include "viewbase.h"
-#include <vector>
-#include <string>
+#ifndef GUI_VIEW_VOLUMN_H
+#define GUI_VIEW_VOLUMN_H
+#include "../viewbase.h"
 
-namespace ax::NodeEditor {
-    struct EditorContext;
-}
-
-namespace January::Engine {
-
-    namespace Node {
-        struct NodeBase;
-        struct EdgeBase;
-    }
-
-    namespace View {
-
-        class JViewAction : public JViewBase {
-        public:
-            DEFAULT_VIEW_CTOR(JViewAction) {}
-            DEFAULT_VIEW_DECTOR(JViewAction) {}
-            void Init() override;
-            void Update() override;
-            void Draw() override;
-            void DeInit() override;
-        protected:
-            void Play();
-            void Pause();
-            void Stop();
-        private:
-            bool is_play;
-            bool is_pause;
-        };
-    }
+namespace January::Engine::View { 
+    class JViewVolumn : public JViewBase {
+    public:
+        DEFAULT_VIEW_CTOR(JViewVolumn) {}
+        DEFAULT_VIEW_DECTOR(JViewVolumn) {}
+    };
 }
 #endif

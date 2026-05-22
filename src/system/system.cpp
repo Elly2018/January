@@ -29,7 +29,7 @@ SOFTWARE.
 #include "../engine/struct/context.h"
 #include "../engine/utility/command.h"
 #include "../gui/manager.h"
-#include "../gui/view/explorer.h"
+#include "../gui/view/general/explorer.h"
 
 namespace January::System {
     using namespace Engine;

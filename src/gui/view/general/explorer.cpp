@@ -26,9 +26,9 @@ SOFTWARE.
 #include <thread>
 #include <spdlog/spdlog.h>
 #include <imgui.h>
-#include "../../engine/engine.h"
-#include "../../engine/struct/config.h"
-#include "../../engine/struct/context.h"
+#include "../../../engine/engine.h"
+#include "../../../engine/struct/config.h"
+#include "../../../engine/struct/context.h"
 
 namespace fs = std::filesystem;
 

@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#include "viewbase.h"
-#ifndef GUI_VIEW_PREVIEW_H
-#define GUI_VIEW_PREVIEW_H
+#ifndef GUI_VIEW_SCRIPT_H
+#define GUI_VIEW_SCRIPT_H
+#include "../viewbase.h"
 
 namespace January::Engine::View {
-    class JViewPreview : public JViewBase {
+    class JViewScript : public JViewBase {
     public:
-        DEFAULT_VIEW_CTOR(JViewPreview) {}
-        DEFAULT_VIEW_DECTOR(JViewPreview) {}
+        DEFAULT_VIEW_CTOR(JViewScript) {}
+        DEFAULT_VIEW_DECTOR(JViewScript) {}
     };
 }
 #endif

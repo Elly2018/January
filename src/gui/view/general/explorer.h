@@ -30,7 +30,7 @@ SOFTWARE.
 #include <filesystem>
 #include <uuid_v4.h>
 #include <FileWatch.hpp>
-#include "viewbase.h"
+#include "../viewbase.h"
 
 namespace fs = std::filesystem;
 

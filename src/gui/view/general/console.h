@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#include "viewbase.h"
+#ifndef GUI_VIEW_CONSOLE_H
+#define GUI_VIEW_CONSOLE_H
+#include "../viewbase.h"
 #include <string>
 #include <mutex>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/callback_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#ifndef GUI_VIEW_CONSOLE_H
-#define GUI_VIEW_CONSOLE_H
 
 struct ImVec4;
 
