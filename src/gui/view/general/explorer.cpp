@@ -77,7 +77,7 @@ namespace January::Engine::View {
                 spdlog::debug("\tClean file data");
                 UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
                 {
-                    std::lock_guard<std::mutex> guard(mtx);
+                    std::lock_guard<std::mutex> guard(files_mtx);
                     spdlog::debug("\tStart fetch files...");
                     for(auto entry : fs::directory_iterator(pp)){
                         spdlog::debug("\t\tDetect entry: {}", entry.path().c_str());
@@ -123,8 +123,10 @@ namespace January::Engine::View {
                 DrawPathBar();
                 ImGui::EndChild();
             }
-            ImGui::SliderInt("size", &imgSize, 0, 10, "%d");
+            int32_t temp_imgSize = imgSize.load();
+            ImGui::SliderInt("size", &temp_imgSize, 0, 10, "%d");
             {
+                imgSize.store(temp_imgSize);
                 ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
                 DrawLeftSide();
                 ImGui::EndChild();
@@ -154,6 +156,7 @@ namespace January::Engine::View {
         ImGui::PushFont(jengine.context->icon_font);
         ImGui::BeginDisabled(travel_record.size() == 0);
         if(ImGui::Button("\uf053")){ // Return
+            std::lock_guard<std::mutex> guard(travel_record_mtx);
             changed = true;
             std::string buffer = travel_record.top();
             travel_record.pop();
@@ -164,6 +167,7 @@ namespace January::Engine::View {
         ImGui::SameLine();
         ImGui::BeginDisabled(path_node.size() == 1);
         if(ImGui::Button("\uf062")){ // Up
+            std::lock_guard<std::mutex> guard(travel_record_mtx);
             changed = true;
             fs::path buffer = path;
             buffer = buffer.parent_path();
@@ -176,6 +180,7 @@ namespace January::Engine::View {
         ImGui::SameLine();
         ImGui::BeginDisabled(path == "Assets");
         if(ImGui::Button("\uf015")){ // Home
+            std::lock_guard<std::mutex> guard(travel_record_mtx);
             changed = true;
             travel_record.push(path);
             path = "Assets";
@@ -191,6 +196,7 @@ namespace January::Engine::View {
         for(auto& p : path_node){
             buffer /= p;
             if(ImGui::Button((p + "##Explorer_Path_Button").c_str())){
+                std::lock_guard<std::mutex> guard(travel_record_mtx);
                 changed = true;
                 travel_record.push(path);
                 path = buffer;
@@ -317,6 +323,7 @@ namespace January::Engine::View {
         }
         if(ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
             if(target.is_dir){
+                std::lock_guard<std::mutex> guard(travel_record_mtx);
                 changed = true;
                 travel_record.push(path);
                 path = fs::relative(target.path, root).string();

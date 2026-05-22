@@ -107,23 +107,24 @@ namespace January::Engine::View {
         // Does user change the path by input or enter folder etc...
         // When changed is true
         // It will re-generate the "files" variables
-        bool changed = false;
+        std::atomic_bool changed = false;
         // Init will be the trigger
         // Define if the first event call is on.
-        bool init = false;
-        float leftWidth = 0;
+        std::atomic_bool init = false;
+        std::atomic<float> leftWidth = 0;
         // The slider
         // Range [0 - 10]
         // Display mode will change base on variable is 0 or not
         // 0: Line text display
         // 1-10: Grid item display
-        int32_t imgSize = 1;
-        int32_t selection = 0;
+        std::atomic_int32_t imgSize = 1;
+        std::atomic_int32_t selection = 0;
         filewatch::FileWatch<std::string>* watcher = nullptr;
-        std::mutex mtx;
+        std::mutex files_mtx;
         std::vector<JFileContent> files = std::vector<JFileContent>();
         JFolderContent Assets = JFolderContent();
         std::stack<std::string> travel_record;
+        std::mutex travel_record_mtx;
     };
 }
 #endif
