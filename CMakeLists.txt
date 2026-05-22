@@ -126,3 +126,16 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_definitions(january PRIVATE RELEASE_MODE)
 endif()
+
+file(GLOB_RECURSE FONT_OTF "${CMAKE_SOURCE_DIR}/*.otf")
+
+if(WIN32)
+  add_custom_command(TARGET january POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          ${FONT_OTF}
+          $<TARGET_FILE_DIR:january>
+          COMMENT "Copying Font to output directory"
+  )
+else()
+
+endif()
