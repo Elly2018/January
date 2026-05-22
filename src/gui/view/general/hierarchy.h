@@ -21,22 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "preview.h"
+#pragma once
+#ifndef GUI_VIEW_HIERARCHY_H
+#define GUI_VIEW_HIERARCHY_H
+#include "../viewbase.h"
 
 namespace January::Engine::View {
-    void JViewPreview::Draw(){
-
-    }
-
-    void JViewPreview::DrawRenderTexture(){
-
-    }
-
-    void JViewPreview::DrawToolbar(){
-
-    }
-
-    void JViewPreview::DrawGizmo(){
-
-    }
+    class JViewHierarchy : public JViewBase {
+    public:
+        DEFAULT_VIEW_CTOR(JViewHierarchy) {}
+        DEFAULT_VIEW_DECTOR(JViewHierarchy) {}
+    };
 }
+#endif

@@ -71,7 +71,8 @@ namespace January {
             BLUEPRINT = 2,
             CONSOLE = 3,
             EXPLORER = 4,
-            INSPECTOR = 5,
+            HIERARCHY = 5,
+            INSPECTOR = 6,
         };
 
         enum class JanuaryViewAudioFlag {
@@ -116,9 +117,10 @@ namespace January {
             struct JViewBlueprint*          blueprint;
             struct JViewConsole*            console;
             struct JViewExplorer*           explorer;
+            struct JViewHierarchy*          hierarchy;
             struct JViewInspector*          inspector;
             struct JViewPreview*            preview;
-            struct JViewProfiler*            profiler;
+            struct JViewProfiler*           profiler;
             struct JViewScript*             script;
             struct JViewTimeline*           timeline;
             struct JViewVolumn*             volumn;

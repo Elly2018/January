@@ -39,6 +39,7 @@ namespace January::Engine::View {
         vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
         vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
         vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
+        vm.hierarchy = new JViewHierarchy(std::string("Hierarchy##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::HIERARCHY, *jsystem.window, *jsystem.engine);
         vm.inspector = new JViewInspector(std::string("Inspector##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::INSPECTOR, *jsystem.window, *jsystem.engine);
         vm.preview = new JViewPreview(std::string("Preview##view"), (int32_t)JanuaryViewTypeFlag::RENDER, (int32_t)JanuaryViewRenderFlag::PREVIEW, *jsystem.window, *jsystem.engine);
         vm.profiler = new JViewProfiler(std::string("Profiler##view"), (int32_t)JanuaryViewTypeFlag::DEBUG, (int32_t)JanuaryViewDebugFlag::PROFILER, *jsystem.window, *jsystem.engine);

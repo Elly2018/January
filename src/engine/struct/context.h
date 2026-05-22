@@ -57,6 +57,8 @@ namespace January::Engine {
         // Everything called here can be find in console view
         // spdlog::info <- default logger is for os cli console output
         struct spdlog::logger*      logger;
+        //
+        
     };
 }
 #endif

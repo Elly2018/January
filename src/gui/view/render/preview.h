@@ -31,6 +31,12 @@ namespace January::Engine::View {
     public:
         DEFAULT_VIEW_CTOR(JViewPreview) {}
         DEFAULT_VIEW_DECTOR(JViewPreview) {}
+
+        void Draw() override;
+    protected:
+        void DrawRenderTexture();
+        void DrawToolbar();
+        void DrawGizmo();
     };
 }
 #endif

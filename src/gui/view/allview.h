@@ -5,6 +5,7 @@
 #include "general/blueprint.h"
 #include "general/console.h"
 #include "general/explorer.h"
+#include "general/hierarchy.h"
 #include "general/inspector.h"
 #include "render/preview.h"
 #include "script/script.h"
