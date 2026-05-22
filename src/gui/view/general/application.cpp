@@ -1,4 +1,4 @@
-#include "action.h"
+#include "application.h"
 #include <imgui.h>
 #include <spdlog/spdlog.h>
 #include "../../../engine/engine.h"
@@ -6,13 +6,13 @@
 #include "../../../engine/struct/context.h"
 
 namespace January::Engine::View {
-    void JViewAction::Init(){
-        spdlog::info("Loaded View: Action");
+    void JViewApplication::Init(){
+        spdlog::info("Loaded View: Application");
     }
-    void JViewAction::Update(){
+    void JViewApplication::Update(){
 
     }
-    void JViewAction::Draw(){
+    void JViewApplication::Draw(){
         if(ImGui::Button("Play")){
 
         }
@@ -25,17 +25,17 @@ namespace January::Engine::View {
         ImGui::Text("Time: %f", jengine.context->time);
         ImGui::Text("DeltaTime: %f", jengine.context->delta);
     }
-    void JViewAction::DeInit(){
+    void JViewApplication::DeInit(){
 
     }
 
-    void JViewAction::Play(){
+    void JViewApplication::Play(){
 
     }
-    void JViewAction::Pause(){
+    void JViewApplication::Pause(){
 
     }
-    void JViewAction::Stop(){
+    void JViewApplication::Stop(){
 
     }
 }

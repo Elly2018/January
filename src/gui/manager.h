@@ -67,7 +67,7 @@ namespace January {
 
         enum class JanuaryViewGeneralFlag {
             NONE = 0,
-            ACTION = 1,
+            APPLICATION = 1,
             BLUEPRINT = 2,
             CONSOLE = 3,
             EXPLORER = 4,
@@ -112,7 +112,7 @@ namespace January {
         };
 
         struct ViewManager {
-            struct JViewAction*             action;
+            struct JViewApplication*        application;
             struct JViewBlueprint*          blueprint;
             struct JViewConsole*            console;
             struct JViewExplorer*           explorer;

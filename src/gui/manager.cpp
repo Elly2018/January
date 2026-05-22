@@ -35,7 +35,7 @@ SOFTWARE.
 namespace January::Engine::View {
     void VInit(ViewManager& vm, struct System::JSystem& jsystem){
         NFD_Init();
-        vm.action = new JViewAction(std::string("Action##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::ACTION, *jsystem.window, *jsystem.engine);
+        vm.application = new JViewApplication(std::string("Application##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::APPLICATION, *jsystem.window, *jsystem.engine);
         vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
         vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
         vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
@@ -48,6 +48,7 @@ namespace January::Engine::View {
 
         vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
         
+        vm.views.push_back(vm.application);
         vm.views.push_back(vm.blueprint);
         vm.views.push_back(vm.console);
         vm.views.push_back(vm.explorer);
@@ -175,8 +176,8 @@ namespace January::Engine::View {
                 }
                 ImGui::Separator();
                 if(ImGui::BeginMenu("General##MainMenuBar_View")){
-                    if(ImGui::MenuItem("Application##MainMenuBar_View_General", NULL, vm.action->IsEnable())){
-                        vm.action->SetEnable(!vm.action->IsEnable());
+                    if(ImGui::MenuItem("Application##MainMenuBar_View_General", NULL, vm.application->IsEnable())){
+                        vm.application->SetEnable(!vm.application->IsEnable());
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     if(ImGui::MenuItem("Blueprint##MainMenuBar_View_General", NULL, vm.blueprint->IsEnable())){

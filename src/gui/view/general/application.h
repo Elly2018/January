@@ -41,10 +41,10 @@ namespace January::Engine {
 
     namespace View {
 
-        class JViewAction : public JViewBase {
+        class JViewApplication : public JViewBase {
         public:
-            DEFAULT_VIEW_CTOR(JViewAction) {}
-            DEFAULT_VIEW_DECTOR(JViewAction) {}
+            DEFAULT_VIEW_CTOR(JViewApplication) {}
+            DEFAULT_VIEW_DECTOR(JViewApplication) {}
             void Init() override;
             void Update() override;
             void Draw() override;
