@@ -157,35 +157,35 @@ namespace January::Engine::View {
         ImGui::BeginDisabled(travel_record.size() == 0);
         if(ImGui::Button("\uf053")){ // Return
             std::lock_guard<std::mutex> guard(travel_record_mtx);
-            changed = true;
             std::string buffer = travel_record.top();
             travel_record.pop();
             path = buffer;
             UpdatePathNode();
+            changed = true;
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
         ImGui::BeginDisabled(path_node.size() == 1);
         if(ImGui::Button("\uf062")){ // Up
             std::lock_guard<std::mutex> guard(travel_record_mtx);
-            changed = true;
             fs::path buffer = path;
             buffer = buffer.parent_path();
             travel_record.push(path);
             path = buffer.string();
             spdlog::debug("Asset browse {}", path);
             UpdatePathNode();
+            changed = true;
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
         ImGui::BeginDisabled(path == "Assets");
         if(ImGui::Button("\uf015")){ // Home
             std::lock_guard<std::mutex> guard(travel_record_mtx);
-            changed = true;
             travel_record.push(path);
             path = "Assets";
             spdlog::debug("Asset browse {}", path);
             UpdatePathNode();
+            changed = true;
         }
         ImGui::EndDisabled();
         ImGui::PopFont();
@@ -197,11 +197,11 @@ namespace January::Engine::View {
             buffer /= p;
             if(ImGui::Button((p + "##Explorer_Path_Button").c_str())){
                 std::lock_guard<std::mutex> guard(travel_record_mtx);
-                changed = true;
                 travel_record.push(path);
                 path = buffer;
                 spdlog::debug("Asset browse {}", path);
                 UpdatePathNode();
+                changed = true;
                 break;
             }
             if(p != path_node.at(path_node.size() - 1)){
@@ -324,11 +324,11 @@ namespace January::Engine::View {
         if(ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
             if(target.is_dir){
                 std::lock_guard<std::mutex> guard(travel_record_mtx);
-                changed = true;
                 travel_record.push(path);
                 path = fs::relative(target.path, root).string();
                 spdlog::debug("Asset browse {}", path);
                 UpdatePathNode();
+                changed = true;
             }
         }
     }
