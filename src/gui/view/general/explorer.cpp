@@ -95,14 +95,12 @@ namespace January::Engine::View {
 
     void JViewExplorer::Draw() {
         ImGuiStyle& style = ImGui::GetStyle();
+        float w = std::max(ImGui::GetWindowWidth(), 20.f);
         if(!init){
             changed = true;
             init = true;
+            leftWidth = w * (1.f / 3.f);
         }
-        float w = std::max(ImGui::GetWindowWidth(), 20.f);
-        leftWidth = w * (1.f / 3.f);
-        rightWidth = w * (2.f / 3.f);
-
         AppContext* context = jengine.context;
         if(context == nullptr){
             spdlog::error("context is nullptr");
@@ -117,9 +115,9 @@ namespace January::Engine::View {
                 DrawLeftSide();
                 ImGui::EndChild();
             }
-            ImGui::SameLine();
+            DrawMiddleHandle();
             {
-                ImGui::BeginChild("ViewExplorer_Right", ImVec2(rightWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
+                ImGui::BeginChild("ViewExplorer_Right", ImVec2(0, 0), true);
                 DrawRightSide();
                 DrawRightSide_Event();
                 ImGui::EndChild();
@@ -143,6 +141,34 @@ namespace January::Engine::View {
         init = false;
     }
 
+    void JViewExplorer::DrawMiddleHandle(){
+        const float minWidth = 100.0f;    // Minimum allowable width
+        const float maxWidth = 800.0f;   // Maximum allowable width
+        const float splitterWidth = 8.0f; // Thickness of the draggable hit-box
+
+        ImGui::SameLine();
+        // Set cursor position to overlap slightly for a seamless look, then create hit-box
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x); 
+        ImGui::InvisibleButton("v_splitter", ImVec2(splitterWidth, -1));
+
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+        }
+
+        if (ImGui::IsItemActive()) {
+            // Adjust width based on mouse movement speed (io.MouseDelta)
+            leftWidth += ImGui::GetIO().MouseDelta.x;
+            
+            // Clamp the values so the panels don't break or disappear
+            if (leftWidth < minWidth) leftWidth = minWidth;
+            if (leftWidth > maxWidth) leftWidth = maxWidth;
+        }
+
+        // 4. Right Panel
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + splitterWidth);
+    }
+
     void JViewExplorer::DrawLeftSide(){
         ImGui::Text("Left");
     }
@@ -158,6 +184,7 @@ namespace January::Engine::View {
             }
         }else{
             ImGui::BeginGroup();
+            float rightWidth = ImGui::GetWindowWidth();
             int32_t c = 0;
             int32_t row = std::floor<int32_t>(rightWidth / std::max<int32_t>(imgSize * 20 + 50, 50));
             for(auto file : files){
@@ -193,7 +220,28 @@ namespace January::Engine::View {
     void JViewExplorer::DrawItemEvent(JFileContent& target){
         std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + target.path.string();
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
-            if (ImGui::Selectable("Delete")){
+            if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
+                
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem(("Delete##" + popup_id).c_str())){
+                
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem(("Cut##" + popup_id).c_str())){
+
+            }
+            if (ImGui::MenuItem(("Copy##" + popup_id).c_str())){
+
+            }
+            if (ImGui::MenuItem(("Paste##" + popup_id).c_str())){
+
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem(("Copy Path##" + popup_id).c_str())){
+                
+            }
+            if (ImGui::MenuItem(("Copy Relative Path##" + popup_id).c_str())){
                 
             }
             ImGui::EndPopup();
@@ -204,16 +252,38 @@ namespace January::Engine::View {
         ImGuiPopupFlags background_flags = ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
 
         if(ImGui::BeginPopupContextWindow("ViewExplorer_Right_ContextItem", background_flags)){
-            if (ImGui::Selectable("Create Folder")){
+            if (ImGui::MenuItem("Create Folder##ViewExplorer_Right_ContextItem")){
                 
             }
-            if (ImGui::Selectable("Create Resource")){
+            if (ImGui::MenuItem("Create Resource##ViewExplorer_Right_ContextItem")){
                 
             }
-            if (ImGui::Selectable("Create Script")){
+            if (ImGui::MenuItem("Create Script##ViewExplorer_Right_ContextItem")){
                 
             }
-            if (ImGui::Selectable("Refresh")){
+            ImGui::Separator();
+            if (ImGui::MenuItem("Open File Explorer Here##ViewExplorer_Right_ContextItem")){
+
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Cut##ViewExplorer_Right_ContextItem")){
+
+            }
+            if (ImGui::MenuItem("Copy##ViewExplorer_Right_ContextItem")){
+
+            }
+            if (ImGui::MenuItem("Paste##ViewExplorer_Right_ContextItem")){
+
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Copy Path##ViewExplorer_Right_ContextItem")){
+                
+            }
+            if (ImGui::MenuItem("Copy Relative Path##ViewExplorer_Right_ContextItem")){
+                
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Refresh##ViewExplorer_Right_ContextItem")){
                 changed = true;
             }
             ImGui::EndPopup();

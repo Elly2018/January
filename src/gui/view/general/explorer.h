@@ -61,6 +61,7 @@ namespace January::Engine::View {
 
         void ReloadProject();
     protected:
+        void DrawMiddleHandle();
         void DrawLeftSide();
         void DrawRightSide();
         void DrawItemTooltip(JFileContent& target);
@@ -79,7 +80,6 @@ namespace January::Engine::View {
         // Define if the first event call is on.
         bool init = false;
         float leftWidth = 0;
-        float rightWidth = 0;
         int32_t imgSize = 1;
         int32_t selection = 0;
         filewatch::FileWatch<std::string>* watcher = nullptr;
