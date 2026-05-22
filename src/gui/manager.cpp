@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "manager.h"
+#include <nfd.h>
 #include "view/action.h"
 #include "view/blueprint.h"
 #include "view/console.h"
@@ -32,7 +33,6 @@ SOFTWARE.
 #include "view/script.h"
 #include "view/timeline.h"
 #include "view/volumn.h"
-#include "popup/file_dialog.h"
 #include "popup/project_dashboard.h"
 #include "../engine/engine.h"
 #include "../engine/struct/config.h"
@@ -43,6 +43,7 @@ SOFTWARE.
 
 namespace January::Engine::View {
     void VInit(ViewManager& vm, struct System::JSystem& jsystem){
+        NFD_Init();
         vm.action = new JViewAction(std::string("Action##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::ACTION, *jsystem.window, *jsystem.engine);
         vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
         vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
@@ -55,7 +56,6 @@ namespace January::Engine::View {
         vm.volumn = new JViewVolumn(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::AUDIO, (int32_t)JanuaryViewAudioFlag::VOLUMN, *jsystem.window, *jsystem.engine);
 
         vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
-        vm.file_dialog = new JPopupFileDialog(std::string("File Dialog##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::FILE_DIALOG, *jsystem.window, *jsystem.engine);
         
         vm.views.push_back(vm.blueprint);
         vm.views.push_back(vm.console);
@@ -68,7 +68,6 @@ namespace January::Engine::View {
         vm.views.push_back(vm.volumn);
 
         vm.popups.push_back(vm.project_dashboard);
-        vm.popups.push_back(vm.file_dialog);
 
         for(auto& c : vm.views){
             c->Init();

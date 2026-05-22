@@ -50,6 +50,10 @@ include_directories(${CMD_DIR})
 set(JSON_DIR third-party/json)
 include_directories(${JSON_DIR})
 
+# nativefiledialog
+set(NFD_DIR third-party/nativefiledialog)
+add_subdirectory(${NFD_DIR})
+
 # ini
 set(INI_DIR third-party/mINI)
 include_directories(${INI_DIR}/src/mini)
@@ -110,6 +114,7 @@ target_link_libraries(january PRIVATE
   Vulkan::Vulkan 
   SDL3::SDL3
   CURL::libcurl
+  nfd
 )
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)

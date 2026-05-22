@@ -3,6 +3,7 @@
 #include <sstream>
 #include <mutex>
 #include <filesystem>
+#include <nfd.h>
 #include "imgui.h"
 #include "imgui_notify.h"
 #include "spdlog/spdlog.h"
@@ -10,7 +11,6 @@
 #include "../../system/system.h"
 #include "../../system/window.h"
 #include "../../gui/manager.h"
-#include "../../gui/popup/file_dialog.h"
 #include "../../gui/popup/project_dashboard.h"
 #include "../engine.h"
 #include "../struct/config.h"
@@ -78,26 +78,10 @@ namespace January::Engine {
             jsystem.engine->manager->project_dashboard->SetEnable(true);
         }
         else if(cmd == "open_project"){
-            View::DialogResultFeedback feedback = [&jsystem](bool cancel, std::vector<std::string> results) {
-                if(cancel) {
-                    std::string t = "Project path file dialog: cancel";
-                    spdlog::warn(t);
-                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Warning, 3000);
-                    toast.set_title("Project Load");
-                    toast.set_content(t.c_str());
-                    ImGui::InsertNotification(toast);
-                    return;
-                }
-                if(results.size() < 1) {
-                    std::string t = "Project path file dialog: no path select";
-                    spdlog::warn(t);
-                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Warning, 3000);
-                    toast.set_title("Project Load");
-                    toast.set_content(t.c_str());
-                    ImGui::InsertNotification(toast);
-                    return;
-                }
-                std::string target_path = results.at(0);
+            nfdchar_t* outPath;
+            nfdresult_t result = NFD_PickFolder(&outPath, NULL);
+            if (result == NFD_OKAY){
+                std::string target_path = outPath;
                 if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
                     std::string t = std::format("Project path does not exist: {}", target_path.c_str());
                     spdlog::error(t);
@@ -126,14 +110,17 @@ namespace January::Engine {
                 toast.set_content(t.c_str());
                 ImGui::InsertNotification(toast);
                 AddRecent(*jsystem.engine, target_path);
-            };
-            std::vector<std::pair<std::string, std::string>> filters = std::vector<std::pair<std::string, std::string>>();
-            filters.push_back(std::pair<std::string, std::string>(".january", "January Project"));
-            jsystem.engine->manager->file_dialog->SetTitle("Open Project");
-            jsystem.engine->manager->file_dialog->SetDialogType(View::JPopupFileDialog::DialogType::SINGLE_DIR);
-            jsystem.engine->manager->file_dialog->SetFilter(filters);
-            jsystem.engine->manager->file_dialog->SetEnable(true);
-            jsystem.engine->manager->file_dialog->RegisterOneTimeFeedback(feedback);
+            } else if (result == NFD_CANCEL) {
+                std::string t = "Project path file dialog: cancel";
+                spdlog::warn(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Warning, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
+                return;
+            } else {
+                printf("Error: %s\n", NFD_GetError());
+            }
         }
         else if(cmd == "save_project"){
 
