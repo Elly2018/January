@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef GUI_VIEW_EXPLORER_H
 #define GUI_VIEW_EXPLORER_H
 #include <vector>
+#include <stack>
 #include <string>
 #include <mutex>
 #include <filesystem>
@@ -81,8 +82,9 @@ namespace January::Engine::View {
         void DeInit() override;
         void Focus(bool value) override;
 
-        void ReloadProject();
     protected:
+        void DrawPathAction();
+        void DrawPathBar();
         void DrawMiddleHandle();
         void DrawLeftSide();
         void DrawRightSide();
@@ -90,10 +92,15 @@ namespace January::Engine::View {
         void DrawItemEvent(JFileContent& target);
         void DrawRightSide_Event();
 
+        void UpdatePathNode();
+
     public:
+        void ReloadProject();
+        // You will get project + Assets
         fs::path CurrentFolder();
         // The relative path base on project "Assets" folder
         std::string path = "";
+        std::vector<std::string> path_node;
 
     private:
         // Modify by tyhe file watcher worker callback
@@ -116,6 +123,7 @@ namespace January::Engine::View {
         std::mutex mtx;
         std::vector<JFileContent> files = std::vector<JFileContent>();
         JFolderContent Assets = JFolderContent();
+        std::stack<std::string> travel_record;
     };
 }
 #endif

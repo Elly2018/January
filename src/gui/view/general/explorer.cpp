@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "explorer.h"
+#include <algorithm>
 #include <filesystem>
 #include <thread>
 #include <spdlog/spdlog.h>
@@ -47,6 +48,8 @@ namespace January::Engine::View {
         JViewBase::Init();
         spdlog::info("Loaded View: Explorer");
         Assets.name = "Assets";
+        path_node.clear();
+        path_node.push_back("Assets");
     }
 
     void JViewExplorer::Update() {
@@ -104,6 +107,7 @@ namespace January::Engine::View {
 
     void JViewExplorer::Draw() {
         ImGuiStyle& style = ImGui::GetStyle();
+        ImGuiIO& io = ImGui::GetIO();
         float w = std::max(ImGui::GetWindowWidth(), 20.f);
         if(!init){
             changed = true;
@@ -116,8 +120,13 @@ namespace January::Engine::View {
         }
 
         if(context != nullptr && fs::exists(context->project_path)){
-            bool change = ImGui::InputText("Path", path.data(), 512, ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_EnterReturnsTrue);
-            if(change) changed = true;
+            {
+                ImGui::BeginChild("ViewExplorer_Top", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY);
+                DrawPathAction();
+                ImGui::SameLine();
+                DrawPathBar();
+                ImGui::EndChild();
+            }
             ImGui::SliderInt("size", &imgSize, 0, 10, "%d");
             {
                 ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
@@ -145,9 +154,52 @@ namespace January::Engine::View {
         changed = true;
     }
 
-    void JViewExplorer::ReloadProject(){
-        path = "";
-        init = false;
+    void JViewExplorer::DrawPathAction() {
+        ImGui::PushFont(jengine.context->icon_font);
+        ImGui::BeginDisabled(travel_record.size() == 0);
+        if(ImGui::Button("\uf053")){ // Return
+            changed = true;
+            std::string buffer = travel_record.top();
+            travel_record.pop();
+            path = buffer;
+            UpdatePathNode();
+        }
+        ImGui::EndDisabled();
+        ImGui::SameLine();
+        ImGui::BeginDisabled(path_node.size() == 1);
+        if(ImGui::Button("\uf062")){ // Up
+            changed = true;
+            fs::path buffer = path;
+            buffer = buffer.parent_path();
+            path = buffer.string();
+            travel_record.push(path);
+            UpdatePathNode();
+        }
+        ImGui::EndDisabled();
+        ImGui::SameLine();
+        if(ImGui::Button("\uf015")){ // Home
+            changed = true;
+            path = "";
+            travel_record.push(path);
+            UpdatePathNode();
+        }
+        ImGui::PopFont();
+    }
+
+    void JViewExplorer::DrawPathBar() {
+        fs::path buffer = jengine.context->project_path;
+        for(auto& p : path_node){
+            buffer.append(p);
+            if(ImGui::Button((p + "##Explorer_Path_Button").c_str())){
+                path = buffer;
+                changed = true;
+                UpdatePathNode();
+                break;
+            }
+            if(p != path_node.at(path_node.size() - 1)){
+                ImGui::SameLine();
+            }
+        }
     }
 
     void JViewExplorer::DrawMiddleHandle(){
@@ -183,7 +235,7 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawRightSide(){
-        if(imgSize == 0){
+        if(imgSize == 0){ // Line text
             int32_t c = 0;
             for(auto file : files){
                 ImGui::Selectable(file.title.c_str(), c == selection);
@@ -191,7 +243,7 @@ namespace January::Engine::View {
                 DrawItemEvent(file);
                 c++;
             }
-        }else{
+        }else{ // Grid Item
             ImGui::BeginGroup();
             float rightWidth = ImGui::GetWindowWidth();
             int32_t c = 0;
@@ -219,9 +271,11 @@ namespace January::Engine::View {
         display_text += target.path.parent_path().string().c_str();
         display_text += "\n";
 
-        display_text += "Size: ";
-        display_text += format_bytes(target.filesize);
-        display_text += "\n";
+        if(!target.is_dir){
+            display_text += "Size: ";
+            display_text += format_bytes(target.filesize);
+            display_text += "\n";
+        }
 
         ImGui::SetItemTooltip("%s", display_text.c_str());
     }
@@ -254,6 +308,16 @@ namespace January::Engine::View {
                 
             }
             ImGui::EndPopup();
+        }
+        if(ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left)){
+
+        }
+        if(ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
+            if(target.is_dir){
+                path = target.path;
+                changed = true;
+                UpdatePathNode();
+            }
         }
     }
 
@@ -297,6 +361,26 @@ namespace January::Engine::View {
             }
             ImGui::EndPopup();
         }
+    }
+
+    void JViewExplorer::UpdatePathNode() {
+        fs::path root = jengine.context->project_path;
+        fs::path p = path;
+        path_node.clear();
+        while(p != root){
+            path_node.push_back(p.filename().string());
+            p = p.parent_path();
+            if(!p.has_parent_path()){
+                spdlog::error("Exploere UpdatePathNode Error: Parent path and node path does not match");
+                break;
+            }
+        }
+        std::reverse(path_node.begin(), path_node.end());
+    }
+
+    void JViewExplorer::ReloadProject(){
+        path = "";
+        init = false;
     }
 
     fs::path JViewExplorer::CurrentFolder(){
