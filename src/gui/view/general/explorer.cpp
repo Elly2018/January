@@ -246,7 +246,7 @@ namespace January::Engine::View {
         if(imgSize == 0){ // Line text
             int32_t c = 0;
             for(auto file : files){
-                ImGui::Selectable(file.title.c_str(), c == selection);
+                ImGui::Selectable(file.title.c_str());
                 DrawItemTooltip(file);
                 DrawItemEvent(file);
                 c++;
@@ -255,9 +255,10 @@ namespace January::Engine::View {
             ImGui::BeginGroup();
             float rightWidth = ImGui::GetWindowWidth();
             int32_t c = 0;
-            int32_t row = std::floor<int32_t>(rightWidth / std::max<int32_t>(imgSize * 20 + 50, 50));
+            int32_t max = imgSize * 10 + 100;
+            int32_t row = std::floor<int32_t>(rightWidth / max);
             for(auto file : files){
-                ImGui::Button(file.title.c_str(), ImVec2(std::max<int32_t>(imgSize * 20 + 50, 50), std::max<int32_t>(imgSize * 20 + 50, 50)));
+                ImGui::Button(file.title.c_str(), ImVec2(max, max));
                 DrawItemTooltip(file);
                 DrawItemEvent(file);
                 if((c + 1) % row != 0){

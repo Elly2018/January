@@ -118,7 +118,6 @@ namespace January::Engine::View {
         // 0: Line text display
         // 1-10: Grid item display
         std::atomic_int32_t imgSize = 1;
-        std::atomic_int32_t selection = 0;
         filewatch::FileWatch<std::string>* watcher = nullptr;
         std::mutex files_mtx;
         std::vector<JFileContent> files = std::vector<JFileContent>();
