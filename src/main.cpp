@@ -33,7 +33,7 @@ using namespace January::System;
 int main(int argc, char** argv){
     int32_t err;
 #if DEBUG_MODE
-    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_level(spdlog::level::info);
 #endif
     InitCMD(argc, argv);
     JSystem jsystem;
