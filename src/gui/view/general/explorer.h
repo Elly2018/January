@@ -43,6 +43,12 @@ namespace January::Engine::View {
         uintmax_t filesize;
     };
 
+    struct JFolderContent {
+        std::string name;
+        bool is_open;
+        std::vector<JFolderContent*> children;
+    };
+
     class JViewExplorer : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewExplorer) {}
@@ -57,6 +63,8 @@ namespace January::Engine::View {
     protected:
         void DrawLeftSide();
         void DrawRightSide();
+        void DrawItemTooltip(JFileContent& target);
+        void DrawRightSide_Event();
 
     public:
         fs::path CurrentFolder();
@@ -76,6 +84,7 @@ namespace January::Engine::View {
         filewatch::FileWatch<std::string>* watcher = nullptr;
         std::mutex mtx;
         std::vector<JFileContent> files = std::vector<JFileContent>();
+        JFolderContent Assets = JFolderContent();
     };
 }
 #endif

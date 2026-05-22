@@ -3093,6 +3093,30 @@ src/engine/utility/command.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/command.cpp.s
 .PHONY : src/engine/utility/command.cpp.s
 
+src/engine/utility/format.o: src/engine/utility/format.cpp.o
+.PHONY : src/engine/utility/format.o
+
+# target to build an object file
+src/engine/utility/format.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/format.cpp.o
+.PHONY : src/engine/utility/format.cpp.o
+
+src/engine/utility/format.i: src/engine/utility/format.cpp.i
+.PHONY : src/engine/utility/format.i
+
+# target to preprocess a source file
+src/engine/utility/format.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/format.cpp.i
+.PHONY : src/engine/utility/format.cpp.i
+
+src/engine/utility/format.s: src/engine/utility/format.cpp.s
+.PHONY : src/engine/utility/format.s
+
+# target to generate assembly for a file
+src/engine/utility/format.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/utility/format.cpp.s
+.PHONY : src/engine/utility/format.cpp.s
+
 src/engine/utility/path.o: src/engine/utility/path.cpp.o
 .PHONY : src/engine/utility/path.o
 
@@ -4152,6 +4176,9 @@ help:
 	@echo "... src/engine/utility/command.o"
 	@echo "... src/engine/utility/command.i"
 	@echo "... src/engine/utility/command.s"
+	@echo "... src/engine/utility/format.o"
+	@echo "... src/engine/utility/format.i"
+	@echo "... src/engine/utility/format.s"
 	@echo "... src/engine/utility/path.o"
 	@echo "... src/engine/utility/path.i"
 	@echo "... src/engine/utility/path.s"

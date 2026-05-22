@@ -29,6 +29,7 @@ SOFTWARE.
 #include "../../../engine/engine.h"
 #include "../../../engine/struct/config.h"
 #include "../../../engine/struct/context.h"
+#include "../../../engine/utility/format.h"
 
 namespace fs = std::filesystem;
 
@@ -36,6 +37,7 @@ namespace January::Engine::View {
     void JViewExplorer::Init() {
         JViewBase::Init();
         spdlog::info("Loaded View: Explorer");
+        Assets.name = "Assets";
     }
 
     void JViewExplorer::Update() {
@@ -117,6 +119,7 @@ namespace January::Engine::View {
             ImGui::BeginChild("ViewExplorer_Right", ImVec2(rightWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
                 DrawRightSide();
             ImGui::EndChild();
+            DrawRightSide_Event();
         }else{
             ImGui::Text("You need to choose path fist");
         }
@@ -155,12 +158,48 @@ namespace January::Engine::View {
             int32_t row = std::floor<int32_t>(rightWidth / std::max<float>(imgSize * 500, 50));
             for(auto file : files){
                 ImGui::Button(file.title.c_str(), ImVec2(std::max<float>(imgSize * 500, 50), std::max<float>(imgSize * 500, 50)));
+                DrawItemTooltip(file);
                 if((c + 1) % row != 0){
                     ImGui::SameLine();
                 }
                 c++;
             }
             ImGui::EndGroup();
+        }
+    }
+
+    void JViewExplorer::DrawItemTooltip(JFileContent& target){
+        std::string display_text = "";
+        display_text += "Filename: ";
+        display_text += target.path.filename().string().c_str();
+        display_text += "\n";
+
+        display_text += "Folder: ";
+        display_text += target.path.parent_path().string().c_str();
+        display_text += "\n";
+
+        display_text += "Size: ";
+        display_text += format_bytes(target.filesize);
+        display_text += "\n";
+
+        ImGui::SetItemTooltip("%s", display_text.c_str());
+    }
+
+    void JViewExplorer::DrawRightSide_Event(){
+        if(ImGui::BeginPopupContextItem("ViewExplorer_Right_ContextItem")){
+            if (ImGui::Selectable("Create Folder")){
+                
+            }
+            if (ImGui::Selectable("Create Resource")){
+                
+            }
+            if (ImGui::Selectable("Create Script")){
+                
+            }
+            if (ImGui::Selectable("Refresh")){
+                
+            }
+            ImGui::EndPopup();
         }
     }
 
