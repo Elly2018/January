@@ -27,6 +27,15 @@ SOFTWARE.
 #include <cinttypes>
 #include <string>
 
+// Quick way to create view subclass constructor
+#define DEFAULT_VIEW_CTOR(x) \
+x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) :  \
+JViewBase(_title, _type, _subtype, _win, _engine) \
+
+// Quick way to create view subclass deconstructor
+#define DEFAULT_VIEW_DECTOR(x) \
+    virtual ~x() \
+
 namespace January {
     namespace System {
         struct JWindow;
@@ -37,43 +46,51 @@ namespace January {
             // The base class for editor view
             class JViewBase {
             public:
-                JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
-                    title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {
-                        Init();
-                    }
-                virtual ~JViewBase() {}
+                JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine);
+                virtual ~JViewBase();
+                // When view is shows up
                 virtual void OnEnable() {};
+                // When view is closes down
                 virtual void OnDisable() {};
+                // Constrctor called, when engine is up
                 virtual void Init() {}
-                virtual void Update() {}
-                virtual void Draw() {}
+                // Release resource, when engine is down
                 virtual void DeInit() {}
+                // Application editor window focus event call
+                virtual void Focus(bool value) {}
+                // Every frame update
+                virtual void Update() {}
+                // Editor view before content draw
+                virtual bool PreDraw();
+                // The content of this view
+                virtual void Draw() {}
+                // Editor view after content draw
+                virtual void PostDraw();
 
+                // Runtime event: Play
+                virtual void OnPlay() {}
+                // Runtime event: Pause
+                virtual void OnPause() {}
+                // Runtime event: UnPause
+                virtual void OnUnPause() {}
+                // Runtime event: Stop
+                virtual void OnStop() {}
+
+                // Check view is show up currently or not
                 bool IsEnable() { return enable; }
-                int64_t GetID(){
-                    int64_t p = 0;
-                    int32_t* pt = (int32_t*)(&p);
-                    pt[0] = type;
-                    pt[1] = subtype;
-                    return p;
-                }
-                void SetEnable(bool value) {
-                    bool diff = value != enable;
-                    if(diff){
-                        enable = value;
-                        if(enable) OnEnable();
-                        else OnDisable();
-                    }
-                }
+                // Get category ID, (type + subtype)
+                int64_t GetID();
+                // View show call
+                void SetEnable(bool value);
             public:
-                std::string         title;
-                int32_t             type;
-                int32_t             subtype;
+                std::string         title           = "";
+                int32_t             type            = 0;
+                int32_t             subtype         = 0;
             protected:
                 System::JWindow&    jwindow;
                 JEngine&            jengine;
-            private:
-                bool                enable;
+                bool                enable          = false;
+                int32_t             window_flag     = 0;
             };
         }
     }

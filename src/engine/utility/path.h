@@ -22,10 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#ifndef ENGINE_UTILITY_PATH_H
+#define ENGINE_UTILITY_PATH_H
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
 namespace January::Engine {
+    static const char* MANIFEST_FILENAME = "manifest.ini";
+
     fs::path get_home_directory();
+    fs::path get_temp_directory();
+
+    bool is_project_path_vaild(const fs::path& path);
 }
+#endif

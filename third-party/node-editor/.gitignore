@@ -1,0 +1,12 @@
+.vs
+.vscode
+.build*
+.DS_Store
+bin
+[Ee]xamples
+[Bb]uild
+*.VC.db
+*.VC.opendb
+*.user
+*.ini
+*.json

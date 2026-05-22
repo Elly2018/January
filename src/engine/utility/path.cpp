@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "path.h"
-
+#include <stdlib.h>
+#include <spdlog/spdlog.h>
+#include <ini.h>
 // Helping find the home path
 #ifndef _WIN32
 #include <unistd.h>
@@ -58,5 +60,36 @@ namespace January::Engine {
             return fs::path(homedir);
         }
         throw std::runtime_error("Could not determine home directory");
+    }
+
+    fs::path get_temp_directory(){
+        fs::path p = get_home_directory();
+        p /= "january";
+        if(!fs::exists(p)) fs::create_directories(p);
+        return p;
+    }
+
+    bool is_project_path_vaild(const fs::path& path){
+        if(!fs::exists(path)) {
+            spdlog::warn("Project path not exist: {}", path.c_str());
+            return false;
+        }
+        fs::path manifest = path;
+        manifest /= MANIFEST_FILENAME;
+        if(!fs::exists(manifest)) {
+            spdlog::warn("{} file not exist: {}", MANIFEST_FILENAME, manifest.c_str());
+            return false;
+        }
+        mINI::INIFile mani(manifest);
+        mINI::INIStructure ini;
+        mani.read(ini);
+
+        std::string& name = ini["header"]["name"];
+        std::string& description = ini["header"]["description"];
+        std::string& version = ini["header"]["version"];
+
+        spdlog::info("{} loaded: {} {} {}", MANIFEST_FILENAME, name.c_str(), description.c_str(), version.c_str());
+
+        return true;
     }
 }

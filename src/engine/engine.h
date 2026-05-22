@@ -25,9 +25,11 @@ SOFTWARE.
 #ifndef ENGINE_ENGINE_H
 #define ENGINE_ENGINE_H
 #include <cinttypes>
+#include <filesystem>
 
 namespace January {
     namespace System {
+        struct JSystem;
         struct JWindow;
     }
     namespace Engine {
@@ -37,6 +39,7 @@ namespace January {
         namespace View {
             struct ViewManager;
         }
+        std::filesystem::path get_config_path(const char* path);
         // Save app config to app preference location
         void SaveAppConfig(struct AppConfig& target);
         // Load app config from app preference location
@@ -51,11 +54,14 @@ namespace January {
         };
 
         // Engine init
-        int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow);
+        int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow, struct System::JSystem& system);
         // Engine release memory
         void EngineDeInit(JEngine& jengine);
         // Update engine logic and stuff
         void EngineUpdate(JEngine& jengine);
+
+        // ...
+        void AddRecent(JEngine& jengine, std::string& path);
     }
 }
 #endif

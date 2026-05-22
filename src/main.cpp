@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "config.h"
 #include <spdlog/spdlog.h>
 #include "system/cli.h"
 #include "system/system.h"
@@ -30,11 +31,13 @@ using namespace January::System;
 
 // Program entry point
 int main(int argc, char** argv){
+    int32_t err;
+#if DEBUG_MODE
+    spdlog::set_level(spdlog::level::debug);
+#endif
     InitCMD(argc, argv);
     JSystem jsystem;
-    if(SInit(jsystem) == -1){
-        spdlog::trace("SInit failed");
-        return -1;
-    }
+    err = SInit(jsystem);
+    assert(err != -1 && "SInit failed");
     SRun(jsystem);
 }

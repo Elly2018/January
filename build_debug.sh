@@ -4,7 +4,8 @@
 mkdir -p build
 cd build
 
-cp ../Roboto-Medium.ttf .
+cp ../res/*.ttf .
+cp ../res/*.otf .
 
 # Configure CMake
 cmake .. -DCMAKE_BUILD_TYPE=Debug

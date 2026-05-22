@@ -26,12 +26,21 @@ SOFTWARE.
 #define ENGINE_STRUCT_CONTEXT_H
 #include <string>
 #include <queue>
+#include <mutex>
+
+struct ImFont;
+
+namespace spdlog {
+    struct logger;
+}
 
 namespace January::Engine {
     // Current application context
     // This data cannot be store in disk, This is the memory only data
     struct AppContext {
         std::string                 project_path                  = "";
+        // Does application needs load project right now
+        bool                        load_project                  = false;
         // Application global time
         double                      time                          = 0;
         // Application delta time
@@ -40,6 +49,16 @@ namespace January::Engine {
         bool                        done                          = false;
         // Command buffer, execute next frame
         std::queue<std::string>     commands                      = std::queue<std::string>();
+        std::mutex                  commands_mtx;
+        struct ImFont*              text_font;
+        struct ImFont*              icon_font;
+        struct ImFont*              emoji_font;
+        // This is for console view content output
+        // Everything called here can be find in console view
+        // spdlog::info <- default logger is for os cli console output
+        struct spdlog::logger*      logger;
+        //
+        
     };
 }
 #endif

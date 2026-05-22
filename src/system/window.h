@@ -32,6 +32,7 @@ SOFTWARE.
 #include <stdlib.h>         // abort
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
+#include "../config.h"
 
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
@@ -52,21 +53,30 @@ namespace January {
     }
 
     namespace System {
+        struct JSystem;
         // Pure render window struct
         // This should be generate by engine or editor
         struct JWindowRender {
+            // SDL window flag, you can define fullscreen or hidden or no background etc flags here
             SDL_WindowFlags          g_windowFlags;
+            // The instance of SDL window
             SDL_Window*              g_window = nullptr;
+            // The vulkan callback context
             VkAllocationCallbacks*   g_Allocator = nullptr;
+            // The vulkan main instance
             VkInstance               g_Instance = VK_NULL_HANDLE;
+            // Use physical device
             VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
+            // Use virtual device, extend by physical device
             VkDevice                 g_Device = VK_NULL_HANDLE;
             uint32_t                 g_QueueFamily = (uint32_t)-1;
             VkQueue                  g_Queue = VK_NULL_HANDLE;
             VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
             VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
 
+            // Is window should be done and close?
             bool                     g_done = false;
+            // This must be 2 or bigger
             uint32_t                 g_MinImageCount = 2;
             bool                     g_SwapChainRebuild = false;
         };
@@ -85,7 +95,11 @@ namespace January {
         };
 
         // The editor window drawing function call
-        void DrawLoop(JWindow& jwindow);
+        void DrawLoop(struct JSystem& jsystem);
+        // Save preference to home dir (imgui.ini)
+        void SavePreference();
+        // Load preference from home dir (imgui.ini)
+        void LoadPreference();
 
         // Editor window context initialization
         int32_t JInit(JWindow& jwindow, JRWindowInit init);

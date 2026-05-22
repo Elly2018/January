@@ -1,0 +1,69 @@
+/**
+MIT License
+
+Copyright (c) 2026 ZhuElly
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#pragma once
+#ifndef GUI_POPUP_PROJECT_DASHBOARD_H
+#define GUI_POPUP_PROJECT_DASHBOARD_H
+#include "popupbase.h"
+#include <string>
+
+namespace January::Engine::View {
+    class JPopupProjectDashboard : public JPopupBase {
+    public:
+        DEFAULT_POPUP_CTOR(JPopupProjectDashboard) {}
+        DEFAULT_POPUP_DECTOR(JPopupProjectDashboard) {}
+
+        void OnEnable() override;
+        void OnDisable() override;
+
+        enum class PAGE {
+            MAIN, NEW
+        };
+
+        enum class TEMPLATE {
+            BLANK, RT_ART, FILM, GAME, SOFTWARE, SERVER
+        };
+
+        void Init() override;
+        bool PreDraw() override;
+        void Draw() override;
+        void Update() override;
+
+    protected:
+        void DrawOption();
+        void DrawRecent();
+        void DrawNewProject();
+
+    private:
+        std::string GetTemplateName(TEMPLATE _temp);
+        void GenerateProject();
+
+        PAGE page = PAGE::MAIN;
+        TEMPLATE temp = TEMPLATE::BLANK;
+        std::string p_name;
+        std::string p_path;
+        std::string p_text;
+    };
+}
+
+#endif

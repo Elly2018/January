@@ -26,11 +26,15 @@ SOFTWARE.
 #include <memory>
 #include <thread>
 #include <stdexcept>
+#include <imgui.h>
 #include <imgui_notify.h>
 #include <tahoma.h>
 #include <spdlog/spdlog.h>
 #include "system.h"
 #include "../engine/engine.h"
+#include "../engine/struct/context.h"
+#include "../engine/utility/path.h"
+#include "../gui/manager.h"
 
 namespace January::System {
     
@@ -108,17 +112,16 @@ namespace January::System {
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
             volkLoadInstance(g_Instance);
 #endif
-
             // Setup the debug report callback
 #ifdef APP_USE_VULKAN_DEBUG_REPORT
-            auto f_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(window.g_Instance, "vkCreateDebugReportCallbackEXT");
+            auto f_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(win.g_Instance, "vkCreateDebugReportCallbackEXT");
             IM_ASSERT(f_vkCreateDebugReportCallbackEXT != nullptr);
             VkDebugReportCallbackCreateInfoEXT debug_report_ci = {};
             debug_report_ci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
             debug_report_ci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
             debug_report_ci.pfnCallback = debug_report;
             debug_report_ci.pUserData = nullptr;
-            err = f_vkCreateDebugReportCallbackEXT(window.g_Instance, &debug_report_ci, window.g_Allocator, &g_DebugReport);
+            err = f_vkCreateDebugReportCallbackEXT(win.g_Instance, &debug_report_ci, win.g_Allocator, &g_DebugReport);
             check_vk_result(err);
 #endif
         }
@@ -325,27 +328,12 @@ namespace January::System {
 #pragma endregion
 
 #pragma region MainLoop
-    void DrawLoop(JWindow& jwindow){
+    void DrawLoop(struct JSystem& jsystem){
+        JWindow& jwindow = *jsystem.window;
         ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         
         while (!jwindow.g_done){
-            // Poll and handle events (inputs, window resize, etc.)
-            // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-            // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-            // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-            // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-            // [If using SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your SDL_AppEvent() function]
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
-            {
-                ImGui_ImplSDL3_ProcessEvent(&event);
-                if (event.type == SDL_EVENT_QUIT)
-                    jwindow.g_done = true;
-                if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(jwindow.g_window))
-                    jwindow.g_done = true;
-            }
-
             // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
             if (SDL_GetWindowFlags(jwindow.g_window) & SDL_WINDOW_MINIMIZED)
             {
@@ -370,6 +358,7 @@ namespace January::System {
             ImGui::NewFrame();
 
             jwindow.g_dockerspace = ImGui::DockSpaceOverViewport();
+            VDraw(*jsystem.engine->manager, *jsystem.window, *jsystem.engine);
 
             // Render toasts on top of everything, at the end of your code!
             // You should push style vars here
@@ -397,9 +386,16 @@ namespace January::System {
     }
 #pragma endregion
 
+    void SavePreference(){
+        ImGui::SaveIniSettingsToDisk(Engine::get_config_path("imgui.ini").c_str());
+    }
+
+    void LoadPreference(){
+        ImGui::LoadIniSettingsFromDisk(Engine::get_config_path("imgui.ini").c_str());
+    }
+
     int32_t JInit(JWindow& jwindow, JRWindowInit init) {
         spdlog::debug("Application Initialization: Editor");
-        jwindow = JWindow();
 
         // Setup SDL
         // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
@@ -411,6 +407,7 @@ namespace January::System {
 
         // Create window with Vulkan graphics context
         float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+        spdlog::debug("\tmain_scale: {}", main_scale);
         jwindow.g_windowFlags = SDL_WINDOW_VULKAN | 
             SDL_WINDOW_RESIZABLE | 
             SDL_WINDOW_HIGH_PIXEL_DENSITY |
@@ -421,6 +418,7 @@ namespace January::System {
         {
             throw std::runtime_error(std::format("Error: SDL_CreateWindow(): {}\n", SDL_GetError()));
         }
+        spdlog::debug("\tSDL window created");
 
         ImVector<const char*> extensions;
         {
@@ -430,6 +428,7 @@ namespace January::System {
                 extensions.push_back(sdl_extensions[n]);
         }
         SetupVulkan(jwindow, extensions);
+        spdlog::debug("\tVulkan setup finish");
 
         // Create Window Surface
         VkSurfaceKHR surface;
@@ -438,6 +437,7 @@ namespace January::System {
         {
             throw std::runtime_error("Failed to create Vulkan surface.\n");
         }
+        spdlog::debug("\tVulkan surface finish");
 
         // Create Framebuffers
         int w, h;
@@ -451,6 +451,8 @@ namespace January::System {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.IniFilename = Engine::get_config_path("imgui.ini").c_str();
+        io.LogFilename = Engine::get_config_path("imgui.log").c_str();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -497,20 +499,10 @@ namespace January::System {
         // - Read 'docs/FONTS.md' for more instructions and details. If you like the default font but want it to scale better, consider using the 'ProggyVector' from the same author!
         // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
         style.FontSizeBase = 20.0f;
-        //io.Fonts->AddFontDefault();
-        //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
-        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
         //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
         //IM_ASSERT(font != nullptr);
-
-        ImFontConfig font_cfg;
-        font_cfg.FontDataOwnedByAtlas = false;
-        io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
-        // Initialize notify
-        ImGui::MergeIconsWithLatestFont(16.f, false);
-        ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
         return 0;
     }
 
