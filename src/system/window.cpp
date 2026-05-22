@@ -387,11 +387,15 @@ namespace January::System {
 #pragma endregion
 
     void SavePreference(){
-        ImGui::SaveIniSettingsToDisk(Engine::get_config_path("imgui.ini").c_str());
+        const char* save_path = Engine::get_config_path("imgui.ini").c_str();
+        ImGui::SaveIniSettingsToDisk(save_path);
+        spdlog::debug("SaveIniSettingsToDisk: {}", save_path);
     }
 
     void LoadPreference(){
-        ImGui::LoadIniSettingsFromDisk(Engine::get_config_path("imgui.ini").c_str());
+        const char* save_path = Engine::get_config_path("imgui.ini").c_str();
+        ImGui::LoadIniSettingsFromDisk(save_path);
+        spdlog::debug("LoadIniSettingsFromDisk: {}", save_path);
     }
 
     int32_t JInit(JWindow& jwindow, JRWindowInit init) {
