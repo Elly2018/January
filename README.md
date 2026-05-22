@@ -2,6 +2,9 @@
 
 My goal is createa a Touch designer alternative software.
 
+This program should contain hierachy or asset management windows etc... It should feels like a game engine,
+But with real-time control capability.
+
 ## Feature
 
 - [ ] Window management
