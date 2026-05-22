@@ -73,6 +73,7 @@ namespace January::Engine {
         }
         std::string dataString = data.dump(4) + "\n";
         std::ofstream outputFile(p);
+        spdlog::debug("SaveAppConfig: {}", p.string());
         outputFile.write(dataString.c_str(), dataString.size());
         outputFile.close();
     }
@@ -84,6 +85,7 @@ namespace January::Engine {
             SaveAppConfig(config);
         }else{
             std::fstream i(p);
+            spdlog::debug("LoadAppConfig: {}", p.string());
             json data = json::parse(i);
             if(data["j_FPS"].is_number_integer()){
                 config.j_FPS = data["j_FPS"].get<int32_t>();

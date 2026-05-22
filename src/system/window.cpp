@@ -387,14 +387,14 @@ namespace January::System {
 #pragma endregion
 
     void SavePreference(){
-        const char* save_path = Engine::get_config_path("imgui.ini").string().c_str();
-        ImGui::SaveIniSettingsToDisk(save_path);
+        std::string save_path = Engine::get_config_path("imgui.ini").string();
+        ImGui::SaveIniSettingsToDisk(save_path.c_str());
         spdlog::debug("SaveIniSettingsToDisk: {}", save_path);
     }
 
     void LoadPreference(){
-        const char* save_path = Engine::get_config_path("imgui.ini").string().c_str();
-        ImGui::LoadIniSettingsFromDisk(save_path);
+        std::string save_path = Engine::get_config_path("imgui.ini").string();
+        ImGui::LoadIniSettingsFromDisk(save_path.c_str());
         spdlog::debug("LoadIniSettingsFromDisk: {}", save_path);
     }
 

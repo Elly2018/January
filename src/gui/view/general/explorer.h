@@ -64,6 +64,7 @@ namespace January::Engine::View {
         void DrawLeftSide();
         void DrawRightSide();
         void DrawItemTooltip(JFileContent& target);
+        void DrawItemEvent(JFileContent& target);
         void DrawRightSide_Event();
 
     public:

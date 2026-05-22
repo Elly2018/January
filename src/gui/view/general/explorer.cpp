@@ -149,20 +149,21 @@ namespace January::Engine::View {
 
     void JViewExplorer::DrawRightSide(){
         if(imgSize == 0){
-            ImGui::BeginListBox("Explorer_Right_Listbox", ImVec2(rightWidth, 0));
             int32_t c = 0;
             for(auto file : files){
                 ImGui::Selectable(file.title.c_str(), c == selection);
+                DrawItemTooltip(file);
+                DrawItemEvent(file);
                 c++;
             }
-            ImGui::EndListBox();
         }else{
             ImGui::BeginGroup();
             int32_t c = 0;
-            int32_t row = std::floor<int32_t>(rightWidth / std::max<int32_t>(imgSize * 20, 20));
+            int32_t row = std::floor<int32_t>(rightWidth / std::max<int32_t>(imgSize * 20 + 50, 50));
             for(auto file : files){
-                ImGui::Button(file.title.c_str(), ImVec2(std::max<int32_t>(imgSize * 20, 20), std::max<int32_t>(imgSize * 20, 20)));
+                ImGui::Button(file.title.c_str(), ImVec2(std::max<int32_t>(imgSize * 20 + 50, 50), std::max<int32_t>(imgSize * 20 + 50, 50)));
                 DrawItemTooltip(file);
+                DrawItemEvent(file);
                 if((c + 1) % row != 0){
                     ImGui::SameLine();
                 }
@@ -187,6 +188,15 @@ namespace January::Engine::View {
         display_text += "\n";
 
         ImGui::SetItemTooltip("%s", display_text.c_str());
+    }
+
+    void JViewExplorer::DrawItemEvent(JFileContent& target){
+        if(ImGui::BeginPopupContextItem("ViewExplorer_Right_ContextItem")){
+            if (ImGui::Selectable("Delete")){
+                
+            }
+            ImGui::EndPopup();
+        }
     }
 
     void JViewExplorer::DrawRightSide_Event(){
