@@ -17,6 +17,10 @@ add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
 set(IMGUI_DIR third-party/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ${IMGUI_DIR}/misc/cpp)
 
+# CR
+set(CR_DIR third-party/cr)
+include_directories(${CR_DIR}/cr)
+
 # Node editorc
 set(Node_DIR third-party/node-editor)
 include_directories(${Node_DIR})
