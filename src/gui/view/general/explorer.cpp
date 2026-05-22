@@ -111,14 +111,18 @@ namespace January::Engine::View {
         if(context != nullptr && fs::exists(context->project_path)){
             bool change = ImGui::InputText("Path", path.data(), 512, ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_EnterReturnsTrue);
             if(change) changed = true;
-            ImGui::SliderFloat("size", &imgSize, 0.f, 1.f, "%.1f");
-            ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
+            ImGui::SliderInt("size", &imgSize, 0, 10, "%d");
+            {
+                ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
                 DrawLeftSide();
-            ImGui::EndChild();
+                ImGui::EndChild();
+            }
             ImGui::SameLine();
-            ImGui::BeginChild("ViewExplorer_Right", ImVec2(rightWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
+            {
+                ImGui::BeginChild("ViewExplorer_Right", ImVec2(rightWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
                 DrawRightSide();
-            ImGui::EndChild();
+                ImGui::EndChild();
+            }
             DrawRightSide_Event();
         }else{
             ImGui::Text("You need to choose path fist");
@@ -155,9 +159,9 @@ namespace January::Engine::View {
         }else{
             ImGui::BeginGroup();
             int32_t c = 0;
-            int32_t row = std::floor<int32_t>(rightWidth / std::max<float>(imgSize * 500, 50));
+            int32_t row = std::floor<int32_t>(rightWidth / std::max<int32_t>(imgSize * 20, 20));
             for(auto file : files){
-                ImGui::Button(file.title.c_str(), ImVec2(std::max<float>(imgSize * 500, 50), std::max<float>(imgSize * 500, 50)));
+                ImGui::Button(file.title.c_str(), ImVec2(std::max<int32_t>(imgSize * 20, 20), std::max<int32_t>(imgSize * 20, 20)));
                 DrawItemTooltip(file);
                 if((c + 1) % row != 0){
                     ImGui::SameLine();

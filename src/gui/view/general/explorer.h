@@ -79,7 +79,7 @@ namespace January::Engine::View {
         bool init = false;
         float leftWidth = 0;
         float rightWidth = 0;
-        float imgSize = 0.5f;
+        int32_t imgSize = 1;
         int32_t selection = 0;
         filewatch::FileWatch<std::string>* watcher = nullptr;
         std::mutex mtx;
