@@ -14,7 +14,7 @@ namespace January::Engine::View {
             logs.push_back(cl);
             changed = true;
         });
-        callback_sink->set_level(spdlog::level::info);
+        callback_sink->set_level(spdlog::level::trace);
         console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         jengine.context->logger = new spdlog::logger("engine logger", {console_sink, callback_sink});
     }

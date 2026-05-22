@@ -48,6 +48,7 @@ namespace January::Engine::View {
         JViewBase::Init();
         spdlog::info("Loaded View: Explorer");
         Assets.name = "Assets";
+        path = "Assets";
         path_node.clear();
         path_node.push_back("Assets");
     }
@@ -57,18 +58,13 @@ namespace January::Engine::View {
             spdlog::debug("Detect explorer update");
             fs::path pp = CurrentFolder();
             if(fs::exists(pp)){
-                if(path != "/" && path != "") pp /= path.c_str();
-                if(!fs::exists(pp)){
-                    spdlog::warn("\tPath does not exist: {}, So we change back to project root instead", pp.c_str());
-                    pp = fs::path(jengine.context->project_path.c_str());
-                    path = CurrentFolder();
-                }
                 if(watcher != nullptr){
                     delete watcher;
                 }
                 spdlog::debug("\tRemove explorer file watcher");
 
                 spdlog::debug("\tTry register watcher: {}", pp.c_str());
+                spdlog::debug("\tCurrent path: {}", path);
                 watcher = new filewatch::FileWatch<std::string>(
                     pp.string(),
                     [this](const std::string& path, const filewatch::Event change_type){
@@ -99,7 +95,7 @@ namespace January::Engine::View {
                     }
                 }
             }else{
-                spdlog::debug("\tSkip update because project path not exist");
+                spdlog::debug("\tSkip update because project path not exist {}", pp.string());
             }
             changed = false;
         }
@@ -171,28 +167,32 @@ namespace January::Engine::View {
             changed = true;
             fs::path buffer = path;
             buffer = buffer.parent_path();
-            path = buffer.string();
             travel_record.push(path);
+            path = buffer.string();
+            spdlog::debug("Asset browse {}", path);
             UpdatePathNode();
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
         if(ImGui::Button("\uf015")){ // Home
             changed = true;
-            path = "";
             travel_record.push(path);
+            path = "Assets";
+            spdlog::debug("Asset browse {}", path);
             UpdatePathNode();
         }
         ImGui::PopFont();
     }
 
     void JViewExplorer::DrawPathBar() {
-        fs::path buffer = jengine.context->project_path;
+        fs::path buffer = "";
         for(auto& p : path_node){
-            buffer.append(p);
+            buffer /= p;
             if(ImGui::Button((p + "##Explorer_Path_Button").c_str())){
-                path = buffer;
                 changed = true;
+                travel_record.push(path);
+                path = buffer;
+                spdlog::debug("Asset browse {}", path);
                 UpdatePathNode();
                 break;
             }
@@ -281,6 +281,7 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawItemEvent(JFileContent& target){
+        fs::path root = jengine.context->project_path;
         std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + target.path.string();
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
             if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
@@ -314,8 +315,10 @@ namespace January::Engine::View {
         }
         if(ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
             if(target.is_dir){
-                path = target.path;
                 changed = true;
+                travel_record.push(path);
+                path = fs::relative(target.path, root).string();
+                spdlog::debug("Asset browse {}", path);
                 UpdatePathNode();
             }
         }
@@ -364,28 +367,23 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::UpdatePathNode() {
-        fs::path root = jengine.context->project_path;
         fs::path p = path;
         path_node.clear();
-        while(p != root){
+        while(p.has_parent_path()){
             path_node.push_back(p.filename().string());
             p = p.parent_path();
-            if(!p.has_parent_path()){
-                spdlog::error("Exploere UpdatePathNode Error: Parent path and node path does not match");
-                break;
-            }
         }
+        path_node.push_back(p.filename().string());
         std::reverse(path_node.begin(), path_node.end());
     }
 
     void JViewExplorer::ReloadProject(){
-        path = "";
+        path = "Assets";
         init = false;
     }
 
     fs::path JViewExplorer::CurrentFolder(){
         fs::path p = jengine.context->project_path;
-        p /= "Assets";
         p /= path;
         return p;
     }

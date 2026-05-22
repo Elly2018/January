@@ -98,8 +98,8 @@ namespace January::Engine::View {
         void ReloadProject();
         // You will get project + Assets
         fs::path CurrentFolder();
-        // The relative path base on project "Assets" folder
-        std::string path = "";
+        // The relative path base on project root folder
+        std::string path = "Assets";
         std::vector<std::string> path_node;
 
     private:
