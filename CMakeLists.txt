@@ -1,8 +1,3 @@
-# Example usage:
-#  mkdir build
-#  cd build
-#  cmake -g "Visual Studio 14 2015" ..
-
 cmake_minimum_required(VERSION 4.1)
 project(january C CXX)
 
