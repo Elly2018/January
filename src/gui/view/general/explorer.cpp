@@ -257,12 +257,20 @@ namespace January::Engine::View {
         if(path_input){
             std::string previous = path;
             if(ImGui::InputText("Path##Explorer_Path_InputText", &path, ImGuiInputTextFlags_EnterReturnsTrue)){
-                std::lock_guard<std::mutex> guard(travel_record_mtx);
-                travel_record.push(previous);
-                spdlog::debug("Asset browse {}", path);
-                UpdatePathNode();
-                path_input = false;
-                changed = true;
+                fs::path sss = jengine.context->project_path;
+                sss /= path;
+                if(fs::exists(sss) && fs::is_directory(sss)){
+                    std::lock_guard<std::mutex> guard(travel_record_mtx);
+                    travel_record.push(previous);
+                    spdlog::debug("Asset browse {}", path);
+                    UpdatePathNode();
+                    path_input = false;
+                    changed = true;
+                }else{
+                    spdlog::error("Enter path is not vaild {}", path);
+                    path_input = false;
+                    path = previous;
+                }
             }
         }else{
             fs::path buffer = "";
