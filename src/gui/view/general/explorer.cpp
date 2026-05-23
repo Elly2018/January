@@ -271,6 +271,7 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawLeftSideTreeNode(JFolderContent& tree, int32_t level){
+        ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 8.0f);
         if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + std::to_string(level)).c_str())){
             if (ImGui::IsItemToggledOpen()) {
                 {
@@ -297,6 +298,7 @@ namespace January::Engine::View {
             }
             ImGui::TreePop();
         }
+        ImGui::PopStyleVar();
     }
 
     void JViewExplorer::DrawLeftSide(){
