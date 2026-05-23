@@ -490,6 +490,11 @@ namespace January::Engine::View {
 
     bool JViewExplorer::FilterCheck(JFileContent& file) {
         if(filter == FilterFlag::NONE) return true;
+        if(file.is_dir) return true;
+        std::string ext = file.path.extension().string();
+        if(ext == ".janunary_prefab" && ((int32_t)filter.load() & (int32_t)FilterFlag::PREFAB) != 0) return true;
+        if(ext == ".janunary_material" && ((int32_t)filter.load() & (int32_t)FilterFlag::MATERIAL) != 0) return true;
+        if(ext == ".janunary_texture" && ((int32_t)filter.load() & (int32_t)FilterFlag::TEXTURE) != 0) return true;
         return false;
     }
 
