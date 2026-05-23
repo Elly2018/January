@@ -244,6 +244,7 @@ namespace January::Engine::View {
         ImGui::SameLine();
         if(ImGui::Button("\uf120##Exploere_Icon_Action")){ // Input
             path_input = PathBarDisplay::PATH_INPUT;
+            path_buffer = path;
         }
         if(mode == DisplayMode::NORMAL){
             ImGui::SameLine();
@@ -257,13 +258,13 @@ namespace January::Engine::View {
 
     void JViewExplorer::DrawPathBar() {
         if(path_input == PathBarDisplay::PATH_INPUT){
-            std::string previous = path;
-            if(ImGui::InputText("Path##Explorer_Path_InputText", &path, ImGuiInputTextFlags_EnterReturnsTrue)){
+            if(ImGui::InputText("Path##Explorer_Path_InputText", &path_buffer, ImGuiInputTextFlags_EnterReturnsTrue)){
                 fs::path sss = jengine.context->project_path;
-                sss /= path;
+                sss /= path_buffer;
                 if(fs::exists(sss) && fs::is_directory(sss)){
                     std::lock_guard<std::mutex> guard(travel_record_mtx);
-                    travel_record.push(previous);
+                    travel_record.push(path);
+                    path = path_buffer;
                     spdlog::debug("Asset browse {}", path);
                     UpdatePathNode();
                     path_input = PathBarDisplay::DEFAULT;
@@ -271,7 +272,6 @@ namespace January::Engine::View {
                 }else{
                     spdlog::error("Enter path is not vaild {}", path);
                     path_input = PathBarDisplay::DEFAULT;
-                    path = previous;
                 }
             }
         }

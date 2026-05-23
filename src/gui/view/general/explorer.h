@@ -141,6 +141,7 @@ namespace January::Engine::View {
         fs::path CurrentFolder();
         // The relative path base on project root folder
         std::string path = "Assets";
+        std::string path_buffer = "";
         // Use for render path bar (The top bar with list of folder button for quick traval)
         std::vector<std::string> path_node;
 
