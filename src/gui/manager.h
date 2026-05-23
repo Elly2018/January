@@ -51,7 +51,9 @@ namespace January {
         struct JViewTimeline;
         struct JViewVolumn;
 
-        struct JPopupFileDialog;
+        struct JPopupCreateFolder;
+        struct JPopupCreateResource;
+        struct JPopupCreateScript;
         struct JPopupProjectDashboard;
 
         enum class JanuaryViewTypeFlag {
@@ -106,10 +108,12 @@ namespace January {
 
         enum class JanuaryViewGeneralPopupFlag {
             NONE = 0,
-            FILE_DIALOG = 1,
-            PROJECT_DASHBOARD = 2,
-            PREFERENCE = 3,
-            SETTING = 4,
+            PROJECT_DASHBOARD = 1,
+            PREFERENCE = 2,
+            SETTING = 3,
+            CREATE_FOLDER = 10,
+            CREATE_RESOURCE = 11,
+            CREATE_SCRIPT = 12,
         };
 
         struct ViewManager {
@@ -125,7 +129,9 @@ namespace January {
             struct JViewTimeline*           timeline;
             struct JViewVolumn*             volumn;
 
-            struct JPopupFileDialog*        file_dialog;
+            struct JPopupCreateFolder*      create_folder;
+            struct JPopupCreateResource*    create_resource;
+            struct JPopupCreateScript*      create_script;
             struct JPopupProjectDashboard*  project_dashboard;
 
             std::vector<struct JViewBase*>  views;

@@ -27,6 +27,9 @@ add_subdirectory(${DILIGENT_DIR} EXCLUDE_FROM_ALL)
 # SDL3
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
 
+# clip
+add_subdirectory(third-party/clip EXCLUDE_FROM_ALL)
+
 # libcurl
 set(LIBCURL_DIR third-party/libcurl)
 add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)

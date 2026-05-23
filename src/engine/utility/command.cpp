@@ -11,7 +11,7 @@
 #include "../../system/system.h"
 #include "../../system/window.h"
 #include "../../gui/manager.h"
-#include "../../gui/popup/project_dashboard.h"
+#include "../../gui/popup/allpopup.h"
 #include "../engine.h"
 #include "../struct/config.h"
 #include "../struct/context.h"
@@ -70,6 +70,16 @@ namespace January::Engine {
         }
     }
 
+    std::string GetPath(std::vector<std::string>& cmds){
+        std::string r_path = "";
+        for(int32_t i = 1; i < cmds.size(); i++){
+            r_path += cmds.at(i);
+            r_path += " ";
+        }
+        r_path.pop_back();
+        return r_path;
+    }
+
     std::vector<std::string> split_string_by_space(const std::string& str) {
         std::vector<std::string> words;
         std::stringstream ss(str); // Turn the string into a stream
@@ -85,12 +95,7 @@ namespace January::Engine {
 
     void multi_command(struct System::JSystem& jsystem, std::vector<std::string> cmds){
         if(cmds.size() >= 2 && cmds.at(0) == "open_recent"){
-            std::string r_path = "";
-            for(int32_t i = 1; i < cmds.size(); i++){
-                r_path += cmds.at(i);
-                r_path += " ";
-            }
-            r_path.pop_back();
+            std::string r_path = GetPath(cmds);
             int32_t search = -1;
             for(int32_t i = 0; i < jsystem.engine->config->j_recent.size(); i++){
                 if(jsystem.engine->config->j_recent.at(i).j_path == r_path){
@@ -116,6 +121,21 @@ namespace January::Engine {
             toast.set_content(t.c_str());
             ImGui::InsertNotification(toast);
             AddRecent(*jsystem.engine, r_path);
+        }
+        else if(cmds.size() >= 2 && cmds.at(0) == "create_folder"){
+            std::string r_path = GetPath(cmds);
+            jsystem.engine->manager->create_folder->RegisterFolder(r_path);
+            jsystem.engine->manager->create_folder->SetEnable(true);
+        }
+        else if(cmds.size() >= 2 && cmds.at(0) == "create_resource"){
+            std::string r_path = GetPath(cmds);
+            jsystem.engine->manager->create_resource->RegisterFolder(r_path);
+            jsystem.engine->manager->create_resource->SetEnable(true);
+        }
+        else if(cmds.size() >= 2 && cmds.at(0) == "create_script"){
+            std::string r_path = GetPath(cmds);
+            jsystem.engine->manager->create_script->RegisterFolder(r_path);
+            jsystem.engine->manager->create_script->SetEnable(true);
         }
     }
 

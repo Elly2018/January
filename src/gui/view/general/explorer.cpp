@@ -36,6 +36,25 @@ namespace fs = std::filesystem;
 
 namespace January::Engine::View {
 
+    void openFolder(const std::string& path) {
+        std::string command;
+
+        #if defined(_WIN32) || defined(_WIN64)
+            // Windows: use "explorer" command
+            command = "explorer \"" + path + "\"";
+        #elif defined(__APPLE__)
+            // macOS: use "open" command
+            command = "open \"" + path + "\"";
+        #elif defined(__linux__)
+            // Linux: use "xdg-open" (standard for most desktops)
+            command = "xdg-open \"" + path + "\"";
+        #else
+            #error "Unsupported platform"
+        #endif
+
+        std::system(command.c_str());
+    }
+
     void JFolderContent::CleanChildren(){
         for(auto c : children){
             c->CleanChildren();
@@ -272,7 +291,12 @@ namespace January::Engine::View {
 
     void JViewExplorer::DrawLeftSideTreeNode(JFolderContent& tree, int32_t level){
         ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 14.0f);
-        if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + std::to_string(level)).c_str())){
+        bool leaf = tree.children.size() == 0;
+        ImGuiTreeNodeFlags tree_flag = ImGuiTreeNodeFlags_None;
+        if(leaf) {
+            tree_flag |= ImGuiTreeNodeFlags_Leaf;
+        }
+        if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + std::to_string(level)).c_str(), tree_flag)){
             if (ImGui::IsItemToggledOpen()) {
                 {
                     fs::path pp = jengine.context->project_path;
@@ -356,8 +380,13 @@ namespace January::Engine::View {
         fs::path root = jengine.context->project_path;
         std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + target.path.string();
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
-            if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
-                
+            if(target.is_dir){
+                if (ImGui::MenuItem(("Open File Explorer Here##" + popup_id).c_str())){
+                    openFolder(target.path);
+                }
+            }else{
+                if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
+                }
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Delete##" + popup_id).c_str())){
@@ -412,7 +441,7 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Open File Explorer Here##ViewExplorer_Right_ContextItem")){
-
+                openFolder(CurrentFolder().string());
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Cut##ViewExplorer_Right_ContextItem")){

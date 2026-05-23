@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #include "manager.h"
 #include "view/allview.h"
-#include "popup/project_dashboard.h"
+#include "popup/allpopup.h"
 #include "../engine/engine.h"
 #include "../engine/struct/config.h"
 #include "../engine/struct/context.h"
@@ -46,6 +46,9 @@ namespace January::Engine::View {
         vm.volumn = new JViewVolumn(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::AUDIO, (int32_t)JanuaryViewAudioFlag::VOLUMN, *jsystem.window, *jsystem.engine);
 
         vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
+        vm.create_folder = new JPopupCreateFolder(std::string("Create Folder##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::CREATE_FOLDER, *jsystem.window, *jsystem.engine);
+        vm.create_resource = new JPopupCreateResource(std::string("Create Resource##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::CREATE_RESOURCE, *jsystem.window, *jsystem.engine);
+        vm.create_script = new JPopupCreateScript(std::string("Create Script##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::CREATE_SCRIPT, *jsystem.window, *jsystem.engine);
         
         vm.views.push_back(vm.application);
         vm.views.push_back(vm.blueprint);
@@ -60,6 +63,9 @@ namespace January::Engine::View {
         vm.views.push_back(vm.volumn);
 
         vm.popups.push_back(vm.project_dashboard);
+        vm.popups.push_back(vm.create_folder);
+        vm.popups.push_back(vm.create_resource);
+        vm.popups.push_back(vm.create_script);
 
         for(auto& c : vm.views){
             c->Init();

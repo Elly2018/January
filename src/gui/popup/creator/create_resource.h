@@ -22,31 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_UTILITY_COMMAND_H
-#define ENGINE_UTILITY_COMMAND_H
+#ifndef GUI_POPUP_CREATOR_CREATE_RESOURCE_H
+#define GUI_POPUP_CREATOR_CREATE_RESOURCE_H
+#include "../popupbase.h"
 #include <string>
 
-namespace January {
-    namespace System {
-        struct JSystem;
-    }
-    namespace Engine {
-        struct AppContext;
-        void ApplyCommand(struct System::JSystem& jsystem, std::string cmd);
-        // Single Command:
-        // * config_dirty
-        // * new_project
-        // * open_project
-        // * save_project
-        // * save_project_as
-        // * open_setting
-        // * open_preference
-        // Multi Command:
-        // * open_recent <path>
-        // * create_folder <path>
-        // * create_resource <path>
-        // * create_script <path>
-        void PushCommand(struct AppContext& config, std::string cmd);
-    }
+namespace January::Engine::View {
+    class JPopupCreateResource : public JPopupBase {
+    public:
+        DEFAULT_POPUP_CTOR(JPopupCreateResource) {}
+        DEFAULT_POPUP_DECTOR(JPopupCreateResource) {}
+
+    public:
+        void RegisterFolder(std::string _folder);
+
+    private:
+        std::string folder;
+    };
 }
 #endif

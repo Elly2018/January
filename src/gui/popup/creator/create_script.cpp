@@ -21,32 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
-#ifndef ENGINE_UTILITY_COMMAND_H
-#define ENGINE_UTILITY_COMMAND_H
-#include <string>
+#include "create_script.h"
 
-namespace January {
-    namespace System {
-        struct JSystem;
-    }
-    namespace Engine {
-        struct AppContext;
-        void ApplyCommand(struct System::JSystem& jsystem, std::string cmd);
-        // Single Command:
-        // * config_dirty
-        // * new_project
-        // * open_project
-        // * save_project
-        // * save_project_as
-        // * open_setting
-        // * open_preference
-        // Multi Command:
-        // * open_recent <path>
-        // * create_folder <path>
-        // * create_resource <path>
-        // * create_script <path>
-        void PushCommand(struct AppContext& config, std::string cmd);
+namespace January::Engine::View {
+    void JPopupCreateScript::RegisterFolder(std::string _folder){
+        folder = _folder;
     }
 }
-#endif

@@ -3213,6 +3213,78 @@ src/gui/nodes/nodebase.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/nodes/nodebase.cpp.s
 .PHONY : src/gui/nodes/nodebase.cpp.s
 
+src/gui/popup/creator/create_folder.o: src/gui/popup/creator/create_folder.cpp.o
+.PHONY : src/gui/popup/creator/create_folder.o
+
+# target to build an object file
+src/gui/popup/creator/create_folder.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_folder.cpp.o
+.PHONY : src/gui/popup/creator/create_folder.cpp.o
+
+src/gui/popup/creator/create_folder.i: src/gui/popup/creator/create_folder.cpp.i
+.PHONY : src/gui/popup/creator/create_folder.i
+
+# target to preprocess a source file
+src/gui/popup/creator/create_folder.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_folder.cpp.i
+.PHONY : src/gui/popup/creator/create_folder.cpp.i
+
+src/gui/popup/creator/create_folder.s: src/gui/popup/creator/create_folder.cpp.s
+.PHONY : src/gui/popup/creator/create_folder.s
+
+# target to generate assembly for a file
+src/gui/popup/creator/create_folder.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_folder.cpp.s
+.PHONY : src/gui/popup/creator/create_folder.cpp.s
+
+src/gui/popup/creator/create_resource.o: src/gui/popup/creator/create_resource.cpp.o
+.PHONY : src/gui/popup/creator/create_resource.o
+
+# target to build an object file
+src/gui/popup/creator/create_resource.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_resource.cpp.o
+.PHONY : src/gui/popup/creator/create_resource.cpp.o
+
+src/gui/popup/creator/create_resource.i: src/gui/popup/creator/create_resource.cpp.i
+.PHONY : src/gui/popup/creator/create_resource.i
+
+# target to preprocess a source file
+src/gui/popup/creator/create_resource.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_resource.cpp.i
+.PHONY : src/gui/popup/creator/create_resource.cpp.i
+
+src/gui/popup/creator/create_resource.s: src/gui/popup/creator/create_resource.cpp.s
+.PHONY : src/gui/popup/creator/create_resource.s
+
+# target to generate assembly for a file
+src/gui/popup/creator/create_resource.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_resource.cpp.s
+.PHONY : src/gui/popup/creator/create_resource.cpp.s
+
+src/gui/popup/creator/create_script.o: src/gui/popup/creator/create_script.cpp.o
+.PHONY : src/gui/popup/creator/create_script.o
+
+# target to build an object file
+src/gui/popup/creator/create_script.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_script.cpp.o
+.PHONY : src/gui/popup/creator/create_script.cpp.o
+
+src/gui/popup/creator/create_script.i: src/gui/popup/creator/create_script.cpp.i
+.PHONY : src/gui/popup/creator/create_script.i
+
+# target to preprocess a source file
+src/gui/popup/creator/create_script.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_script.cpp.i
+.PHONY : src/gui/popup/creator/create_script.cpp.i
+
+src/gui/popup/creator/create_script.s: src/gui/popup/creator/create_script.cpp.s
+.PHONY : src/gui/popup/creator/create_script.s
+
+# target to generate assembly for a file
+src/gui/popup/creator/create_script.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/gui/popup/creator/create_script.cpp.s
+.PHONY : src/gui/popup/creator/create_script.cpp.s
+
 src/gui/popup/popupbase.o: src/gui/popup/popupbase.cpp.o
 .PHONY : src/gui/popup/popupbase.o
 
@@ -4191,6 +4263,15 @@ help:
 	@echo "... src/gui/nodes/nodebase.o"
 	@echo "... src/gui/nodes/nodebase.i"
 	@echo "... src/gui/nodes/nodebase.s"
+	@echo "... src/gui/popup/creator/create_folder.o"
+	@echo "... src/gui/popup/creator/create_folder.i"
+	@echo "... src/gui/popup/creator/create_folder.s"
+	@echo "... src/gui/popup/creator/create_resource.o"
+	@echo "... src/gui/popup/creator/create_resource.i"
+	@echo "... src/gui/popup/creator/create_resource.s"
+	@echo "... src/gui/popup/creator/create_script.o"
+	@echo "... src/gui/popup/creator/create_script.i"
+	@echo "... src/gui/popup/creator/create_script.s"
 	@echo "... src/gui/popup/popupbase.o"
 	@echo "... src/gui/popup/popupbase.i"
 	@echo "... src/gui/popup/popupbase.s"
