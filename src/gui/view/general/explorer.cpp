@@ -286,7 +286,7 @@ namespace January::Engine::View {
         ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 14.0f);
         bool leaf = tree.children.size() == 0 && tree.is_open;
         bool selected = CurrentFolder() == pp;
-        ImGuiTreeNodeFlags tree_flag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+        ImGuiTreeNodeFlags tree_flag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanFullWidth;
         if(leaf) {
             tree_flag |= ImGuiTreeNodeFlags_Leaf;
         }
