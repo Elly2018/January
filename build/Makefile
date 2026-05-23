@@ -3010,6 +3010,30 @@ clean-certs/fast:
 	$(MAKE) $(MAKESILENT) -f third-party/libcurl/tests/certs/CMakeFiles/clean-certs.dir/build.make third-party/libcurl/tests/certs/CMakeFiles/clean-certs.dir/build
 .PHONY : clean-certs/fast
 
+src/engine/assets/asset.o: src/engine/assets/asset.cpp.o
+.PHONY : src/engine/assets/asset.o
+
+# target to build an object file
+src/engine/assets/asset.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/assets/asset.cpp.o
+.PHONY : src/engine/assets/asset.cpp.o
+
+src/engine/assets/asset.i: src/engine/assets/asset.cpp.i
+.PHONY : src/engine/assets/asset.i
+
+# target to preprocess a source file
+src/engine/assets/asset.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/assets/asset.cpp.i
+.PHONY : src/engine/assets/asset.cpp.i
+
+src/engine/assets/asset.s: src/engine/assets/asset.cpp.s
+.PHONY : src/engine/assets/asset.s
+
+# target to generate assembly for a file
+src/engine/assets/asset.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/assets/asset.cpp.s
+.PHONY : src/engine/assets/asset.cpp.s
+
 src/engine/engine.o: src/engine/engine.cpp.o
 .PHONY : src/engine/engine.o
 
@@ -4250,6 +4274,9 @@ help:
 	@echo "... tunits"
 	@echo "... units"
 	@echo "... xxhash"
+	@echo "... src/engine/assets/asset.o"
+	@echo "... src/engine/assets/asset.i"
+	@echo "... src/engine/assets/asset.s"
 	@echo "... src/engine/engine.o"
 	@echo "... src/engine/engine.i"
 	@echo "... src/engine/engine.s"

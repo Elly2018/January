@@ -124,9 +124,9 @@ namespace January::Engine::View {
         // Drawing right panel content
         void DrawRightSide();
         // Handle item tooltip event
-        void DrawItemTooltip(JFileContent& target);
+        void DrawItemTooltip(fs::path& _path, bool is_dir = true, uintmax_t filesize = 0);
         // Handle item event, such as right click or double click
-        void DrawItemEvent(JFileContent& target);
+        void DrawItemEvent(fs::path& _path, bool is_dir = true, bool tree_node = false);
         // Handle right panel background context menu event
         void DrawRightSide_Event();
         // Update the folder list, this should get called when "path" variable changed

@@ -136,14 +136,14 @@ namespace January::Engine::View {
         ImGui::PopFont();
         ImGui::SameLine();
         ImGui::Selectable(target.title.c_str());
-        DrawItemTooltip(target);
-        DrawItemEvent(target);
+        DrawItemTooltip(target.path, target.is_dir, target.filesize);
+        DrawItemEvent(target.path, target.is_dir);
     }
 
     void JViewExplorer::DrawItemGrid(JFileContent& target, int32_t size){
         ImGui::Button(target.title.c_str(), ImVec2(size, size));
-        DrawItemTooltip(target);
-        DrawItemEvent(target);
+        DrawItemTooltip(target.path, target.is_dir, target.filesize);
+        DrawItemEvent(target.path, target.is_dir);
     }
 
     void JViewExplorer::DrawPathAction() {
@@ -281,18 +281,18 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawLeftSideTreeNode(JFolderContent& tree, int32_t level){
+        fs::path pp = jengine.context->project_path;
+        pp /= tree.path;
         ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 14.0f);
         bool leaf = tree.children.size() == 0 && tree.is_open;
-        ImGuiTreeNodeFlags tree_flag = ImGuiTreeNodeFlags_None;
+        ImGuiTreeNodeFlags tree_flag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
         if(leaf) {
             tree_flag |= ImGuiTreeNodeFlags_Leaf;
         }
         if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + std::to_string(level)).c_str(), tree_flag)){
             if (ImGui::IsItemToggledOpen()) {
                 {
-                    fs::path pp = jengine.context->project_path;
-                    tree.is_open = true;
-                    pp /= tree.path;
+                    tree.is_open = true;   
                     spdlog::debug("\tStart fetch files...");
                     tree.children.clear();
                     for(auto entry : fs::directory_iterator(pp)){
@@ -314,6 +314,8 @@ namespace January::Engine::View {
             }
             ImGui::TreePop();
         }
+        DrawItemTooltip(pp);
+        DrawItemEvent(pp);
         ImGui::PopStyleVar();
     }
 
@@ -340,7 +342,7 @@ namespace January::Engine::View {
                 float rightWidth = ImGui::GetWindowWidth();
                 int32_t c = 0;
                 int32_t max = imgSize * 10 + 100;
-                int32_t row = std::max<int32_t>(std::floor<int32_t>(rightWidth / max), 1);
+                int32_t row = std::max<int32_t>(std::floor<int32_t>(rightWidth / max) - 1, 1);
                 std::lock_guard<std::mutex> guard(files_mtx);
                 for(auto file : files){
                     if(!FilterCheck(file)) continue;
@@ -363,36 +365,36 @@ namespace January::Engine::View {
         }
     }
 
-    void JViewExplorer::DrawItemTooltip(JFileContent& target){
+    void JViewExplorer::DrawItemTooltip(fs::path& _path, bool is_dir, uintmax_t filesize){
         std::string display_text = "";
         display_text += "Filename: ";
-        display_text += target.path.filename().string().c_str();
+        display_text += _path.filename().string().c_str();
         display_text += "\n";
 
         display_text += "Folder: ";
-        display_text += fs::relative(target.path.parent_path(), jengine.context->project_path).string();
+        display_text += fs::relative(_path.parent_path(), jengine.context->project_path).string();
         display_text += "\n";
 
         display_text += "Fullpath: ";
-        display_text += target.path.parent_path().string().c_str();
+        display_text += _path.parent_path().string().c_str();
         display_text += "\n";
 
-        if(!target.is_dir){
+        if(!is_dir){
             display_text += "Size: ";
-            display_text += format_bytes(target.filesize);
+            display_text += format_bytes(filesize);
             display_text += "\n";
         }
 
         ImGui::SetItemTooltip("%s", display_text.c_str());
     }
 
-    void JViewExplorer::DrawItemEvent(JFileContent& target){
+    void JViewExplorer::DrawItemEvent(fs::path& _path, bool is_dir, bool tree_node){
         fs::path root = jengine.context->project_path;
-        std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + target.path.string();
+        std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + _path.string();
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
-            if(target.is_dir){
+            if(is_dir){
                 if (ImGui::MenuItem(("Open File Explorer Here##" + popup_id).c_str())){
-                    openFolder(target.path);
+                    openFolder(_path);
                 }
             }else{
                 if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
@@ -413,25 +415,22 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Copy Path##" + popup_id).c_str())){
-                clip::set_text(target.path.string());
+                clip::set_text(_path.string());
             }
             if (ImGui::MenuItem(("Copy Relative Path##" + popup_id).c_str())){
-                clip::set_text(fs::relative(target.path, root).string());
+                clip::set_text(fs::relative(_path, root).string());
             }
             ImGui::EndPopup();
         }
-        if(ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left)){
-
-        }
-        if(ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
-            if(target.is_dir){
-                std::lock_guard<std::mutex> guard(travel_record_mtx);
-                travel_record.push(path);
-                path = fs::relative(target.path, root).string();
-                spdlog::debug("Asset browse {}", path);
-                UpdatePathNode();
-                changed = true;
-            }
+        bool tree_node_single = tree_node && ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left);
+        bool none_tree_double = tree_node && is_dir && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+        if(tree_node_single || none_tree_double){
+            std::lock_guard<std::mutex> guard(travel_record_mtx);
+            travel_record.push(path);
+            path = fs::relative(path, root).string();
+            spdlog::debug("Asset browse {}", path);
+            UpdatePathNode();
+            changed = true;
         }
     }
 
@@ -542,7 +541,7 @@ namespace January::Engine::View {
                         files.push_back(file);
                     }
 
-                    spdlog::info("Assgin file watch event to {}", entry.path().string().c_str());
+                    spdlog::debug("Assgin file watch event to {}", entry.path().string().c_str());
                 }
             }
         }else{
