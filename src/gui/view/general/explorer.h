@@ -130,6 +130,8 @@ namespace January::Engine::View {
         // When changed is true
         // It will re-generate the "files" variables
         std::atomic_bool changed = false;
+        // Showing button path or text input path
+        std::atomic_bool path_input = false;
         // Init will be the trigger
         // Define if the first event call is on.
         std::atomic_bool init = false;

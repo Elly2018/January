@@ -28,7 +28,10 @@ add_subdirectory(${DILIGENT_DIR} EXCLUDE_FROM_ALL)
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
 
 # clip
-add_subdirectory(third-party/clip EXCLUDE_FROM_ALL)
+set(CLIP_DIR third-party/clip)
+set(CLIP_EXAMPLES OFF CACHE BOOL "Compile clip examples" FORCE)
+set(CLIP_TESTS OFF CACHE BOOL "Compile clip tests" FORCE)
+add_subdirectory(${CLIP_DIR} EXCLUDE_FROM_ALL)
 
 # libcurl
 set(LIBCURL_DIR third-party/libcurl)
@@ -109,6 +112,7 @@ target_include_directories(january PUBLIC
     ${LOG_DIR}/src
     ${SDL3_INCLUDE_DIRS}
     ${LIBCURL_DIR}/include
+    ${CLIP_DIR}
 )
 
 target_link_directories(january PRIVATE
@@ -118,6 +122,7 @@ target_link_directories(january PRIVATE
 if(WIN32)
     target_link_libraries(january PRIVATE
         glfw
+        clip
         Vulkan::Vulkan
         SDL3::SDL3
         CURL::libcurl
@@ -128,6 +133,7 @@ if(WIN32)
 elseif(APPLE)
     target_link_libraries(january PRIVATE
         glfw
+        clip
         Vulkan::Vulkan
         SDL3::SDL3
         CURL::libcurl
@@ -136,6 +142,7 @@ elseif(APPLE)
 else() # Linux
     target_link_libraries(january PRIVATE
         glfw
+        clip
         Vulkan::Vulkan
         SDL3::SDL3
         CURL::libcurl

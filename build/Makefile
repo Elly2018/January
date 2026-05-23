@@ -918,6 +918,19 @@ SDL3_test/fast:
 .PHONY : SDL3_test/fast
 
 #=============================================================================
+# Target rules for targets named clip
+
+# Build rule for target.
+clip: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clip
+.PHONY : clip
+
+# fast build rule for target.
+clip/fast:
+	$(MAKE) $(MAKESILENT) -f third-party/clip/CMakeFiles/clip.dir/build.make third-party/clip/CMakeFiles/clip.dir/build
+.PHONY : clip/fast
+
+#=============================================================================
 # Target rules for targets named curl-ca-bundle
 
 # Build rule for target.
@@ -4101,6 +4114,7 @@ help:
 	@echo "... SPIRV-Tools-reduce"
 	@echo "... SPIRV-Tools-shared"
 	@echo "... SPIRV-Tools-static"
+	@echo "... clip"
 	@echo "... curl"
 	@echo "... curl-example-10-at-a-time"
 	@echo "... curl-example-address-scope"

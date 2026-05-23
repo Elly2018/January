@@ -27,6 +27,8 @@ SOFTWARE.
 #include <thread>
 #include <spdlog/spdlog.h>
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
+#include <clip.h>
 #include "../../../engine/engine.h"
 #include "../../../engine/struct/config.h"
 #include "../../../engine/struct/context.h"
@@ -150,12 +152,20 @@ namespace January::Engine::View {
                 DrawPathAction();
                 ImGui::SameLine();
                 DrawPathBar();
+                ImGui::SameLine();
+                {
+                    if(ImGui::Button("\uf002##Search")){ // Search
+                        std::lock_guard<std::mutex> guard(travel_record_mtx);
+                        travel_record.push(path);
+                        path = "Assets";
+                        spdlog::debug("Asset browse {}", path);
+                        UpdatePathNode();
+                        changed = true;
+                    }
+                }
                 ImGui::EndChild();
             }
-            int32_t temp_imgSize = imgSize.load();
-            ImGui::SliderInt("size", &temp_imgSize, 0, 10, "%d");
             {
-                imgSize.store(temp_imgSize);
                 ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
                 DrawLeftSide();
                 ImGui::EndChild();
@@ -204,7 +214,7 @@ namespace January::Engine::View {
     void JViewExplorer::DrawPathAction() {
         ImGui::PushFont(jengine.context->icon_font);
         ImGui::BeginDisabled(travel_record.size() == 0);
-        if(ImGui::Button("\uf053")){ // Return
+        if(ImGui::Button("\uf053##Exploere_Icon_Action")){ // Return
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             std::string buffer = travel_record.top();
             travel_record.pop();
@@ -215,7 +225,7 @@ namespace January::Engine::View {
         ImGui::EndDisabled();
         ImGui::SameLine();
         ImGui::BeginDisabled(path_node.size() == 1);
-        if(ImGui::Button("\uf062")){ // Up
+        if(ImGui::Button("\uf062##Exploere_Icon_Action")){ // Up
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             fs::path buffer = path;
             buffer = buffer.parent_path();
@@ -228,7 +238,7 @@ namespace January::Engine::View {
         ImGui::EndDisabled();
         ImGui::SameLine();
         ImGui::BeginDisabled(path == "Assets");
-        if(ImGui::Button("\uf015")){ // Home
+        if(ImGui::Button("\uf015##Exploere_Icon_Action")){ // Home
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             travel_record.push(path);
             path = "Assets";
@@ -237,28 +247,39 @@ namespace January::Engine::View {
             changed = true;
         }
         ImGui::EndDisabled();
+        ImGui::SameLine();
+         if(ImGui::Button("\uf121##Exploere_Icon_Action")){ // Input
+            path_input = true;
+        }
         ImGui::PopFont();
     }
 
     void JViewExplorer::DrawPathBar() {
-        fs::path buffer = "";
-        for(auto& p : path_node){
-            bool not_last = p != path_node.at(path_node.size() - 1);
-            buffer /= p;
-            ImGui::BeginDisabled(!not_last);
-            if(ImGui::Button((p + "##Explorer_Path_Button").c_str())){
-                std::lock_guard<std::mutex> guard(travel_record_mtx);
-                travel_record.push(path);
-                path = buffer;
-                spdlog::debug("Asset browse {}", path);
-                UpdatePathNode();
-                changed = true;
+        if(path_input){
+            if(ImGui::InputText("Path##Explorer_Path_InputText", &path)){
+                path_input = false;
             }
-            ImGui::EndDisabled();
-            if(not_last){
-                ImGui::SameLine();
+        }else{
+            fs::path buffer = "";
+            for(auto& p : path_node){
+                bool not_last = p != path_node.at(path_node.size() - 1);
+                buffer /= p;
+                ImGui::BeginDisabled(!not_last);
+                if(ImGui::Button((p + "##Explorer_Path_Button").c_str())){
+                    std::lock_guard<std::mutex> guard(travel_record_mtx);
+                    travel_record.push(path);
+                    path = buffer;
+                    spdlog::debug("Asset browse {}", path);
+                    UpdatePathNode();
+                    changed = true;
+                }
+                ImGui::EndDisabled();
+                if(not_last){
+                    ImGui::SameLine();
+                }
             }
         }
+        
     }
 
     void JViewExplorer::DrawMiddleHandle(){
@@ -330,26 +351,38 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawRightSide(){
-        if(imgSize == 0){ // Line text
-            int32_t c = 0;
-            for(auto file : files){
-                DrawItemLine(file);
-                c++;
-            }
-        }else{ // Grid Item
-            ImGui::BeginGroup();
-            float rightWidth = ImGui::GetWindowWidth();
-            int32_t c = 0;
-            int32_t max = imgSize * 10 + 100;
-            int32_t row = std::floor<int32_t>(rightWidth / max);
-            for(auto file : files){
-                DrawItemGrid(file, max);
-                if((c + 1) % row != 0){
-                    ImGui::SameLine();
+        float h = ImGui::GetWindowHeight();
+        { // Top
+            ImGui::BeginChild("Exploere_Right_Panel_Top", ImVec2(0, h - ImGui::GetTextLineHeightWithSpacing() * 2));
+            if(imgSize == 0){ // Line text
+                int32_t c = 0;
+                for(auto file : files){
+                    DrawItemLine(file);
+                    c++;
                 }
-                c++;
+            }else{ // Grid Item
+                ImGui::BeginGroup();
+                float rightWidth = ImGui::GetWindowWidth();
+                int32_t c = 0;
+                int32_t max = imgSize * 10 + 100;
+                int32_t row = std::max<int32_t>(std::floor<int32_t>(rightWidth / max), 1);
+                for(auto file : files){
+                    DrawItemGrid(file, max);
+                    if((c + 1) % row != 0){
+                        ImGui::SameLine();
+                    }
+                    c++;
+                }
+                ImGui::EndGroup();
             }
-            ImGui::EndGroup();
+            ImGui::EndChild();
+        }
+        { // Bottom
+            ImGui::BeginChild("Exploere_Right_Panel_Bottom", ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 2), ImGuiBackendFlags_None, ImGuiWindowFlags_NoScrollbar);
+            int32_t temp_imgSize = imgSize.load();
+            ImGui::SliderInt("size", &temp_imgSize, 0, 10, "%d");
+            imgSize.store(temp_imgSize);
+            ImGui::EndChild();
         }
     }
 
@@ -394,7 +427,6 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Cut##" + popup_id).c_str())){
-
             }
             if (ImGui::MenuItem(("Copy##" + popup_id).c_str())){
 
@@ -404,10 +436,10 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Copy Path##" + popup_id).c_str())){
-                
+                clip::set_text(target.path.string());
             }
             if (ImGui::MenuItem(("Copy Relative Path##" + popup_id).c_str())){
-                
+                clip::set_text(fs::relative(target.path, root).string());
             }
             ImGui::EndPopup();
         }
@@ -455,10 +487,10 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Copy Path##ViewExplorer_Right_ContextItem")){
-                
+                clip::set_text(CurrentFolder().string());
             }
             if (ImGui::MenuItem("Copy Relative Path##ViewExplorer_Right_ContextItem")){
-                
+                clip::set_text(fs::relative(CurrentFolder(), jengine.context->project_path).string());
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Refresh##ViewExplorer_Right_ContextItem")){
