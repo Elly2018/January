@@ -242,7 +242,7 @@ namespace January::Engine::View {
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
-        if(ImGui::Button("\uf121##Exploere_Icon_Action")){ // Input
+        if(ImGui::Button("\uf120##Exploere_Icon_Action")){ // Input
             path_input = PathBarDisplay::PATH_INPUT;
         }
         if(mode == DisplayMode::NORMAL){
@@ -356,7 +356,7 @@ namespace January::Engine::View {
                         folder->name = entry.path().filename();
                         folder->is_open = false;
                         tree.children.push_back(folder);
-                        spdlog::info("Assgin file watch event to {}", entry.path().string().c_str());
+                        spdlog::debug("Assgin file watch event to {}", entry.path().string().c_str());
                     }
                 }
             }
@@ -377,7 +377,7 @@ namespace January::Engine::View {
         float h = availSpace.y;
         { // Top
             ImGui::BeginChild("Exploere_Right_Panel_Top", ImVec2(0, h - (ImGui::GetTextLineHeightWithSpacing() * 1.2f)));
-            DrawRightSide_Event();
+            if(mode == DisplayMode::NORMAL) DrawRightSide_Event();
             if(imgSize == 0){ // Line text
                 int32_t c = 0;
                 for(auto file : files){
