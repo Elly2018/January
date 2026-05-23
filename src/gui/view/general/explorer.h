@@ -133,12 +133,15 @@ namespace January::Engine::View {
         void UpdatePathNode();
         // Fire a thread to do a folder deep searching
         void StartSearch();
-    public:
         // Apply the filter to this function
         // Return:
         // True: It passed, render it
         // False: Nope, ignore it
         bool FilterCheck(JFileContent& file);
+        // Help with file watcher update
+        // Monitor the "changed" value to switch focus folder
+        void UpdateFileWatcher();
+    public:
         // Reset it
         // Should be called when load a project
         void ReloadProject();

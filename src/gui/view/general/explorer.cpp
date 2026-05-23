@@ -76,60 +76,7 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::Update() {
-        if(changed){
-            spdlog::debug("Detect explorer update");
-            fs::path pp = CurrentFolder();
-            if(fs::exists(pp)){
-                if(watcher != nullptr){
-                    delete watcher;
-                }
-                spdlog::debug("\tRemove explorer file watcher");
-
-                spdlog::debug("\tTry register watcher: {}", pp.c_str());
-                spdlog::debug("\tCurrent path: {}", path);
-                watcher = new filewatch::FileWatch<std::string>(
-                    pp.string(),
-                    [this](const std::string& path, const filewatch::Event change_type){
-                        changed = true;
-                    }
-                );
-                spdlog::debug("\tCreate explorer file watcher");
-
-                files.clear();
-                spdlog::debug("\tClean file data");
-                UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
-                {
-                    std::lock_guard<std::mutex> guard(files_mtx);
-                    spdlog::debug("\tStart fetch files...");
-                    for(auto entry : fs::directory_iterator(pp)){
-                        spdlog::debug("\t\tDetect entry: {}", entry.path().c_str());
-                        JFileContent file = JFileContent();
-                        file.uuid = uuidGenerator.getUUID();
-                        file.is_dir = entry.is_directory();
-                        file.path = entry.path();
-                        file.title = entry.path().filename();
-                        if(!entry.is_directory()){
-                            file.filesize = entry.file_size();
-                        }
-                        files.push_back(file);
-
-                        spdlog::info("Assgin file watch event to {}", entry.path().string().c_str());
-                    }
-                }
-            }else{
-                spdlog::debug("\tSkip update because project path not exist {}", pp.string());
-                {
-                    std::lock_guard<std::mutex> guard(travel_record_mtx);
-                    while(!travel_record.empty()){
-                        travel_record.pop();
-                    }
-                }
-                path = "Assets";
-                path_node.clear();
-                path_node.push_back("Assets");
-            }
-            changed = false;
-        }
+        UpdateFileWatcher();
     }
 
     void JViewExplorer::Draw() {
@@ -544,6 +491,62 @@ namespace January::Engine::View {
     bool JViewExplorer::FilterCheck(JFileContent& file) {
         if(filter == FilterFlag::NONE) return true;
         return false;
+    }
+
+    void JViewExplorer::UpdateFileWatcher() {
+        if(!changed) return;
+        spdlog::debug("Detect explorer update");
+        fs::path pp = CurrentFolder();
+        if(fs::exists(pp)){
+            if(watcher != nullptr){
+                delete watcher;
+            }
+            spdlog::debug("\tRemove explorer file watcher");
+
+            spdlog::debug("\tTry register watcher: {}", pp.c_str());
+            spdlog::debug("\tCurrent path: {}", path);
+            watcher = new filewatch::FileWatch<std::string>(
+                pp.string(),
+                [this](const std::string& path, const filewatch::Event change_type){
+                    changed = true;
+                }
+            );
+            spdlog::debug("\tCreate explorer file watcher");
+
+            files.clear();
+            spdlog::debug("\tClean file data");
+            UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
+            {
+                std::lock_guard<std::mutex> guard(files_mtx);
+                spdlog::debug("\tStart fetch files...");
+                for(auto entry : fs::directory_iterator(pp)){
+                    spdlog::debug("\t\tDetect entry: {}", entry.path().c_str());
+                    JFileContent file = JFileContent();
+                    file.uuid = uuidGenerator.getUUID();
+                    file.is_dir = entry.is_directory();
+                    file.path = entry.path();
+                    file.title = entry.path().filename();
+                    if(!entry.is_directory()){
+                        file.filesize = entry.file_size();
+                    }
+                    files.push_back(file);
+
+                    spdlog::info("Assgin file watch event to {}", entry.path().string().c_str());
+                }
+            }
+        }else{
+            spdlog::debug("\tSkip update because project path not exist {}", pp.string());
+            {
+                std::lock_guard<std::mutex> guard(travel_record_mtx);
+                while(!travel_record.empty()){
+                    travel_record.pop();
+                }
+            }
+            path = "Assets";
+            path_node.clear();
+            path_node.push_back("Assets");
+        }
+        changed = false;
     }
 
     void JViewExplorer::ReloadProject(){
