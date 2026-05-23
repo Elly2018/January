@@ -303,13 +303,14 @@ namespace January::Engine::View {
                         if(!entry.is_directory()){
                             continue;
                         }
-                        spdlog::debug("\t\tDetect entry: {}", entry.path().c_str());
+                        spdlog::debug("\t\tDetect folder entry: {}", entry.path().c_str());
                         JFolderContent* folder = new JFolderContent();
                         folder->path = tree.path + "/" + entry.path().filename().string();
                         folder->name = entry.path().filename();
                         folder->is_open = false;
+                        spdlog::debug("\t\tAssign folder path: {}", folder->path);
+                        std::lock_guard<std::mutex> lock(folder_node_mtx);
                         tree.children.push_back(folder);
-                        spdlog::debug("Assgin file watch event to {}", entry.path().string().c_str());
                     }
                 }
             }
@@ -393,7 +394,7 @@ namespace January::Engine::View {
 
     void JViewExplorer::DrawItemEvent(fs::path _path, bool is_dir, bool tree_node){
         fs::path root = jengine.context->project_path;
-        std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + _path.string();
+        std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + _path.string() + "__" + std::to_string(is_dir) + "__" + std::to_string(tree_node);
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
             if(is_dir){
                 if (ImGui::MenuItem(("Open File Explorer Here##" + popup_id).c_str())){
@@ -524,7 +525,10 @@ namespace January::Engine::View {
             );
             spdlog::debug("\tCreate explorer file watcher");
 
-            files.clear();
+            {
+                std::lock_guard<std::mutex> guard(files_mtx);
+                files.clear();
+            }
             spdlog::debug("\tClean file data");
             UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
             {
