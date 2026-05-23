@@ -131,8 +131,13 @@ namespace January::Engine::View {
         void DrawRightSide_Event();
         // Update the folder list, this should get called when "path" variable changed
         void UpdatePathNode();
+        // Fire a thread to do a folder deep searching
         void StartSearch();
     public:
+        // Apply the filter to this function
+        // Return:
+        // True: It passed, render it
+        // False: Nope, ignore it
         bool FilterCheck(JFileContent& file);
         // Reset it
         // Should be called when load a project
@@ -152,8 +157,6 @@ namespace January::Engine::View {
         std::atomic<FilterFlag> filter = FilterFlag::NONE;
         // Search text
         std::string search = "";
-        // 
-        std::atomic_bool open_search = false;
         // Modify by tyhe file watcher worker callback
         // Does user change the path by input or enter folder etc...
         // When changed is true
