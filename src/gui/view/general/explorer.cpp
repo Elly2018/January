@@ -329,6 +329,7 @@ namespace January::Engine::View {
             if(mode == DisplayMode::NORMAL) DrawRightSide_Event();
             if(imgSize == 0){ // Line text
                 int32_t c = 0;
+                std::lock_guard<std::mutex> guard(files_mtx);
                 for(auto file : files){
                     if(!FilterCheck(file)) continue;
                     DrawItemLine(file);
@@ -340,6 +341,7 @@ namespace January::Engine::View {
                 int32_t c = 0;
                 int32_t max = imgSize * 10 + 100;
                 int32_t row = std::max<int32_t>(std::floor<int32_t>(rightWidth / max), 1);
+                std::lock_guard<std::mutex> guard(files_mtx);
                 for(auto file : files){
                     if(!FilterCheck(file)) continue;
                     DrawItemGrid(file, max);
@@ -524,7 +526,6 @@ namespace January::Engine::View {
             spdlog::debug("\tClean file data");
             UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
             {
-                std::lock_guard<std::mutex> guard(files_mtx);
                 spdlog::debug("\tStart fetch files...");
                 for(auto entry : fs::directory_iterator(pp)){
                     spdlog::debug("\t\tDetect entry: {}", entry.path().c_str());
@@ -536,7 +537,10 @@ namespace January::Engine::View {
                     if(!entry.is_directory()){
                         file.filesize = entry.file_size();
                     }
-                    files.push_back(file);
+                    {
+                        std::lock_guard<std::mutex> guard(files_mtx);
+                        files.push_back(file);
+                    }
 
                     spdlog::info("Assgin file watch event to {}", entry.path().string().c_str());
                 }
