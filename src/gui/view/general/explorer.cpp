@@ -296,7 +296,7 @@ namespace January::Engine::View {
         if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + pp.string() + "__" + std::to_string(level)).c_str(), tree_flag)){
             DrawItemEvent(pp, true, true);
             if (ImGui::IsItemToggledOpen()) {
-                {
+                if(!tree.is_open){
                     tree.is_open = true;
                     spdlog::debug("\tStart fetch files...");
                     tree.children.clear();
