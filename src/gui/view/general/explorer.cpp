@@ -285,9 +285,13 @@ namespace January::Engine::View {
         pp /= tree.path;
         ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 14.0f);
         bool leaf = tree.children.size() == 0 && tree.is_open;
+        bool selected = CurrentFolder() == pp;
         ImGuiTreeNodeFlags tree_flag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
         if(leaf) {
             tree_flag |= ImGuiTreeNodeFlags_Leaf;
+        }
+        if(selected) {
+            tree_flag |= ImGuiTreeNodeFlags_Selected;
         }
         if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + std::to_string(level)).c_str(), tree_flag)){
             if (ImGui::IsItemToggledOpen()) {
