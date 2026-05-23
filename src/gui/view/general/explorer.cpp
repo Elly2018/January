@@ -566,4 +566,11 @@ namespace January::Engine::View {
         p /= path;
         return p;
     }
+
+    fs::path JViewExplorer::CurrentMetaFolder() {
+        fs::path p = jengine.context->project_path;
+        p /= ".january";
+        p /= path;
+        return p;
+    }
 }

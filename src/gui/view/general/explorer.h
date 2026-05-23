@@ -133,6 +133,9 @@ namespace January::Engine::View {
         void UpdatePathNode();
         // Fire a thread to do a folder deep searching
         void StartSearch();
+        // Base on Assets folder content
+        // Create metadata for it
+        void StartEncoding();
         // Apply the filter to this function
         // Return:
         // True: It passed, render it
@@ -147,8 +150,13 @@ namespace January::Engine::View {
         void ReloadProject();
         // You will get project + Assets
         fs::path CurrentFolder();
+        // You will get project + .january + Assets
+        fs::path CurrentMetaFolder();
         // The relative path base on project root folder
         std::string path = "Assets";
+        // For the inputText, it need a buffer value
+        // We can't just put "path" variable into there
+        // We will have no idea to get the previous path to record
         std::string path_buffer = "";
         // Use for render path bar (The top bar with list of folder button for quick traval)
         std::vector<std::string> path_node;
