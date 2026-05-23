@@ -326,6 +326,7 @@ namespace January::Engine::View {
             if (ImGui::IsItemToggledOpen()) {
                 {
                     fs::path pp = jengine.context->project_path;
+                    tree.is_open = true;
                     pp /= tree.path;
                     spdlog::debug("\tStart fetch files...");
                     tree.children.clear();
