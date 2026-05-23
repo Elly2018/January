@@ -314,8 +314,7 @@ namespace January::Engine::View {
             }
             ImGui::TreePop();
         }
-        DrawItemTooltip(pp);
-        DrawItemEvent(pp);
+        DrawItemEvent(pp, true, true);
         ImGui::PopStyleVar();
     }
 
@@ -365,7 +364,7 @@ namespace January::Engine::View {
         }
     }
 
-    void JViewExplorer::DrawItemTooltip(fs::path& _path, bool is_dir, uintmax_t filesize){
+    void JViewExplorer::DrawItemTooltip(fs::path _path, bool is_dir, uintmax_t filesize){
         std::string display_text = "";
         display_text += "Filename: ";
         display_text += _path.filename().string().c_str();
@@ -388,7 +387,7 @@ namespace January::Engine::View {
         ImGui::SetItemTooltip("%s", display_text.c_str());
     }
 
-    void JViewExplorer::DrawItemEvent(fs::path& _path, bool is_dir, bool tree_node){
+    void JViewExplorer::DrawItemEvent(fs::path _path, bool is_dir, bool tree_node){
         fs::path root = jengine.context->project_path;
         std::string popup_id = "ViewExplorer_Right_Item_ContextItem_" + _path.string();
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
@@ -423,11 +422,11 @@ namespace January::Engine::View {
             ImGui::EndPopup();
         }
         bool tree_node_single = tree_node && ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left);
-        bool none_tree_double = tree_node && is_dir && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+        bool none_tree_double = !tree_node && is_dir && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
         if(tree_node_single || none_tree_double){
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             travel_record.push(path);
-            path = fs::relative(path, root).string();
+            path = fs::relative(_path, root).string();
             spdlog::debug("Asset browse {}", path);
             UpdatePathNode();
             changed = true;
