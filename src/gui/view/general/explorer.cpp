@@ -293,16 +293,15 @@ namespace January::Engine::View {
         if(selected) {
             tree_flag |= ImGuiTreeNodeFlags_Selected;
         }
-        if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + std::to_string(level)).c_str(), tree_flag)){
+        if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + pp.string() + "__" + std::to_string(level)).c_str(), tree_flag)){
+            DrawItemEvent(pp, true, true);
             if (ImGui::IsItemToggledOpen()) {
                 {
-                    tree.is_open = true;   
+                    tree.is_open = true;
                     spdlog::debug("\tStart fetch files...");
                     tree.children.clear();
                     for(auto entry : fs::directory_iterator(pp)){
-                        if(!entry.is_directory()){
-                            continue;
-                        }
+                        if(!entry.is_directory()) continue;
                         spdlog::debug("\t\tDetect folder entry: {}", entry.path().c_str());
                         JFolderContent* folder = new JFolderContent();
                         folder->path = tree.path + "/" + entry.path().filename().string();
@@ -319,7 +318,6 @@ namespace January::Engine::View {
             }
             ImGui::TreePop();
         }
-        DrawItemEvent(pp, true, true);
         ImGui::PopStyleVar();
     }
 
@@ -433,6 +431,9 @@ namespace January::Engine::View {
             travel_record.push(path);
             path = fs::relative(_path, root).string();
             spdlog::debug("Asset browse {}", path);
+            spdlog::debug("\tAsset browse root: {}", root.string());
+            spdlog::debug("\tAsset browse path: {}", path);
+            spdlog::debug("\tAsset browse _path: {}", _path.string());
             UpdatePathNode();
             changed = true;
         }
