@@ -148,7 +148,7 @@ namespace January::Engine::View {
 
         if(context != nullptr && fs::exists(context->project_path)){
             {
-                ImGui::BeginChild("ViewExplorer_Top", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY);
+                ImGui::BeginChild("ViewExplorer_Top", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar);
                 DrawPathAction();
                 ImGui::SameLine();
                 DrawPathBar();
@@ -166,15 +166,14 @@ namespace January::Engine::View {
                 ImGui::EndChild();
             }
             {
-                ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true);
+                ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true, ImGuiWindowFlags_NoScrollbar);
                 DrawLeftSide();
                 ImGui::EndChild();
             }
             DrawMiddleHandle();
             {
-                ImGui::BeginChild("ViewExplorer_Right", ImVec2(0, 0), true);
+                ImGui::BeginChild("ViewExplorer_Right", ImVec2(0, 0), true, ImGuiWindowFlags_NoScrollbar);
                 DrawRightSide();
-                DrawRightSide_Event();
                 ImGui::EndChild();
             }
         }else{
@@ -256,8 +255,14 @@ namespace January::Engine::View {
 
     void JViewExplorer::DrawPathBar() {
         if(path_input){
-            if(ImGui::InputText("Path##Explorer_Path_InputText", &path)){
+            std::string previous = path;
+            if(ImGui::InputText("Path##Explorer_Path_InputText", &path, ImGuiInputTextFlags_EnterReturnsTrue)){
+                std::lock_guard<std::mutex> guard(travel_record_mtx);
+                travel_record.push(previous);
+                spdlog::debug("Asset browse {}", path);
+                UpdatePathNode();
                 path_input = false;
+                changed = true;
             }
         }else{
             fs::path buffer = "";
@@ -312,7 +317,7 @@ namespace January::Engine::View {
 
     void JViewExplorer::DrawLeftSideTreeNode(JFolderContent& tree, int32_t level){
         ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 14.0f);
-        bool leaf = tree.children.size() == 0;
+        bool leaf = tree.children.size() == 0 && tree.is_open;
         ImGuiTreeNodeFlags tree_flag = ImGuiTreeNodeFlags_None;
         if(leaf) {
             tree_flag |= ImGuiTreeNodeFlags_Leaf;
@@ -351,9 +356,11 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawRightSide(){
-        float h = ImGui::GetWindowHeight();
+        ImVec2 availSpace = ImGui::GetContentRegionAvail();
+        float h = availSpace.y;
         { // Top
-            ImGui::BeginChild("Exploere_Right_Panel_Top", ImVec2(0, h - ImGui::GetTextLineHeightWithSpacing() * 2));
+            ImGui::BeginChild("Exploere_Right_Panel_Top", ImVec2(0, h - (ImGui::GetTextLineHeightWithSpacing() * 1.2f)));
+            DrawRightSide_Event();
             if(imgSize == 0){ // Line text
                 int32_t c = 0;
                 for(auto file : files){
@@ -378,7 +385,7 @@ namespace January::Engine::View {
             ImGui::EndChild();
         }
         { // Bottom
-            ImGui::BeginChild("Exploere_Right_Panel_Bottom", ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 2), ImGuiBackendFlags_None, ImGuiWindowFlags_NoScrollbar);
+            ImGui::BeginChild("Exploere_Right_Panel_Bottom", ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 1.2f), ImGuiBackendFlags_None, ImGuiWindowFlags_NoScrollbar);
             int32_t temp_imgSize = imgSize.load();
             ImGui::SliderInt("size", &temp_imgSize, 0, 10, "%d");
             imgSize.store(temp_imgSize);
