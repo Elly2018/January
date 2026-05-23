@@ -97,6 +97,12 @@ namespace January::Engine::View {
             SEARCH_INPUT = 2,
         };
 
+        enum class SearchState {
+            NONE = 0,
+            SEARCHING = 1,
+            DONE = 2
+        };
+
         void Init() override;
         void Update() override;
         void Draw() override;
@@ -166,6 +172,8 @@ namespace January::Engine::View {
         std::atomic<DisplayMode> mode = DisplayMode::NORMAL;
         // The filter content flag
         std::atomic<FilterFlag> filter = FilterFlag::NONE;
+        // Affect the button and other UI display
+        std::atomic<SearchState> search_state = SearchState::NONE;
         // Search text
         std::string search = "";
         // Modify by tyhe file watcher worker callback

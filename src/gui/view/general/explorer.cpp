@@ -199,6 +199,7 @@ namespace January::Engine::View {
             if(ImGui::Button("\uf002##Search")){ // Search
                 search = "";
                 path_input = PathBarDisplay::SEARCH_INPUT;
+                search_state = SearchState::NONE;
             }
         }
         ImGui::EndDisabled();
@@ -493,7 +494,9 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::StartSearch() {
+        if(search_state == SearchState::SEARCHING){
 
+        }
     }
 
     bool JViewExplorer::FilterCheck(JFileContent& file) {
