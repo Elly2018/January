@@ -147,22 +147,11 @@ namespace January::Engine::View {
         }
 
         if(context != nullptr && fs::exists(context->project_path)){
-            {
+            { // Top bar
                 ImGui::BeginChild("ViewExplorer_Top", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar);
                 DrawPathAction();
                 ImGui::SameLine();
                 DrawPathBar();
-                ImGui::SameLine();
-                {
-                    if(ImGui::Button("\uf002##Search")){ // Search
-                        std::lock_guard<std::mutex> guard(travel_record_mtx);
-                        travel_record.push(path);
-                        path = "Assets";
-                        spdlog::debug("Asset browse {}", path);
-                        UpdatePathNode();
-                        changed = true;
-                    }
-                }
                 ImGui::EndChild();
             }
             {
@@ -212,18 +201,24 @@ namespace January::Engine::View {
 
     void JViewExplorer::DrawPathAction() {
         ImGui::PushFont(jengine.context->icon_font);
-        ImGui::BeginDisabled(travel_record.size() == 0);
-        if(ImGui::Button("\uf053##Exploere_Icon_Action")){ // Return
-            std::lock_guard<std::mutex> guard(travel_record_mtx);
-            std::string buffer = travel_record.top();
-            travel_record.pop();
-            path = buffer;
-            UpdatePathNode();
-            changed = true;
+        if(path_input == PathBarDisplay::DEFAULT) {
+            ImGui::BeginDisabled(travel_record.size() == 0);
+            if(ImGui::Button("\uf053##Exploere_Icon_Action")){ // Return
+                std::lock_guard<std::mutex> guard(travel_record_mtx);
+                std::string buffer = travel_record.top();
+                travel_record.pop();
+                path = buffer;
+                UpdatePathNode();
+                changed = true;
+            }
+            ImGui::EndDisabled();
+        }else{
+            if(ImGui::Button("\uf053##Exploere_Icon_Action")){ // Return
+                path_input = PathBarDisplay::DEFAULT;
+            }
         }
-        ImGui::EndDisabled();
         ImGui::SameLine();
-        ImGui::BeginDisabled(path_node.size() == 1);
+        ImGui::BeginDisabled(path_node.size() == 1 || path_input != PathBarDisplay::DEFAULT);
         if(ImGui::Button("\uf062##Exploere_Icon_Action")){ // Up
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             fs::path buffer = path;
@@ -236,7 +231,7 @@ namespace January::Engine::View {
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
-        ImGui::BeginDisabled(path == "Assets");
+        ImGui::BeginDisabled(path == "Assets" || path_input != PathBarDisplay::DEFAULT);
         if(ImGui::Button("\uf015##Exploere_Icon_Action")){ // Home
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             travel_record.push(path);
@@ -247,14 +242,21 @@ namespace January::Engine::View {
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
-         if(ImGui::Button("\uf121##Exploere_Icon_Action")){ // Input
-            path_input = true;
+        if(ImGui::Button("\uf121##Exploere_Icon_Action")){ // Input
+            path_input = PathBarDisplay::PATH_INPUT;
+        }
+        if(mode == DisplayMode::NORMAL){
+            ImGui::SameLine();
+            if(ImGui::Button("\uf002##Search")){ // Search
+                search = "";
+                path_input = PathBarDisplay::SEARCH_INPUT;
+            }
         }
         ImGui::PopFont();
     }
 
     void JViewExplorer::DrawPathBar() {
-        if(path_input){
+        if(path_input == PathBarDisplay::PATH_INPUT){
             std::string previous = path;
             if(ImGui::InputText("Path##Explorer_Path_InputText", &path, ImGuiInputTextFlags_EnterReturnsTrue)){
                 fs::path sss = jengine.context->project_path;
@@ -264,15 +266,21 @@ namespace January::Engine::View {
                     travel_record.push(previous);
                     spdlog::debug("Asset browse {}", path);
                     UpdatePathNode();
-                    path_input = false;
+                    path_input = PathBarDisplay::DEFAULT;
                     changed = true;
                 }else{
                     spdlog::error("Enter path is not vaild {}", path);
-                    path_input = false;
+                    path_input = PathBarDisplay::DEFAULT;
                     path = previous;
                 }
             }
-        }else{
+        }
+        else if(path_input == PathBarDisplay::SEARCH_INPUT) {
+            if(ImGui::InputText("Path##Explorer_Path_InputText", &search, ImGuiInputTextFlags_EnterReturnsTrue)){
+                StartSearch();
+            }
+        }
+        else{
             fs::path buffer = "";
             for(auto& p : path_node){
                 bool not_last = p != path_node.at(path_node.size() - 1);
@@ -373,6 +381,7 @@ namespace January::Engine::View {
             if(imgSize == 0){ // Line text
                 int32_t c = 0;
                 for(auto file : files){
+                    if(!FilterCheck(file)) continue;
                     DrawItemLine(file);
                     c++;
                 }
@@ -383,6 +392,7 @@ namespace January::Engine::View {
                 int32_t max = imgSize * 10 + 100;
                 int32_t row = std::max<int32_t>(std::floor<int32_t>(rightWidth / max), 1);
                 for(auto file : files){
+                    if(!FilterCheck(file)) continue;
                     DrawItemGrid(file, max);
                     if((c + 1) % row != 0){
                         ImGui::SameLine();
@@ -525,6 +535,15 @@ namespace January::Engine::View {
         }
         path_node.push_back(p.filename().string());
         std::reverse(path_node.begin(), path_node.end());
+    }
+
+    void JViewExplorer::StartSearch() {
+
+    }
+
+    bool JViewExplorer::FilterCheck(JFileContent& file) {
+        if(filter == FilterFlag::NONE) return true;
+        return false;
     }
 
     void JViewExplorer::ReloadProject(){

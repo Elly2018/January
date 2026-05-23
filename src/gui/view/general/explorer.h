@@ -78,6 +78,25 @@ namespace January::Engine::View {
     public:
         DEFAULT_VIEW_CTOR(JViewExplorer) {}
         DEFAULT_VIEW_DECTOR(JViewExplorer) {}
+
+        enum class DisplayMode {
+            NORMAL = 0,
+            SEARCH = 1
+        };
+
+        enum class FilterFlag {
+            NONE = 0,
+            PREFAB = 1 << 1,
+            MATERIAL = 1 << 2,
+            TEXTURE = 1 << 3,
+        };
+
+        enum class PathBarDisplay {
+            DEFAULT = 0,
+            PATH_INPUT = 1,
+            SEARCH_INPUT = 2,
+        };
+
         void Init() override;
         void Update() override;
         void Draw() override;
@@ -112,8 +131,9 @@ namespace January::Engine::View {
         void DrawRightSide_Event();
         // Update the folder list, this should get called when "path" variable changed
         void UpdatePathNode();
-
+        void StartSearch();
     public:
+        bool FilterCheck(JFileContent& file);
         // Reset it
         // Should be called when load a project
         void ReloadProject();
@@ -125,13 +145,21 @@ namespace January::Engine::View {
         std::vector<std::string> path_node;
 
     private:
+        // The right panel content display mode
+        std::atomic<DisplayMode> mode = DisplayMode::NORMAL;
+        // The filter content flag
+        std::atomic<FilterFlag> filter = FilterFlag::NONE;
+        // Search text
+        std::string search = "";
+        // 
+        std::atomic_bool open_search = false;
         // Modify by tyhe file watcher worker callback
         // Does user change the path by input or enter folder etc...
         // When changed is true
         // It will re-generate the "files" variables
         std::atomic_bool changed = false;
-        // Showing button path or text input path
-        std::atomic_bool path_input = false;
+        // The path bar display mode
+        std::atomic<PathBarDisplay> path_input = PathBarDisplay::DEFAULT;
         // Init will be the trigger
         // Define if the first event call is on.
         std::atomic_bool init = false;
