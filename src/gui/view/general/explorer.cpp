@@ -48,6 +48,7 @@ namespace January::Engine::View {
         JViewBase::Init();
         spdlog::info("Loaded View: Explorer");
         folder_node.name = "Assets";
+        folder_node.path = "Assets";
         path = "Assets";
         path_node.clear();
         path_node.push_back("Assets");
@@ -96,6 +97,15 @@ namespace January::Engine::View {
                 }
             }else{
                 spdlog::debug("\tSkip update because project path not exist {}", pp.string());
+                {
+                    std::lock_guard<std::mutex> guard(travel_record_mtx);
+                    while(!travel_record.empty()){
+                        travel_record.pop();
+                    }
+                }
+                path = "Assets";
+                path_node.clear();
+                path_node.push_back("Assets");
             }
             changed = false;
         }
@@ -152,6 +162,26 @@ namespace January::Engine::View {
         changed = true;
     }
 
+    void JViewExplorer::DrawItemLine(JFileContent& target){
+        ImGui::PushFont(jengine.context->icon_font);
+        if(target.is_dir){
+            ImGui::Text("%s", "\uf07b");
+        }else{
+            ImGui::Text("%s", "\uf15c");
+        }
+        ImGui::PopFont();
+        ImGui::SameLine();
+        ImGui::Selectable(target.title.c_str());
+        DrawItemTooltip(target);
+        DrawItemEvent(target);
+    }
+
+    void JViewExplorer::DrawItemGrid(JFileContent& target, int32_t size){
+        ImGui::Button(target.title.c_str(), ImVec2(size, size));
+        DrawItemTooltip(target);
+        DrawItemEvent(target);
+    }
+
     void JViewExplorer::DrawPathAction() {
         ImGui::PushFont(jengine.context->icon_font);
         ImGui::BeginDisabled(travel_record.size() == 0);
@@ -194,7 +224,9 @@ namespace January::Engine::View {
     void JViewExplorer::DrawPathBar() {
         fs::path buffer = "";
         for(auto& p : path_node){
+            bool not_last = p != path_node.at(path_node.size() - 1);
             buffer /= p;
+            ImGui::BeginDisabled(!not_last);
             if(ImGui::Button((p + "##Explorer_Path_Button").c_str())){
                 std::lock_guard<std::mutex> guard(travel_record_mtx);
                 travel_record.push(path);
@@ -202,9 +234,9 @@ namespace January::Engine::View {
                 spdlog::debug("Asset browse {}", path);
                 UpdatePathNode();
                 changed = true;
-                break;
             }
-            if(p != path_node.at(path_node.size() - 1)){
+            ImGui::EndDisabled();
+            if(not_last){
                 ImGui::SameLine();
             }
         }
@@ -238,17 +270,44 @@ namespace January::Engine::View {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + splitterWidth);
     }
 
+    void JViewExplorer::DrawLeftSideTreeNode(JFolderContent& tree, int32_t level){
+        if(ImGui::TreeNodeEx((tree.name + "##Exploere_Left_Panel_Tree_Node_" + std::to_string(level)).c_str())){
+            if (ImGui::IsItemToggledOpen()) {
+                {
+                    fs::path pp = jengine.context->project_path;
+                    pp /= tree.path;
+                    spdlog::debug("\tStart fetch files...");
+                    tree.children.clear();
+                    for(auto entry : fs::directory_iterator(pp)){
+                        if(!entry.is_directory()){
+                            continue;
+                        }
+                        spdlog::debug("\t\tDetect entry: {}", entry.path().c_str());
+                        JFolderContent* folder = new JFolderContent();
+                        folder->path = tree.path + "/" + entry.path().filename().string();
+                        folder->name = entry.path().filename();
+                        folder->is_open = false;
+                        tree.children.push_back(folder);
+                        spdlog::info("Assgin file watch event to {}", entry.path().string().c_str());
+                    }
+                }
+            }
+            for(auto child : tree.children){
+                DrawLeftSideTreeNode(*child, level + 1);
+            }
+            ImGui::TreePop();
+        }
+    }
+
     void JViewExplorer::DrawLeftSide(){
-        ImGui::Text("Left");
+        DrawLeftSideTreeNode(folder_node, 1);
     }
 
     void JViewExplorer::DrawRightSide(){
         if(imgSize == 0){ // Line text
             int32_t c = 0;
             for(auto file : files){
-                ImGui::Selectable(file.title.c_str());
-                DrawItemTooltip(file);
-                DrawItemEvent(file);
+                DrawItemLine(file);
                 c++;
             }
         }else{ // Grid Item
@@ -258,9 +317,7 @@ namespace January::Engine::View {
             int32_t max = imgSize * 10 + 100;
             int32_t row = std::floor<int32_t>(rightWidth / max);
             for(auto file : files){
-                ImGui::Button(file.title.c_str(), ImVec2(max, max));
-                DrawItemTooltip(file);
-                DrawItemEvent(file);
+                DrawItemGrid(file, max);
                 if((c + 1) % row != 0){
                     ImGui::SameLine();
                 }
@@ -277,6 +334,10 @@ namespace January::Engine::View {
         display_text += "\n";
 
         display_text += "Folder: ";
+        display_text += fs::relative(target.path.parent_path(), jengine.context->project_path).string();
+        display_text += "\n";
+
+        display_text += "Fullpath: ";
         display_text += target.path.parent_path().string().c_str();
         display_text += "\n";
 

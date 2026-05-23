@@ -67,6 +67,10 @@ namespace January::Engine::View {
         for(auto& c : vm.popups){
             c->Init();
         }
+
+        if(!fs::exists(jsystem.engine->context->project_path)){
+            PushCommand(*jsystem.engine->context, "new_project");
+        }
     }
 
     void VDeInit(ViewManager& vm){

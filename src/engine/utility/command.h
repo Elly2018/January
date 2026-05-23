@@ -33,6 +33,16 @@ namespace January {
     namespace Engine {
         struct AppContext;
         void ApplyCommand(struct System::JSystem& jsystem, std::string cmd);
+        // Single Command:
+        // * config_dirty
+        // * new_project
+        // * open_project
+        // * save_project
+        // * save_project_as
+        // * open_setting
+        // * open_preference
+        // Multi Command:
+        // * open_recent <path>
         void PushCommand(struct AppContext& config, std::string cmd);
     }
 }

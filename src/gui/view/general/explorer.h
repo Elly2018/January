@@ -59,6 +59,8 @@ namespace January::Engine::View {
     struct JFolderContent {
         // Display label on the gui
         std::string name;
+        // Relative path for this file or folder
+        std::string path;
         // Is user open this folder or not
         bool is_open;
         // Children of the folder node
@@ -83,6 +85,8 @@ namespace January::Engine::View {
         void Focus(bool value) override;
 
     protected:
+        void DrawItemLine(JFileContent& target);
+        void DrawItemGrid(JFileContent& target, int32_t size);
         // Drawing path actions
         // 0: Return last travel folder
         // 1: Go to parent folder
@@ -94,6 +98,8 @@ namespace January::Engine::View {
         // And this function is that splitter
         // ImGui::SameLine is included, no need to write it
         void DrawMiddleHandle();
+        // Render the folder tree
+        void DrawLeftSideTreeNode(JFolderContent& tree, int32_t level);
         // Drawing left panel content
         void DrawLeftSide();
         // Drawing right panel content

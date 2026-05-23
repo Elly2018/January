@@ -188,7 +188,7 @@ namespace January::System {
     }
     // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
     // Your real engine/app may not use them.
-    static void SetupVulkanWindow(JWindow& win, ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int width, int height)
+    static void SetupVulkanWindow(JWindow& win, ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int32_t width, int32_t height)
     {
         wd->Surface = surface;
 
@@ -551,7 +551,8 @@ namespace January::System {
         spdlog::debug("\tVulkan surface finish");
 
         // Create Framebuffers
-        int w, h;
+        int32_t w, h;
+        SDL_MaximizeWindow(jwindow.g_window);
         SDL_GetWindowSize(jwindow.g_window, &w, &h);
         ImGui_ImplVulkanH_Window* wd = &jwindow.g_MainWindowData;
         SetupVulkanWindow(jwindow, wd, surface, w, h);

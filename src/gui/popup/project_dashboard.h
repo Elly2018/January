@@ -58,8 +58,10 @@ namespace January::Engine::View {
         std::string GetTemplateName(TEMPLATE _temp);
         void GenerateProject();
 
+        // Current page
         PAGE page = PAGE::MAIN;
         TEMPLATE temp = TEMPLATE::BLANK;
+        std::string p_selection = "";
         std::string p_name;
         std::string p_path;
         std::string p_text;
