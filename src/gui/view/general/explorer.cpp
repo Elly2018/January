@@ -189,6 +189,7 @@ namespace January::Engine::View {
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
+        ImGui::BeginDisabled(path_input != PathBarDisplay::DEFAULT);
         if(ImGui::Button("\uf120##Exploere_Icon_Action")){ // Input
             path_input = PathBarDisplay::PATH_INPUT;
             path_buffer = path;
@@ -200,6 +201,7 @@ namespace January::Engine::View {
                 path_input = PathBarDisplay::SEARCH_INPUT;
             }
         }
+        ImGui::EndDisabled();
         ImGui::PopFont();
     }
 
