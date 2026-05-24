@@ -47,6 +47,7 @@
 #ifndef SpvBuilder_H
 #define SpvBuilder_H
 
+#include <cstdint>
 #include "Logger.h"
 #include "spirv.hpp"
 #include "spvIR.h"
