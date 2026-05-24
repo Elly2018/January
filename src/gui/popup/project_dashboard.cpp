@@ -59,6 +59,13 @@ namespace January::Engine::View {
                 DrawRecent();
                 ImGui::EndChild();
             }
+            ImGui::BeginDisabled(p_selection.size() == 0);
+            if(ImGui::Button("Confirm##project_dashboard")){
+                PushCommand(*jengine.context, "open_recent " + p_selection);
+                SetEnable(false);
+            }
+            ImGui::EndDisabled();
+            ImGui::SameLine();
             if(ImGui::Button("Cancel##project_dashboard")){
                 SetEnable(false);
             }
@@ -88,10 +95,16 @@ namespace January::Engine::View {
     void JPopupProjectDashboard::DrawRecent(){
         for(auto& r : jengine.config->j_recent){
             if(ImGui::Selectable((r.j_path + "##project_dashboard_recent").c_str())){
-
+                if(p_selection == r.j_path){
+                    p_selection = "";
+                }else{
+                    p_selection = r.j_path;
+                }
             }
-            if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered()){
-
+            if(ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
+                p_selection = r.j_path;
+                PushCommand(*jengine.context, "open_recent " + p_selection);
+                SetEnable(false);
             }
         }
     }

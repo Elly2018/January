@@ -14,7 +14,7 @@ namespace January::Engine::View {
             logs.push_back(cl);
             changed = true;
         });
-        callback_sink->set_level(spdlog::level::info);
+        callback_sink->set_level(spdlog::level::trace);
         console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         jengine.context->logger = new spdlog::logger("engine logger", {console_sink, callback_sink});
     }
@@ -54,7 +54,9 @@ namespace January::Engine::View {
     void JViewConsole::RenderContent(){
         std::lock_guard<std::mutex> lock(buffer_mtx);
         for(int32_t i = 0; i < buffer.size(); i++){
-            ImGui::TextColored(GetColor(buffer.at(i).level), "%s", buffer.at(i).messages.c_str());
+            ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
+            ImGui::Selectable(buffer.at(i).messages.c_str());
+            ImGui::PopStyleColor();
         }
     }
 

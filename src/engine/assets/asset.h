@@ -24,4 +24,27 @@ SOFTWARE.
 #pragma once
 #ifndef ENGINE_ASSETS_ASSET_H
 #define ENGINE_ASSETS_ASSET_H
+#include <string>
+#include <filesystem>
+#include <nlohmann/json.hpp>
+
+namespace fs = std::filesystem;
+using json = nlohmann::json;
+
+namespace January::Engine {
+    //
+    // The basic handle for the asset
+    //
+    struct JAssetBase {
+        // This will encode this asset instance into metadata json string
+        // Normally this is for store in the .january/Assets folder content
+        virtual std::string Encode(bool pretty);
+        // Dump the json metadata and replace the value under this object
+        virtual void Decode(json json);
+        // Target path will lead you to project/Assets folder
+        fs::path target;
+        // Asset UUID
+        std::string uuid;
+    };
+}
 #endif

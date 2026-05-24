@@ -593,6 +593,14 @@ uint16_t gravity_function_cpool_add (gravity_vm *vm, gravity_function_t *f, grav
     size_t n = marray_size(f->cpool);
     for (size_t i=0; i<n; i++) {
         gravity_value_t v2 = marray_get(f->cpool, i);
+        // Float constants must match exactly at the bit level so that distinct
+        // small values (e.g. -4e-9 vs -5e-11) are never merged due to the
+        // epsilon-based gravity_value_equals comparison.
+        if (v.isa == gravity_class_float && v2.isa == gravity_class_float) {
+            if (v.f != v2.f) continue;
+            gravity_value_free(NULL, v);
+            return (uint16_t)i;
+        }
         if (gravity_value_equals(v,v2)) {
             gravity_value_free(NULL, v);
             return (uint16_t)i;
@@ -1423,6 +1431,24 @@ void gravity_fiber_reassign (gravity_fiber_t *fiber, gravity_closure_t *closure,
 
     // update stacktop in order to be GC friendly
     fiber->stacktop += FN_COUNTREG(closure->f, nargs);
+
+    // ensure the stack is large enough for the new frame's register window;
+    // gravity_check_stack is only called on CALL instructions so it would not
+    // catch an overflow that occurs while executing the frame itself
+    uint32_t stack_used = (uint32_t)(fiber->stacktop - fiber->stack);
+    if (stack_used > fiber->stackalloc) {
+        uint32_t new_size = power_of2_ceil(stack_used);
+        if (!new_size || new_size < stack_used) new_size = stack_used;
+        gravity_value_t *new_stack = (gravity_value_t *)mem_realloc(NULL, fiber->stack, sizeof(gravity_value_t) * new_size);
+        if (new_stack) {
+            ptrdiff_t offset = new_stack - fiber->stack;
+            fiber->stack = new_stack;
+            fiber->stackalloc = new_size;
+            // adjust all pointers that referenced the old stack address
+            fiber->stacktop += offset;
+            frame->stackstart += offset; // frame 0 stackstart is always at the base
+        }
+    }
 }
 
 void gravity_fiber_reset (gravity_fiber_t *fiber) {

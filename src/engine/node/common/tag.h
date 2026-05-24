@@ -26,22 +26,10 @@ SOFTWARE.
 #define ENGINE_NODE_COMMON_TAG_H
 #include <string>
 #include <glm/glm.hpp>
-#include "../ecs.h"
 
 namespace January::Engine::Node {
-    struct tag_component : public JComponent {
+    struct tag_component {
         std::string tag;
-
-        json Serialization() override { 
-            json j = json::object();
-            j["tag"] = tag;
-            return j; 
-        }
-        void DeSerialization(json data) override {
-            if(data["tag"].is_string()){
-                tag = data["tag"].get<std::string>();
-            }
-        }
     };
 }
 

@@ -294,7 +294,7 @@ namespace ImGui
 				if (!NOTIFY_NULL_OR_EMPTY(icon))
 				{
 					//Text(icon); // Render icon text
-					TextColored(text_color, icon);
+					TextColored(text_color, "%s", icon);
 					was_title_rendered = true;
 				}
 
@@ -305,7 +305,7 @@ namespace ImGui
 					if (!NOTIFY_NULL_OR_EMPTY(icon))
 						SameLine();
 
-					Text(title); // Render title text
+					Text("%s", title); // Render title text
 					was_title_rendered = true;
 				}
 				else if (!NOTIFY_NULL_OR_EMPTY(default_title))
@@ -313,7 +313,7 @@ namespace ImGui
 					if (!NOTIFY_NULL_OR_EMPTY(icon))
 						SameLine();
 
-					Text(default_title); // Render default title text (ImGuiToastType_Success -> "Success", etc...)
+					Text("%s", default_title); // Render default title text (ImGuiToastType_Success -> "Success", etc...)
 					was_title_rendered = true;
 				}
 
@@ -333,7 +333,7 @@ namespace ImGui
 #endif
 					}
 
-					Text(content); // Render content text
+					Text("%s", content); // Render content text
 				}
 
 				PopTextWrapPos();

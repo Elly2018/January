@@ -37,7 +37,7 @@ void configure_parser() {
 
     bool par_v = January::CLI::GetCMDFlag("v", "verbose");
     if(par_v){
-        spdlog::set_level(spdlog::level::debug);
+        spdlog::set_level(spdlog::level::trace);
     }
 
     spdlog::debug("Verbose enable");

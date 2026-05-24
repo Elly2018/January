@@ -28,25 +28,14 @@ SOFTWARE.
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <entt/entt.hpp>
 
 namespace January::Engine {
-    struct JSystem;
-    struct JComponent;
-
     //
     // The scene structure
     //
     struct JScene {
-        // entity uuid to components
-        std::unordered_map<std::string, std::vector<struct JComponent*>> entity_component_map;
-        // system uuid to components
-        std::unordered_map<std::string, std::vector<struct JComponent*>> system_component_map;
-        std::vector<struct JSystem*> systems;
-        // Array of uuid
-        std::vector<std::string> entities;
-        std::vector<struct JComponent*> components;
-
-        struct JSystem* GetSystemByPath(std::string path);
+        entt::registry registry;
     };
 }
 

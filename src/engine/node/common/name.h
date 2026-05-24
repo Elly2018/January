@@ -26,22 +26,10 @@ SOFTWARE.
 #define ENGINE_NODE_COMMON_NAME_H
 #include <string>
 #include <glm/glm.hpp>
-#include "../ecs.h"
 
 namespace January::Engine::Node {
-    struct name_component : public JComponent {
+    struct name_component {
         std::string name;
-
-        json Serialization() override { 
-            json j = json::object();
-            j["name"] = name;
-            return j; 
-        }
-        void DeSerialization(json data) override {
-            if(data["name"].is_string()){
-                name = data["name"].get<std::string>();
-            }
-        }
     };
 }
 

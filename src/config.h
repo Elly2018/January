@@ -26,5 +26,6 @@ SOFTWARE.
 #define CONFIG_H
 
 //#define _DEBUG
+#define CR_HOST
 
 #endif

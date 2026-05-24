@@ -26,27 +26,16 @@ SOFTWARE.
 #define ENGINE_NODE_COMMON_TREE_H
 #include <string>
 #include <glm/glm.hpp>
-#include "../ecs.h"
+#include <entt/entt.hpp>
 
 namespace January::Engine::Node {
-    struct tree_component : public JComponent {
-        std::string path;
-        int32_t index;
+    struct tree_component {
+        std::size_t children_count{0};
 
-        json Serialization() override { 
-            json j = json::object();
-            j["path"] = path;
-            j["index"] = index;
-            return j; 
-        }
-        void DeSerialization(json data) override {
-            if(data["path"].is_string()){
-                path = data["path"].get<std::string>();
-            }
-            if(data["index"].is_number_integer()){
-                index = data["index"].get<int32_t>();
-            }
-        }
+        entt::entity parent{entt::null};
+        entt::entity first_child{entt::null};
+        entt::entity prev_sibling{entt::null};
+        entt::entity next_sibling{entt::null};
     };
 }
 
