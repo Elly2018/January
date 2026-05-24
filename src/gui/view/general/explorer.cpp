@@ -26,6 +26,7 @@ SOFTWARE.
 #include <filesystem>
 #include <thread>
 #include <spdlog/spdlog.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
 #include <clip.h>
@@ -141,7 +142,61 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawItemGrid(JFileContent& target, int32_t size){
-        ImGui::Button(target.title.c_str(), ImVec2(size, size));
+        ImGuiStyle& style = ImGui::GetStyle();
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
+        
+        ImU32 white_color = IM_COL32(255, 255, 255, 255);
+
+        std::string icon_text = "";
+        if(target.is_dir){
+            icon_text = "\uf07b";
+        }else{
+            icon_text = "\uf15c";
+        }
+        
+        ImVec2 icon_size = jengine.context->icon_font->CalcTextSizeA(
+            size * 0.7f,
+            size * 0.7f,
+            0, icon_text.c_str()
+        );
+
+        draw_list->AddText(
+            jengine.context->icon_font, 
+            size * 0.7f, 
+            ImVec2(canvas_pos.x + (size * 0.15f), canvas_pos.y), 
+            white_color, 
+            icon_text.c_str()
+        );
+
+        std::string text_display = target.title;
+        std::string text_ellipsis = "..";
+        ImVec2 text_size = ImGui::CalcTextSize(text_display.c_str(), NULL, true);
+        ImVec2 ellipsis_size = ImGui::CalcTextSize(text_ellipsis.c_str(), NULL, true);
+        bool toolong = text_size.x > size;
+        float text_starter = 0;
+
+        if(toolong) {
+            while(text_size.x > size - ellipsis_size.x){
+                text_display.pop_back();
+                text_size = ImGui::CalcTextSize(text_display.c_str(), NULL, true);
+            }
+            text_display += text_ellipsis.c_str();
+        }else{
+            text_starter = (size - text_size.x) / 2.0f;
+        }
+
+        draw_list->AddText(
+            ImVec2(canvas_pos.x + text_starter, canvas_pos.y + (size * 0.7f)),
+            white_color,
+            text_display.c_str()
+        );
+        
+        ImGui::Dummy(ImVec2(size, size));
+        if(ImGui::IsItemHovered()){
+            draw_list->AddRectFilled(canvas_pos, canvas_pos + ImVec2(size, size), white_color, 5.0f);
+        }
+
         DrawItemTooltip(target.path, target.is_dir, target.filesize);
         DrawItemEvent(target.path, target.is_dir);
     }
