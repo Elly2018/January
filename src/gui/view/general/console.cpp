@@ -57,7 +57,19 @@ namespace January::Engine::View {
         std::lock_guard<std::mutex> lock(buffer_mtx);
         for(int32_t i = 0; i < buffer.size(); i++){
             ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
-            ImGui::Selectable((buffer.at(i).messages + "##Console_Log_Index_" + std::to_string(i)).c_str());
+            std::string mesg = buffer.at(i).messages;
+            int32_t ident = 0;
+            while(mesg.starts_with("\t")){
+                ident++;
+                mesg.erase(mesg.begin());
+            }
+            for(int32_t j = 0; j < ident; j++) {
+                ImGui::Indent(10.0f);
+            }
+            ImGui::Selectable((mesg + "##Console_Log_Index_" + std::to_string(i)).c_str());
+            for(int32_t j = 0; j < ident; j++) {
+                ImGui::Unindent(10.0f);
+            }
             ImGui::PopStyleColor();
         }
     }
