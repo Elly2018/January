@@ -316,7 +316,7 @@ namespace January::Engine::View {
         ImGui::SameLine();
         // Set cursor position to overlap slightly for a seamless look, then create hit-box
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x); 
-        ImGui::InvisibleButton("v_splitter", ImVec2(splitterWidth, -1));
+        ImGui::InvisibleButton("v_splitter##Explorer_Splitter", ImVec2(splitterWidth, -1));
 
         if (ImGui::IsItemHovered()) {
             ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
@@ -593,7 +593,7 @@ namespace January::Engine::View {
             {
                 spdlog::debug("\tStart fetch files...");
                 for(auto entry : fs::directory_iterator(pp)){
-                    spdlog::debug("\t\tDetect entry: {}", entry.path().c_str());
+                    spdlog::debug("\tDetect entry: {}", entry.path().c_str());
                     JFileContent file = JFileContent();
                     file.uuid = uuidGenerator.getUUID();
                     file.is_dir = entry.is_directory();

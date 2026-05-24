@@ -38,6 +38,7 @@ namespace January::Engine::View {
     // The log record from the spdlog
     //
     struct ConsoleLog {
+        uint32_t id;
         spdlog::level::level_enum level;
         std::string messages;
     };
@@ -57,6 +58,8 @@ namespace January::Engine::View {
         void DrawBar();
         // Render bottom content area
         void DrawContent();
+        void DrawDetail();
+        void DrawMiddleHandle(float total_window_height, float splitterHeight);
 
         const struct ImVec4 GetColor(spdlog::level::level_enum col);
         std::string GetName(spdlog::level::level_enum col);
@@ -65,11 +68,16 @@ namespace January::Engine::View {
         void Clear();
 
     private:
+        std::atomic_bool init = false;
+        std::atomic_uint32_t id_counter = 0;
+        std::atomic_int32_t open_bottom = -1;
         std::string search = "";
+        std::atomic<float> topHeight = 0;
         spdlog::level::level_enum level_filter = spdlog::level::level_enum::info;
         std::vector<ConsoleLog> logs = std::vector<ConsoleLog>();
         std::vector<ConsoleLog> buffer = std::vector<ConsoleLog>();
         std::mutex buffer_mtx;
+        std::mutex log_mtx;
         bool changed = false;
         std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
     };

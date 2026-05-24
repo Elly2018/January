@@ -12,8 +12,11 @@ namespace January::Engine::View {
             ConsoleLog cl = ConsoleLog();
             cl.level = msg.level;
             cl.messages = std::string(msg.payload.data(), msg.payload.size());;
-            logs.push_back(cl);
+            cl.id = id_counter;
             changed = true;
+            id_counter++;
+            std::lock_guard<std::mutex> lock(log_mtx);
+            logs.push_back(cl);
         });
         callback_sink->set_level(spdlog::level::trace);
         jengine.context->logger = new spdlog::logger("engine logger", callback_sink);
@@ -28,7 +31,69 @@ namespace January::Engine::View {
     void JViewConsole::Draw() {
         DrawBar();
         ImGui::Separator();
-        DrawContent();
+
+        ImGuiStyle& style = ImGui::GetStyle();
+        float h = ImGui::GetContentRegionAvail().y;
+        if(!init){
+            init = true;
+            topHeight = h * (1.f / 3.f);
+            spdlog::debug("ConsoleLog init");
+            spdlog::debug("\th init value: {}", h);
+            spdlog::debug("\ttop height init value: {}", topHeight.load());
+        }
+        
+        if(open_bottom >= 0){
+            {
+                ImGui::BeginChild("ViewConsole_Frame", ImVec2(0, 0));
+                float current_top_h = topHeight;
+                if (current_top_h > h - 100.0f) current_top_h = h - 100.0f;
+                if (current_top_h < 50.0f) current_top_h = 50.0f;
+                {
+                    ImGui::BeginChild("ViewConsole_Top", ImVec2(0, (topHeight - (style.DisplayWindowPadding.y / 1.5f))), true);
+                    DrawContent();
+                    ImGui::EndChild();
+                }
+                DrawMiddleHandle(h, 8);
+                {
+                    ImGui::BeginChild("ViewConsole_Bottom", ImVec2(0, 0), true);
+                    DrawDetail();
+                    ImGui::EndChild();
+                }
+                ImGui::EndChild();
+            }
+        }else{
+            {
+                ImGui::BeginChild("ViewConsole_Top", ImVec2(0, 0), true);
+                DrawContent();
+                ImGui::EndChild();
+            }
+        }
+    }
+
+    void JViewConsole::DrawMiddleHandle(float total_window_height, float splitterHeight){
+        const float minHeight = 50.0f;
+        const float maxHeight = total_window_height - 50.0f;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+        ImGui::InvisibleButton("h_splitter##Console_Splitter", ImVec2(-1, splitterHeight));
+
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+        }
+
+        if (ImGui::IsItemActive()) {
+            float delta = ImGui::GetIO().MouseDelta.y;
+            if (delta != 0.0f) {
+                float newTopHeight = topHeight + delta;
+                if (newTopHeight < minHeight) newTopHeight = minHeight;
+                if (newTopHeight > maxHeight) newTopHeight = maxHeight;
+                
+                topHeight = newTopHeight;
+            }
+        }
+
+        // 4. Right Panel
+        ImGui::PopStyleVar();
     }
 
     void JViewConsole::Update() {
@@ -56,8 +121,29 @@ namespace January::Engine::View {
     void JViewConsole::DrawContent(){
         std::lock_guard<std::mutex> lock(buffer_mtx);
         for(int32_t i = 0; i < buffer.size(); i++){
-            ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
             std::string mesg = buffer.at(i).messages;
+            bool content = mesg.starts_with("\t");
+            if(content) continue;
+            ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
+            if(ImGui::Selectable((mesg + "##Console_Log_Index_" + std::to_string(i)).c_str())){
+                open_bottom = buffer.at(i).id;
+            }
+            ImGui::PopStyleColor();
+        }
+    }
+
+    void JViewConsole::DrawDetail() {
+        std::lock_guard<std::mutex> lock(log_mtx);
+        if (open_bottom < 0) return;
+        if (open_bottom >= logs.size()) return;
+
+        int32_t counter = open_bottom;
+        int32_t line = 0;
+
+        bool to_end = false;
+        std::string mesg = logs.at(counter).messages;
+        ImVec4 mesg_col = GetColor(logs.at(counter).level);
+        do {
             int32_t ident = 0;
             while(mesg.starts_with("\t")){
                 ident++;
@@ -66,12 +152,23 @@ namespace January::Engine::View {
             for(int32_t j = 0; j < ident; j++) {
                 ImGui::Indent(25.0f);
             }
-            ImGui::Selectable((mesg + "##Console_Log_Index_" + std::to_string(i)).c_str());
+
+            ImGui::PushStyleColor(ImGuiCol_Text, mesg_col);
+            ImGui::Text("%s", mesg.c_str());
+            ImGui::PopStyleColor();
+            line++;
+            counter++;
+            to_end = counter >= logs.size();
+
+            if(!to_end){
+                mesg = logs.at(counter).messages;
+                mesg_col = GetColor(logs.at(counter).level);
+            }
+
             for(int32_t j = 0; j < ident; j++) {
                 ImGui::Unindent(25.0f);
             }
-            ImGui::PopStyleColor();
-        }
+        } while (mesg.starts_with("\t") && !to_end);
     }
 
     const struct ImVec4 JViewConsole::GetColor(spdlog::level::level_enum col){
@@ -119,5 +216,6 @@ namespace January::Engine::View {
         std::lock_guard<std::mutex> lock(buffer_mtx);
         buffer.clear();
         logs.clear();
+        id_counter = 0;
     }
 }
