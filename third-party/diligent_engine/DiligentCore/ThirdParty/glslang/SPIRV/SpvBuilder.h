@@ -55,7 +55,6 @@ namespace spv {
     #include "NonSemanticShaderDebugInfo100.h"
 }
 
-#include <cstdint>
 #include <algorithm>
 #include <map>
 #include <memory>
