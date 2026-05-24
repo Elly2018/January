@@ -1,4 +1,5 @@
 #include "console.h"
+#include <memory>
 #include <imgui.h>
 #include <imgui_stdlib.h>
 #include "../../../engine/engine.h"
@@ -15,8 +16,7 @@ namespace January::Engine::View {
             changed = true;
         });
         callback_sink->set_level(spdlog::level::trace);
-        console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        jengine.context->logger = new spdlog::logger("engine logger", {console_sink, callback_sink});
+        spdlog::register_or_replace(std::make_shared<spdlog::logger>("engine logger", callback_sink));
     }
 
     void JViewConsole::DeInit(){

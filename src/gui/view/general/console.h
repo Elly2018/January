@@ -70,7 +70,6 @@ namespace January::Engine::View {
         std::mutex buffer_mtx;
         bool changed = false;
         std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
-        std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink;
     };
 }
 #endif
