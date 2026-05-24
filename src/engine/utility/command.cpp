@@ -20,7 +20,7 @@ namespace fs = std::filesystem;
 
 namespace January::Engine {
     void MyFolderCallback(void *userdata, const char *const *filelist, int filter) {
-        System::JSystem& jsystem = (System::JSystem&)userdata;
+        System::JSystem* jsystem = (System::JSystem*)userdata;
         if (filelist == NULL || *filelist == NULL) {
             // User canceled the dialog or an error occurred
             SDL_Log("Dialog canceled or failed: %s", SDL_GetError());
@@ -50,16 +50,16 @@ namespace January::Engine {
                 ImGui::InsertNotification(toast);
                 return;
             }
-            jsystem.engine->context->project_path = target_path;
-            jsystem.engine->context->load_project = true;
-            jsystem.engine->manager->project_dashboard->SetEnable(false);
+            jsystem->engine->context->project_path = target_path;
+            jsystem->engine->context->load_project = true;
+            jsystem->engine->manager->project_dashboard->SetEnable(false);
             std::string t = std::format("Project path successfully load: {}", target_path.c_str());
             spdlog::info(t);
             ImGuiToast toast = ImGuiToast(ImGuiToastType_Success, 3000);
             toast.set_title("Project Load");
             toast.set_content(t.c_str());
             ImGui::InsertNotification(toast);
-            AddRecent(*jsystem.engine, target_path);
+            AddRecent(*jsystem->engine, target_path);
         } else {
             std::string t = "Project path file dialog: cancel";
             spdlog::warn(t);
