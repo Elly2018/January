@@ -52,13 +52,15 @@ namespace January::Engine::View {
         void Draw() override;
         void Update() override;
 
-        void RenderBar();
-        void RenderContent();
+    protected:
+        // Render top toolbar
+        void DrawBar();
+        // Render bottom content area
+        void DrawContent();
 
         const struct ImVec4 GetColor(spdlog::level::level_enum col);
         std::string GetName(spdlog::level::level_enum col);
 
-    protected:
         void GetFilteredResult();
         void Clear();
 

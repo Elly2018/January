@@ -11,12 +11,14 @@ namespace January::Engine::View {
             // for example you can be notified by sending an email to yourself
             ConsoleLog cl = ConsoleLog();
             cl.level = msg.level;
-            cl.messages = msg.payload.data();
+            cl.messages = std::string(msg.payload.data(), msg.payload.size());;
             logs.push_back(cl);
             changed = true;
         });
         callback_sink->set_level(spdlog::level::trace);
-        spdlog::register_or_replace(std::make_shared<spdlog::logger>("engine logger", callback_sink));
+        jengine.context->logger = new spdlog::logger("engine logger", callback_sink);
+        jengine.context->logger->info("Engine log created");
+        spdlog::default_logger()->sinks().push_back(callback_sink);
     }
 
     void JViewConsole::DeInit(){
@@ -24,9 +26,9 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Draw() {
-        RenderBar();
+        DrawBar();
         ImGui::Separator();
-        RenderContent();
+        DrawContent();
     }
 
     void JViewConsole::Update() {
@@ -36,7 +38,7 @@ namespace January::Engine::View {
         }
     }
 
-    void JViewConsole::RenderBar(){
+    void JViewConsole::DrawBar(){
         if(ImGui::BeginCombo("Filter##console_view", GetName(level_filter).c_str())){
             for(int32_t n = 0; n < 6; n++){
                 if(ImGui::Selectable( (GetName((spdlog::level::level_enum)n) + "##console_view_level_filter").c_str())){
@@ -51,19 +53,19 @@ namespace January::Engine::View {
         }
     }
 
-    void JViewConsole::RenderContent(){
+    void JViewConsole::DrawContent(){
         std::lock_guard<std::mutex> lock(buffer_mtx);
         for(int32_t i = 0; i < buffer.size(); i++){
             ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
-            ImGui::Selectable(buffer.at(i).messages.c_str());
+            ImGui::Selectable((buffer.at(i).messages + "##Console_Log_Index_" + std::to_string(i)).c_str());
             ImGui::PopStyleColor();
         }
     }
 
     const struct ImVec4 JViewConsole::GetColor(spdlog::level::level_enum col){
         switch(col){
-            case spdlog::level::level_enum::trace: return ImVec4(0.6F, 0.6F, 0.6F, 1.0F);
-            case spdlog::level::level_enum::debug: return ImVec4(0.8F, 0.8F, 0.8F, 1.0F);
+            case spdlog::level::level_enum::trace: return ImVec4(0.4F, 0.6F, 0.4F, 1.0F);
+            case spdlog::level::level_enum::debug: return ImVec4(0.6F, 0.6F, 0.6F, 1.0F);
             default:
             case spdlog::level::level_enum::info: return ImVec4(1.0F, 1.0F, 1.0F, 1.0F);
             case spdlog::level::level_enum::warn: return ImVec4(1.0F, 1.0F, 0.0F, 1.0F);
