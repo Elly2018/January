@@ -26,10 +26,15 @@ SOFTWARE.
 #define ENGINE_NODE_3D_TRANSFORM_H
 #include <string>
 #include <glm/glm.hpp>
-#include "../ecs.h"
 
 namespace January::Engine::Node {
-    struct transform3D_component {
+    struct transform3D_Global_component {
+        glm::vec3 position;
+        glm::vec3 rotation;
+        glm::vec3 scale;
+    };
+
+    struct transform3D_Local_component {
         glm::vec3 position;
         glm::vec3 rotation;
         glm::vec3 scale;

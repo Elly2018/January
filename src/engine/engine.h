@@ -62,6 +62,7 @@ namespace January {
 
         // ...
         void AddRecent(JEngine& jengine, std::string& path);
+        void RemoveRecent(JEngine& jengine, std::string& path);
     }
 }
 #endif

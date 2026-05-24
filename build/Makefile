@@ -3058,54 +3058,6 @@ src/engine/engine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/engine.cpp.s
 .PHONY : src/engine/engine.cpp.s
 
-src/engine/node/ecs.o: src/engine/node/ecs.cpp.o
-.PHONY : src/engine/node/ecs.o
-
-# target to build an object file
-src/engine/node/ecs.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/ecs.cpp.o
-.PHONY : src/engine/node/ecs.cpp.o
-
-src/engine/node/ecs.i: src/engine/node/ecs.cpp.i
-.PHONY : src/engine/node/ecs.i
-
-# target to preprocess a source file
-src/engine/node/ecs.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/ecs.cpp.i
-.PHONY : src/engine/node/ecs.cpp.i
-
-src/engine/node/ecs.s: src/engine/node/ecs.cpp.s
-.PHONY : src/engine/node/ecs.s
-
-# target to generate assembly for a file
-src/engine/node/ecs.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/ecs.cpp.s
-.PHONY : src/engine/node/ecs.cpp.s
-
-src/engine/node/register.o: src/engine/node/register.cpp.o
-.PHONY : src/engine/node/register.o
-
-# target to build an object file
-src/engine/node/register.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/register.cpp.o
-.PHONY : src/engine/node/register.cpp.o
-
-src/engine/node/register.i: src/engine/node/register.cpp.i
-.PHONY : src/engine/node/register.i
-
-# target to preprocess a source file
-src/engine/node/register.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/register.cpp.i
-.PHONY : src/engine/node/register.cpp.i
-
-src/engine/node/register.s: src/engine/node/register.cpp.s
-.PHONY : src/engine/node/register.s
-
-# target to generate assembly for a file
-src/engine/node/register.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/january.dir/build.make CMakeFiles/january.dir/src/engine/node/register.cpp.s
-.PHONY : src/engine/node/register.cpp.s
-
 src/engine/utility/command.o: src/engine/utility/command.cpp.o
 .PHONY : src/engine/utility/command.o
 
@@ -4280,12 +4232,6 @@ help:
 	@echo "... src/engine/engine.o"
 	@echo "... src/engine/engine.i"
 	@echo "... src/engine/engine.s"
-	@echo "... src/engine/node/ecs.o"
-	@echo "... src/engine/node/ecs.i"
-	@echo "... src/engine/node/ecs.s"
-	@echo "... src/engine/node/register.o"
-	@echo "... src/engine/node/register.i"
-	@echo "... src/engine/node/register.s"
 	@echo "... src/engine/utility/command.o"
 	@echo "... src/engine/utility/command.i"
 	@echo "... src/engine/utility/command.s"

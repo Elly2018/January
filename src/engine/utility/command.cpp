@@ -31,6 +31,7 @@ namespace January::Engine {
 
         if (!(filelist == NULL || *filelist == NULL)) {
             std::string target_path = filelist[0];
+            spdlog::info("Trying open path: {}", target_path);
             if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
                 std::string t = std::format("Project path does not exist: {}", target_path.c_str());
                 spdlog::error(t);
@@ -96,12 +97,37 @@ namespace January::Engine {
     void multi_command(struct System::JSystem& jsystem, std::vector<std::string> cmds){
         if(cmds.size() >= 2 && cmds.at(0) == "open_recent"){
             std::string r_path = GetPath(cmds);
+            bool exist = true;
+
+            if(!fs::exists(r_path) || !fs::is_directory(r_path)) {
+                std::string t = std::format("Project path does not exist: {}", r_path.c_str());
+                spdlog::error(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
+                exist = false;
+            }
+            if(!is_project_path_vaild(r_path)){
+                std::string t = std::format("Project path vaildation check failed: {}", r_path.c_str());
+                spdlog::error(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
+                exist = false;
+            }
+
             int32_t search = -1;
             for(int32_t i = 0; i < jsystem.engine->config->j_recent.size(); i++){
                 if(jsystem.engine->config->j_recent.at(i).j_path == r_path){
                     search = i;
                     break;
                 }
+            }
+            if(!exist) {
+                RemoveRecent(*jsystem.engine, r_path);
+                return;
             }
             if(search != -1){
                 jsystem.engine->config->j_recent[search].j_last_open = sc::system_clock::to_time_t(sc::system_clock::now());

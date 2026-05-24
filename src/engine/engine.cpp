@@ -240,4 +240,17 @@ namespace January::Engine {
         }
         SaveAppConfig(*jengine.config);
     }
+    void RemoveRecent(JEngine& jengine, std::string& path){
+        int32_t exist = -1;
+        for(int32_t i = 0; i < jengine.config->j_recent.size(); i++){
+            if(jengine.config->j_recent.at(i).j_path == path){
+                exist = i;
+                break;
+            }
+        }
+        if(exist != -1){
+            jengine.config->j_recent.erase(jengine.config->j_recent.begin() + exist);
+            SaveAppConfig(*jengine.config);
+        }
+    }
 }

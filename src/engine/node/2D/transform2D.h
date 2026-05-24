@@ -25,17 +25,12 @@ SOFTWARE.
 #ifndef ENGINE_NODE_2D_TRANSFORM_H
 #define ENGINE_NODE_2D_TRANSFORM_H
 #include <glm/glm.hpp>
-#include "../ecs.h"
 
 namespace January::Engine::Node {
     struct transform2D_component {
         glm::vec2 position;
         glm::vec2 rotation;
         glm::vec2 scale;
-    };
-
-    class transform2D_system : public JSystem<transform2D_component> {
-        
     };
 }
 

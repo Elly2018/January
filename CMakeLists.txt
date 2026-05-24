@@ -37,6 +37,10 @@ add_subdirectory(${CLIP_DIR} EXCLUDE_FROM_ALL)
 set(LIBCURL_DIR third-party/libcurl)
 add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)
 
+# entt
+set(ENTT_DIR third-party/entt)
+add_subdirectory(${ENTT_DIR} EXCLUDE_FROM_ALL)
+
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ${IMGUI_DIR}/misc/cpp)
@@ -119,33 +123,27 @@ target_link_directories(january PRIVATE
     ${DILIGENT_DIR}/DiligentCore
 )
 
+target_link_libraries(january PRIVATE
+    glfw
+    clip
+    EnTT::EnTT
+    Vulkan::Vulkan
+    SDL3::SDL3
+    CURL::libcurl
+)
+
 if(WIN32)
     target_link_libraries(january PRIVATE
-        glfw
-        clip
-        Vulkan::Vulkan
-        SDL3::SDL3
-        CURL::libcurl
         Diligent-GraphicsEngineD3D11-static
         Diligent-GraphicsEngineD3D12-static
         Diligent-GraphicsEngineVk-static
     )
 elseif(APPLE)
     target_link_libraries(january PRIVATE
-        glfw
-        clip
-        Vulkan::Vulkan
-        SDL3::SDL3
-        CURL::libcurl
         Diligent-GraphicsEngineMetal-static
     )
 else() # Linux
     target_link_libraries(january PRIVATE
-        glfw
-        clip
-        Vulkan::Vulkan
-        SDL3::SDL3
-        CURL::libcurl
         Diligent-GraphicsEngineVk-static
         Diligent-GraphicsEngineOpenGL-static
     )
