@@ -194,7 +194,7 @@ namespace January::Engine::View {
         
         ImGui::Dummy(ImVec2(size, size));
         if(ImGui::IsItemHovered()){
-            draw_list->AddRect(canvas_pos - ImVec2(5, 5), canvas_pos + ImVec2(size, size) + ImVec2(5, 5), white_color, 5.0f);
+            draw_list->AddRect(canvas_pos, canvas_pos + ImVec2(size, size), white_color, 5.0f);
         }
 
         DrawItemTooltip(target.path, target.is_dir, target.filesize);
