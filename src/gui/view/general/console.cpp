@@ -64,11 +64,11 @@ namespace January::Engine::View {
                 mesg.erase(mesg.begin());
             }
             for(int32_t j = 0; j < ident; j++) {
-                ImGui::Indent(10.0f);
+                ImGui::Indent(25.0f);
             }
             ImGui::Selectable((mesg + "##Console_Log_Index_" + std::to_string(i)).c_str());
             for(int32_t j = 0; j < ident; j++) {
-                ImGui::Unindent(10.0f);
+                ImGui::Unindent(25.0f);
             }
             ImGui::PopStyleColor();
         }
