@@ -34,6 +34,9 @@ SOFTWARE.
 struct ImVec4;
 
 namespace January::Engine::View {
+    //
+    // The log record from the spdlog
+    //
     struct ConsoleLog {
         spdlog::level::level_enum level;
         std::string messages;
