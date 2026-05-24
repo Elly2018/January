@@ -79,11 +79,20 @@ namespace January::Engine::View {
         DEFAULT_VIEW_CTOR(JViewExplorer) {}
         DEFAULT_VIEW_DECTOR(JViewExplorer) {}
 
+        //
+        // The right panel display mode currently
+        // 0: Show file in the disk
+        // 1: Show search result
+        //
         enum class DisplayMode {
             NORMAL = 0,
             SEARCH = 1
         };
 
+        // 
+        // The file type filter
+        // 0: The flag == this, this mean no filter at all
+        //
         enum class FilterFlag {
             NONE = 0,
             PREFAB = 1 << 1,
@@ -91,12 +100,24 @@ namespace January::Engine::View {
             TEXTURE = 1 << 3,
         };
 
+        //
+        // The path bar input mode
+        // 0: Show the path buttons
+        // 1: Show a input field let user enter relative path
+        // 2: Show search input field
+        //
         enum class PathBarDisplay {
             DEFAULT = 0,
             PATH_INPUT = 1,
             SEARCH_INPUT = 2,
         };
 
+        //
+        // Search state
+        // 0: Not start search yet
+        // 1: Search background thread is running
+        // 2: It's done, scan finish
+        //
         enum class SearchState {
             NONE = 0,
             SEARCHING = 1,
