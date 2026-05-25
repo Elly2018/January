@@ -16,6 +16,7 @@ namespace January::Engine::View {
             changed = true;
             id_counter++;
             std::lock_guard<std::mutex> lock(log_mtx);
+            auto_scroll_next = true;
             logs.push_back(cl);
         });
         callback_sink->set_level(spdlog::level::trace);
@@ -44,18 +45,18 @@ namespace January::Engine::View {
         
         if(open_bottom >= 0){
             {
-                ImGui::BeginChild("ViewConsole_Frame", ImVec2(0, 0));
+                ImGui::BeginChild("ViewConsole_Frame", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
                 float current_top_h = topHeight;
                 if (current_top_h > h - 100.0f) current_top_h = h - 100.0f;
                 if (current_top_h < 50.0f) current_top_h = 50.0f;
                 {
-                    ImGui::BeginChild("ViewConsole_Top", ImVec2(0, (topHeight - (style.DisplayWindowPadding.y / 1.5f))), true);
+                    ImGui::BeginChild("ViewConsole_Top", ImVec2(0, (topHeight - (style.DisplayWindowPadding.y / 1.5f))), true, ImGuiWindowFlags_NoSavedSettings);
                     DrawContent();
                     ImGui::EndChild();
                 }
                 DrawMiddleHandle(h, 8);
                 {
-                    ImGui::BeginChild("ViewConsole_Bottom", ImVec2(0, 0), true);
+                    ImGui::BeginChild("ViewConsole_Bottom", ImVec2(0, 0), true, ImGuiWindowFlags_NoSavedSettings);
                     DrawDetail();
                     ImGui::EndChild();
                 }
@@ -63,7 +64,7 @@ namespace January::Engine::View {
             }
         }else{
             {
-                ImGui::BeginChild("ViewConsole_Top", ImVec2(0, 0), true);
+                ImGui::BeginChild("ViewConsole_Top", ImVec2(0, 0), true, ImGuiWindowFlags_NoSavedSettings);
                 DrawContent();
                 ImGui::EndChild();
             }
@@ -81,15 +82,32 @@ namespace January::Engine::View {
             ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
         }
 
+        static bool active = false;
+
         if (ImGui::IsItemActive()) {
             float delta = ImGui::GetIO().MouseDelta.y;
             if (delta != 0.0f) {
+                float og = topHeight;
                 float newTopHeight = topHeight + delta;
                 if (newTopHeight < minHeight) newTopHeight = minHeight;
                 if (newTopHeight > maxHeight) newTopHeight = maxHeight;
                 
+                if(!active){
+                    spdlog::trace("ConsoleLog splitter interact data");
+                    spdlog::trace("\tInteract Part");
+                    spdlog::trace("\t\tOriginal value: {}", og);
+                    spdlog::trace("\t\tNew value: {}", newTopHeight);
+                    spdlog::trace("\t\tDelta: {}", delta);
+                    spdlog::trace("\tConst Part");
+                    spdlog::trace("\t\tTotal window height: {}", total_window_height);
+                    spdlog::trace("\t\tMinimum height: {}", minHeight);
+                    spdlog::trace("\t\tMaximum height: {}", maxHeight);
+                    active = true;
+                }
                 topHeight = newTopHeight;
             }
+        }else{
+            active = false;
         }
 
         // 4. Right Panel
@@ -125,7 +143,8 @@ namespace January::Engine::View {
             bool content = mesg.starts_with("\t");
             if(content) continue;
             ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
-            if(ImGui::Selectable((mesg + "##Console_Log_Index_" + std::to_string(i)).c_str())){
+            bool is_selected = open_bottom == buffer.at(i).id;
+            if(ImGui::Selectable((mesg + "##Console_Log_Index_" + std::to_string(i)).c_str(), is_selected)){
                 open_bottom = buffer.at(i).id;
             }
             ImGui::PopStyleColor();
@@ -201,6 +220,7 @@ namespace January::Engine::View {
 
     void JViewConsole::GetFilteredResult(){
         std::lock_guard<std::mutex> lock(buffer_mtx);
+        std::lock_guard<std::mutex> lock2(log_mtx);
         buffer.clear();
         for(int32_t i = 0; i < logs.size(); i++){
             if(logs.at(i).level < level_filter){

@@ -69,6 +69,7 @@ namespace January::Engine::View {
 
     private:
         std::atomic_bool init = false;
+        std::atomic_bool auto_scroll_next = false;
         std::atomic_uint32_t id_counter = 0;
         std::atomic_int32_t open_bottom = -1;
         std::string search = "";
