@@ -27,7 +27,7 @@ SOFTWARE.
 #include <string>
 
 namespace January::Engine::Node {
-    struct name_component {
+    struct script_runner_component {
         // A relative path to the gravity script
         char script_path[128];
         // A relative path to data bank
