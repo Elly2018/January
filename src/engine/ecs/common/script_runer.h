@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace January::Engine::Node {
     struct script_runner_component {
+        int32_t priority;
         // A relative path to the gravity script
         char script_path[128];
         // A relative path to data bank
