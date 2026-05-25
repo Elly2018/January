@@ -22,14 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_NODE_COMMON_NAME_H
-#define ENGINE_NODE_COMMON_NAME_H
+#ifndef ENGINE_NODE_COMMON_SCRIPT_RUNNER_H
+#define ENGINE_NODE_COMMON_SCRIPT_RUNNER_H
 #include <string>
-#include <glm/glm.hpp>
 
 namespace January::Engine::Node {
     struct name_component {
-        char name[128];
+        // A relative path to the gravity script
+        char script_path[128];
+        // A relative path to data bank
+        char data_bank[128];
     };
 }
 
