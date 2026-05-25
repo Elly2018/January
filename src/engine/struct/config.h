@@ -39,17 +39,33 @@ namespace January::Engine {
         std::string j_path                                       = "";
         time_t j_last_open                                       = sc::system_clock::to_time_t(sc::system_clock::now());
     };
+    //
     // Engine Configuration
     // Store information which can be modify and affect the inner workflow.
     // Such as FPS
+    //
+    // The serialized data will be store in home/january/config.json
+    // Which means, this is GLOBAL setting, keep that in mind
+    // If you are looking for local project setting, go setting.h
+    //
     struct AppConfig {
         int32_t j_FPS                                            = 60;
         // Last open project
         std::string j_last_open                                  = "";
+        // Recent open project records
         std::vector<AppConfigRecent> j_recent                    = std::vector<AppConfigRecent>();
+        // Record the view is open last time
+        // In order to match with imgui.ini setting
         std::vector<std::pair<int64_t, bool>> j_views_enable     = std::vector<std::pair<int64_t, bool>>();
+        // Group of projects setting file
         std::vector<std::string> j_workspace                     = std::vector<std::string>();
         std::vector<std::string> j_favorite                      = std::vector<std::string>();
+        //
+        // Global project setting
+        // This will affect the project which user just create
+        //
+        // JSON structure
+        //
         json j_project_setting                                   = json::object();
     };
 }
