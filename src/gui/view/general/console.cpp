@@ -37,7 +37,7 @@ namespace January::Engine::View {
         float h = ImGui::GetContentRegionAvail().y;
         if(!init){
             init = true;
-            topHeight = h * (1.f / 3.f);
+            topHeight = 200.0f;
             spdlog::debug("ConsoleLog init");
             spdlog::debug("\th init value: {}", h);
             spdlog::debug("\ttop height init value: {}", topHeight.load());
