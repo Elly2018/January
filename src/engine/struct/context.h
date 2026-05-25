@@ -57,8 +57,9 @@ namespace January::Engine {
         // Everything called here can be find in console view
         // spdlog::info <- default logger is for os cli console output
         struct spdlog::logger*      logger;
-        //
-        
+        // Logger twith tag as a key
+        // Let user create multiple log and attach to whatever them want
+        std::unordered_map<std::string, struct spdlog::logger*> logger_map;
     };
 }
 #endif
