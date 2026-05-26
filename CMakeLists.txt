@@ -116,6 +116,7 @@ target_link_libraries(january PRIVATE
     clip
     EnTT::EnTT
     Vulkan::Vulkan
+    Vulkan::Headers
     SDL3::SDL3
     CURL::libcurl
 )
