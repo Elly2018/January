@@ -32,19 +32,8 @@ SOFTWARE.
 #include <stdlib.h>         // abort
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
+#include "vulkan_helper.h"
 #include "../config.h"
-
-// Volk headers
-#ifdef IMGUI_IMPL_VULKAN_USE_VOLK
-#define VOLK_IMPLEMENTATION
-#include <volk.h>
-#endif
-
-//#define APP_USE_UNLIMITED_FRAME_RATE
-#ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
-static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
-#endif
 
 namespace January {
 

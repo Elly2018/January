@@ -35,7 +35,6 @@ SOFTWARE.
 #include "../engine/struct/context.h"
 #include "../engine/utility/path.h"
 #include "../gui/manager.h"
-#include "vulkan_helper.h"
 
 namespace January::System {
     
@@ -75,64 +74,15 @@ namespace January::System {
 
         VCreateInstance(instance_extensions, win.g_Instance, win.g_Allocator);
 
-        win.g_PhysicalDevice = VGetPhysocalDeviceFront(win.g_Instance);
+        VGetPhysocalDeviceFront(win.g_Instance, win.g_PhysicalDevice);
         IM_ASSERT(win.g_PhysicalDevice != VK_NULL_HANDLE);
 
         // Select graphics queue family
         win.g_QueueFamily = VGetQueueFamily(win.g_PhysicalDevice);
         IM_ASSERT(win.g_QueueFamily != (uint32_t)-1);
 
-        // Create Logical Device (with 1 queue)
-        {
-            ImVector<const char*> device_extensions;
-            device_extensions.push_back("VK_KHR_swapchain");
-
-            // Enumerate physical device extension
-            uint32_t properties_count;
-            ImVector<VkExtensionProperties> properties;
-            vkEnumerateDeviceExtensionProperties(win.g_PhysicalDevice, nullptr, &properties_count, nullptr);
-            properties.resize(properties_count);
-            vkEnumerateDeviceExtensionProperties(win.g_PhysicalDevice, nullptr, &properties_count, properties.Data);
-#ifdef VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME
-            if (IsExtensionAvailable(properties, VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME))
-                device_extensions.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
-#endif
-
-            const float queue_priority[] = { 1.0f };
-            VkDeviceQueueCreateInfo queue_info[1] = {};
-            queue_info[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queue_info[0].queueFamilyIndex = win.g_QueueFamily;
-            queue_info[0].queueCount = 1;
-            queue_info[0].pQueuePriorities = queue_priority;
-            VkDeviceCreateInfo create_info = {};
-            create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-            create_info.queueCreateInfoCount = sizeof(queue_info) / sizeof(queue_info[0]);
-            create_info.pQueueCreateInfos = queue_info;
-            create_info.enabledExtensionCount = (uint32_t)device_extensions.Size;
-            create_info.ppEnabledExtensionNames = device_extensions.Data;
-            err = vkCreateDevice(win.g_PhysicalDevice, &create_info, win.g_Allocator, &win.g_Device);
-            check_vk_result(err);
-            vkGetDeviceQueue(win.g_Device, win.g_QueueFamily, 0, &win.g_Queue);
-        }
-
-        // Create Descriptor Pool
-        // If you wish to load e.g. additional textures you may need to alter pools sizes and maxSets.
-        {
-            VkDescriptorPoolSize pool_sizes[] =
-            {
-                { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE },
-            };
-            VkDescriptorPoolCreateInfo pool_info = {};
-            pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-            pool_info.maxSets = 0;
-            for (VkDescriptorPoolSize& pool_size : pool_sizes)
-                pool_info.maxSets += pool_size.descriptorCount;
-            pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
-            pool_info.pPoolSizes = pool_sizes;
-            err = vkCreateDescriptorPool(win.g_Device, &pool_info, win.g_Allocator, &win.g_DescriptorPool);
-            check_vk_result(err);
-        }
+        VGetLogicalDevice(win.g_PhysicalDevice, win.g_Queue, win.g_QueueFamily, win.g_Allocator, win.g_Device);
+        VGetDescriptionPool(win.g_Device, win.g_Allocator, win.g_DescriptorPool);
     }
     // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
     // Your real engine/app may not use them.
@@ -587,13 +537,7 @@ namespace January::System {
             throw std::runtime_error(std::format("Error: SDL_CreateWindow(): {}\n", SDL_GetError()));
         }
 
-        ImVector<const char*> extensions;
-        {
-            uint32_t sdl_extensions_count = 0;
-            const char* const* sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&sdl_extensions_count);
-            for (uint32_t n = 0; n < sdl_extensions_count; n++)
-                extensions.push_back(sdl_extensions[n]);
-        }
+        std::vector<const char*> extensions = VGetExtensions();
         SetupVulkan(jrwindow, extensions);
         return 0;
     }
