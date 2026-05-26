@@ -36,11 +36,9 @@ namespace January
         for(int32_t i = 0; i < level; i++) {
             msg.append("\t");
         }
-        msg += "[vulkan] Error: VkResult = {}";
-
         if (err == VK_SUCCESS)
             return;
-        spdlog::critical(msg.c_str(), err);
+        spdlog::critical("{}[vulkan] Error: VkResult = {}", msg, static_cast<int32_t>(err));
         if (err < 0)
             abort();
     }
