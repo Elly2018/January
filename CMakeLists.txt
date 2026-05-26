@@ -16,14 +16,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_definitions(VK_PROTOTYPES)
 
-# diligent_engine
-set(DILIGENT_BUILD_SAMPLES OFF CACHE BOOL "Disable Diligent samples" FORCE)
-set(DILIGENT_BUILD_TOOLS OFF CACHE BOOL "Disable Diligent tools" FORCE)
-set(DILIGENT_BUILD_FX OFF CACHE BOOL "Disable DiligentFX framework" FORCE)
-set(DILIGENT_NO_FORMAT_VALIDATION ON CACHE BOOL "Disable format validation" FORCE)
-set(DILIGENT_DIR third-party/diligent_engine)
-add_subdirectory(${DILIGENT_DIR} EXCLUDE_FROM_ALL)
-
 # SDL3
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
 
@@ -119,10 +111,6 @@ target_include_directories(january PUBLIC
     ${CLIP_DIR}
 )
 
-target_link_directories(january PRIVATE
-    ${DILIGENT_DIR}/DiligentCore
-)
-
 target_link_libraries(january PRIVATE
     glfw
     clip
@@ -131,23 +119,6 @@ target_link_libraries(january PRIVATE
     SDL3::SDL3
     CURL::libcurl
 )
-
-if(WIN32)
-    target_link_libraries(january PRIVATE
-        Diligent-GraphicsEngineD3D11-static
-        Diligent-GraphicsEngineD3D12-static
-        Diligent-GraphicsEngineVk-static
-    )
-elseif(APPLE)
-    target_link_libraries(january PRIVATE
-        Diligent-GraphicsEngineMetal-static
-    )
-else() # Linux
-    target_link_libraries(january PRIVATE
-        Diligent-GraphicsEngineVk-static
-        Diligent-GraphicsEngineOpenGL-static
-    )
-endif()
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
 
