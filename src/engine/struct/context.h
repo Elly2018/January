@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 #ifndef ENGINE_STRUCT_CONTEXT_H
 #define ENGINE_STRUCT_CONTEXT_H
+#include <unordered_map>
 #include <string>
 #include <queue>
 #include <mutex>

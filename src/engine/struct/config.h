@@ -30,6 +30,7 @@ SOFTWARE.
 #include <utility>
 #include <string>
 #include "nlohmann/json.hpp"
+#include "setting.h"
 
 namespace sc = std::chrono;
 using json = nlohmann::json;
@@ -66,7 +67,7 @@ namespace January::Engine {
         //
         // JSON structure
         //
-        json j_project_setting                                   = json::object();
+        ProjectConfig j_project_setting                          = ProjectConfig();
     };
 }
 #endif
