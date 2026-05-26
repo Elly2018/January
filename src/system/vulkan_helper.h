@@ -34,12 +34,14 @@ SOFTWARE.
 #endif
 
 //#define APP_USE_UNLIMITED_FRAME_RATE
-#ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
-static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
-#endif
 
 namespace January {
+    void check_vk_result(VkResult err, uint32_t level = 0);
+    bool IsExtensionAvailable(const std::vector<VkExtensionProperties> &properties, const char *extension);
+#ifdef APP_USE_VULKAN_DEBUG_REPORT
+    VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData);
+#endif
+
     void VPrintDeviceProperty(VkPhysicalDevice& p_device);
     std::vector<const char*> VGetExtensions();
 

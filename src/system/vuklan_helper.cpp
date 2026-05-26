@@ -9,6 +9,10 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
 
+#ifdef APP_USE_VULKAN_DEBUG_REPORT
+static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
+#endif
+
 template <>
 struct fmt::formatter<VkResult> : fmt::formatter<int> {
     template <typename FormatContext>
@@ -23,22 +27,37 @@ struct fmt::formatter<VkResult> : fmt::formatter<int> {
 
 namespace January
 {
-    static void check_vk_result(VkResult err)
+    void check_vk_result(VkResult err, uint32_t level)
     {
+        std::string msg = "";
+        for(int32_t i = 0; i < level; i++) {
+            msg.append("\t");
+        }
+        msg += "[vulkan] Error: VkResult = {}";
+
         if (err == VK_SUCCESS)
             return;
-        spdlog::critical("[vulkan] Error: VkResult = {}", err);
+        spdlog::critical(msg.c_str(), err);
         if (err < 0)
             abort();
     }
 
-    static bool IsExtensionAvailable(const std::vector<VkExtensionProperties> &properties, const char *extension)
+    bool IsExtensionAvailable(const std::vector<VkExtensionProperties> &properties, const char *extension)
     {
         for (const VkExtensionProperties &p : properties)
             if (strcmp(p.extensionName, extension) == 0)
                 return true;
         return false;
     }
+
+#ifdef APP_USE_VULKAN_DEBUG_REPORT
+    VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
+    {
+        (void)flags; (void)object; (void)location; (void)messageCode; (void)pUserData; (void)pLayerPrefix; // Unused arguments
+        fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\nMessage: %s\n\n", objectType, pMessage);
+        return VK_FALSE;
+    }
+#endif // APP_USE_VULKAN_DEBUG_REPORT
 
     void VPrintDeviceProperty(uint32_t index, VkPhysicalDevice &p_device)
     {
@@ -90,10 +109,15 @@ namespace January
             // printf("Error: SDL_Init(): %s\n", SDL_GetError());
             throw std::runtime_error(std::format("Error: SDL_Init(): {}\n", SDL_GetError()));
         }
+        spdlog::trace("SDL init successfully");
+        spdlog::trace("\tTags:");
+        spdlog::trace("\t\tSDL_INIT_VIDEO");
+        spdlog::trace("\t\tSDL_INIT_GAMEPAD");
     }
 
     void VCreateInstance(std::vector<const char*> extensions, VkInstance& instance, VkAllocationCallbacks* allocation)
     {
+        spdlog::trace("Trying init vulkan instance...");
         VkInstanceCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
@@ -103,7 +127,7 @@ namespace January
         vkEnumerateInstanceExtensionProperties(nullptr, &properties_count, nullptr);
         properties.resize(properties_count);
         VkResult err = vkEnumerateInstanceExtensionProperties(nullptr, &properties_count, properties.data());
-        check_vk_result(err);
+        check_vk_result(err, 1);
 
         // Enable required extensions
         if (IsExtensionAvailable(properties, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
@@ -128,22 +152,23 @@ namespace January
         create_info.enabledExtensionCount = (uint32_t)extensions.size();
         create_info.ppEnabledExtensionNames = extensions.data();
         err = vkCreateInstance(&create_info, allocation, &instance);
-        check_vk_result(err);
+        check_vk_result(err, 1);
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
         volkLoadInstance(instance);
 #endif
         // Setup the debug report callback
 #ifdef APP_USE_VULKAN_DEBUG_REPORT
-        auto f_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(win.g_Instance, "vkCreateDebugReportCallbackEXT");
+        auto f_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
         IM_ASSERT(f_vkCreateDebugReportCallbackEXT != nullptr);
         VkDebugReportCallbackCreateInfoEXT debug_report_ci = {};
         debug_report_ci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
         debug_report_ci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
         debug_report_ci.pfnCallback = debug_report;
         debug_report_ci.pUserData = nullptr;
-        err = f_vkCreateDebugReportCallbackEXT(win.g_Instance, &debug_report_ci, win.g_Allocator, &g_DebugReport);
-        check_vk_result(err);
+        err = f_vkCreateDebugReportCallbackEXT(instance, &debug_report_ci, allocation, &g_DebugReport);
+        check_vk_result(err, 1);
 #endif
+        spdlog::trace("Trying init vulkan instance...Finished");
     }
 
     void VGetPhysocalDeviceFront(VkInstance &instance, VkPhysicalDevice &p_device)
