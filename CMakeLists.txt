@@ -16,6 +16,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_definitions(VK_PROTOTYPES)
 
+# Libraries
+find_package(Vulkan REQUIRED)
+
 # SDL3
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
 
@@ -80,9 +83,6 @@ include_directories(${Math_DIR})
 # notify
 set(Notify_DIR third-party/notify/include)
 include_directories(${Notify_DIR})
-
-# Libraries
-find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
 
