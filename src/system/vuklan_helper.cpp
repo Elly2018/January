@@ -1,41 +1,85 @@
 #include "vulkan_helper.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdexcept>
+#include <format>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 
-namespace January {
-    VkInstance VCreateInstance(){
+namespace January
+{
+    static void check_vk_result(VkResult err)
+    {
+        if (err == VK_SUCCESS)
+            return;
+        fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
+        if (err < 0)
+            abort();
+    }
+
+    static bool IsExtensionAvailable(const std::vector<VkExtensionProperties> &properties, const char *extension)
+    {
+        for (const VkExtensionProperties &p : properties)
+            if (strcmp(p.extensionName, extension) == 0)
+                return true;
+        return false;
+    }
+
+    std::vector<const char*> VGetExtensions()
+    {
+        std::vector<const char*> r = std::vector<const char*>();
+        uint32_t sdl_extensions_count = 0;
+        const char* const* sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&sdl_extensions_count);
+        for (uint32_t n = 0; n < sdl_extensions_count; n++)
+            r.push_back(sdl_extensions[n]);
+        return r;
+    }
+
+    void VInit(){
+        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
+        {
+            //printf("Error: SDL_Init(): %s\n", SDL_GetError());
+            throw std::runtime_error(std::format("Error: SDL_Init(): {}\n", SDL_GetError()));
+        }
+    }
+
+    void VCreateInstance(std::vector<const char*> extensions, VkInstance& instance, VkAllocationCallbacks& allocation)
+    {
         VkInstanceCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
         // Enumerate available extensions
         uint32_t properties_count;
-        ImVector<VkExtensionProperties> properties;
+        std::vector<VkExtensionProperties> properties;
         vkEnumerateInstanceExtensionProperties(nullptr, &properties_count, nullptr);
         properties.resize(properties_count);
-        err = vkEnumerateInstanceExtensionProperties(nullptr, &properties_count, properties.Data);
+        VkResult err = vkEnumerateInstanceExtensionProperties(nullptr, &properties_count, properties.data());
         check_vk_result(err);
 
         // Enable required extensions
         if (IsExtensionAvailable(properties, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
-            instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+            extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 #ifdef VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME
         if (IsExtensionAvailable(properties, VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME))
         {
-            instance_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+            extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
             create_info.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
         }
 #endif
 
         // Enabling validation layers
 #ifdef APP_USE_VULKAN_DEBUG_REPORT
-        const char* layers[] = { "VK_LAYER_KHRONOS_validation" };
+        const char *layers[] = {"VK_LAYER_KHRONOS_validation"};
         create_info.enabledLayerCount = 1;
         create_info.ppEnabledLayerNames = layers;
-        instance_extensions.push_back("VK_EXT_debug_report");
+        extensions.push_back("VK_EXT_debug_report");
 #endif
 
         // Create Vulkan Instance
-        create_info.enabledExtensionCount = (uint32_t)instance_extensions.Size;
-        create_info.ppEnabledExtensionNames = instance_extensions.Data;
-        err = vkCreateInstance(&create_info, win.g_Allocator, &win.g_Instance);
+        create_info.enabledExtensionCount = (uint32_t)extensions.size();
+        create_info.ppEnabledExtensionNames = extensions.data();
+        err = vkCreateInstance(&create_info, &allocation, &instance);
         check_vk_result(err);
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
         volkLoadInstance(g_Instance);
@@ -54,11 +98,15 @@ namespace January {
 #endif
     }
 
-    VkPhysicalDevice VGetPhysocalDeviceFront(VkInstance instance){
-
+    VkPhysicalDevice VGetPhysocalDeviceFront(VkInstance instance)
+    {
     }
 
-    std::vector<VkPhysicalDevice> VGetPhysocalDeviceAll(VkInstance instance){
+    std::vector<VkPhysicalDevice> VGetPhysocalDeviceAll(VkInstance instance)
+    {
+    }
 
+    uint32_t VGetQueueFamily(VkPhysicalDevice device) {
+        
     }
 }

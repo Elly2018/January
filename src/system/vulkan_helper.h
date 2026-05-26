@@ -28,9 +28,15 @@ SOFTWARE.
 #include <vulkan/vulkan.h>
 
 namespace January {
-    VkInstance VCreateInstance();
+    std::vector<const char*> VGetExtensions();
+
+    // Setup SDL
+    // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
+    void VInit();
+    void VCreateInstance(std::vector<const char*> extensions, VkInstance& instance, VkAllocationCallbacks* allocation);
     VkPhysicalDevice VGetPhysocalDeviceFront(VkInstance instance);
     std::vector<VkPhysicalDevice> VGetPhysocalDeviceAll(VkInstance instance);
+    uint32_t VGetQueueFamily(VkPhysicalDevice device);
 }
 
 #endif
