@@ -22,6 +22,15 @@ find_package(Vulkan REQUIRED)
 # SDL3
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
 
+# shaderc
+set(SHADERC_SKIP_TESTS ON CACHE BOOL "Skip shaderc tests" FORCE)
+set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "Skip shaderc examples" FORCE)
+set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "Skip shaderc copyright check" FORCE)
+set(DISABLE_RTTI ON CACHE BOOL "Disable RTTI for shaderc dependencies" FORCE)
+set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "Use shared CRT" FORCE)
+set(SHADERC_DIR third-party/shaderc)
+add_subdirectory(${SHADERC_DIR})
+
 # clip
 set(CLIP_DIR third-party/clip)
 set(CLIP_EXAMPLES OFF CACHE BOOL "Compile clip examples" FORCE)
@@ -109,6 +118,7 @@ target_include_directories(january PUBLIC
     ${SDL3_INCLUDE_DIRS}
     ${LIBCURL_DIR}/include
     ${CLIP_DIR}
+    ${SHADERC_DIR}/libshaderc/include
 )
 
 target_link_libraries(january PRIVATE
@@ -118,6 +128,7 @@ target_link_libraries(january PRIVATE
     Vulkan::Vulkan
     SDL3::SDL3
     CURL::libcurl
+    shaderc
 )
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
