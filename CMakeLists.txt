@@ -115,7 +115,6 @@ target_link_libraries(january PRIVATE
     glfw
     clip
     EnTT::EnTT
-    Vulkan::Vulkan
     Vulkan::Headers
     SDL3::SDL3
     CURL::libcurl
