@@ -27,6 +27,9 @@ struct fmt::formatter<VkResult> : fmt::formatter<int> {
 
 namespace January
 {
+    void check_vk_result(VkResult err) {
+        check_vk_result(err, 0);
+    }
     void check_vk_result(VkResult err, uint32_t level)
     {
         std::string msg = "";
