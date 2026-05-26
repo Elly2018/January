@@ -26,6 +26,7 @@ SOFTWARE.
 #define SYSTEM_VULKAN_HELPER_H
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <shaderc/shaderc.hpp>
 
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
@@ -58,6 +59,9 @@ namespace January {
     // Create Descriptor Pool
     // If you wish to load e.g. additional textures you may need to alter pools sizes and maxSets.
     void VGetDescriptionPool(VkDevice& device, VkAllocationCallbacks* allocation, VkDescriptorPool& pool);
+    // Compile shader
+    std::vector<uint32_t> CompileGLSLToSPIRV(const std::string& sourceName, shaderc_shader_kind shaderKind, const std::string& glslSource, bool optimize = true);
+    VkShaderModule CreateShaderModule(VkDevice& logicalDevice, const std::vector<uint32_t>& spirvCode);
 }
 
 #endif

@@ -270,4 +270,50 @@ namespace January
         VkResult err = vkCreateDescriptorPool(device, &pool_info, allocation, &pool);
         check_vk_result(err);
     }
+
+    std::vector<uint32_t> CompileGLSLToSPIRV(const std::string& sourceName, shaderc_shader_kind shaderKind, const std::string& glslSource, bool optimize = true)
+    {
+        shaderc::Compiler compiler;
+        shaderc::CompileOptions options;
+
+        if (optimize) {
+            options.SetOptimizationLevel(shaderc_optimization_level_performance);
+        } else {
+            options.SetOptimizationLevel(shaderc_optimization_level_zero);
+        }
+
+        options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
+        shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(
+            glslSource, 
+            shaderKind, 
+            sourceName.c_str(), 
+            options
+        );
+        if (result.GetCompilationStatus() != shaderc_compilation_status_success) {
+            spdlog::error("Shaderc Error in [{}]", result.GetErrorMessage());
+            return {}; 
+        }
+        return std::vector<uint32_t>(result.cbegin(), result.cend());
+    }
+
+    VkShaderModule CreateShaderModule(VkDevice& logicalDevice, const std::vector<uint32_t>& spirvCode)
+    {
+        if (spirvCode.empty()) {
+            spdlog::error("Cannot create shader module: SPIR-V binary vector is empty.");
+            return VK_NULL_HANDLE;
+        }
+        VkShaderModuleCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        createInfo.codeSize = spirvCode.size() * sizeof(uint32_t); 
+        createInfo.pCode = spirvCode.data();
+        VkShaderModule shaderModule = VK_NULL_HANDLE;
+        VkResult result = vkCreateShaderModule(logicalDevice, &createInfo, nullptr, &shaderModule);
+        
+        if (result != VK_SUCCESS) {
+            spdlog::error("Failed to create Vulkan VkShaderModule! Error code: {}", static_cast<int>(result));
+            return VK_NULL_HANDLE;
+        }
+
+        return shaderModule;
+    }
 }
