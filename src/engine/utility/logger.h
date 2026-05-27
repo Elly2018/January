@@ -57,7 +57,7 @@ namespace January::Engine {
         std::mutex log_mtx;
         std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
         uint32_t id_counter;
-        static spdlog::logger*      logger;
+        spdlog::logger*      logger;
         enum spdlog::level::level_enum level;
         // Check if logger vector is changed
         // Use flip to make change variable false, some sort of marker or update

@@ -28,33 +28,9 @@ namespace January::Engine::View {
             spdlog::debug("\th init value: {}", h);
             spdlog::debug("\ttop height init value: {}", topHeight.load());
         }
-        
-        if(open_bottom >= 0){
-            {
-                ImGui::BeginChild("ViewConsole_Frame", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
-                float current_top_h = topHeight;
-                if (current_top_h > h - 100.0f) current_top_h = h - 100.0f;
-                if (current_top_h < 50.0f) current_top_h = 50.0f;
-                {
-                    ImGui::BeginChild("ViewConsole_Top", ImVec2(0, (topHeight - (style.DisplayWindowPadding.y / 1.5f))), true, ImGuiWindowFlags_NoSavedSettings);
-                    DrawContent();
-                    ImGui::EndChild();
-                }
-                DrawMiddleHandle(h, 8);
-                {
-                    ImGui::BeginChild("ViewConsole_Bottom", ImVec2(0, 0), true, ImGuiWindowFlags_NoSavedSettings);
-                    DrawDetail();
-                    ImGui::EndChild();
-                }
-                ImGui::EndChild();
-            }
-        }else{
-            {
-                ImGui::BeginChild("ViewConsole_Top", ImVec2(0, 0), true, ImGuiWindowFlags_NoSavedSettings);
-                DrawContent();
-                ImGui::EndChild();
-            }
-        }
+
+        DrawTab();
+        DrawTabContent();
     }
 
     void JViewConsole::DrawMiddleHandle(float total_window_height, float splitterHeight){
@@ -119,6 +95,58 @@ namespace January::Engine::View {
         }
         if(ImGui::InputText("Search##console_view", &search)){
             change_page = true;
+        }
+    }
+
+    void JViewConsole::DrawTab(){
+        if(ImGui::BeginTabBar("ViewConsole_Tag")){
+            if(ImGui::BeginTabItem("Engine")){
+                logger_index = 0;
+                change_page = true;
+                ImGui::EndTabItem();
+            }
+            if(ImGui::BeginTabItem("Runtime")){
+                logger_index = 1;
+                change_page = true;
+                ImGui::EndTabItem();
+            }
+            if(ImGui::BeginTabItem("Script")){
+                logger_index = 2;
+                change_page = true;
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
+        }
+    }
+
+    void JViewConsole::DrawTabContent(){
+        ImGuiStyle& style = ImGui::GetStyle();
+        float h = ImGui::GetContentRegionAvail().y;
+        if(open_bottom >= 0){
+            {
+                ImGui::BeginChild("ViewConsole_Frame", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
+                float current_top_h = topHeight;
+                if (current_top_h > h - 100.0f) current_top_h = h - 100.0f;
+                if (current_top_h < 50.0f) current_top_h = 50.0f;
+                {
+                    ImGui::BeginChild("ViewConsole_Top", ImVec2(0, (topHeight - (style.DisplayWindowPadding.y / 1.5f))), true, ImGuiWindowFlags_NoSavedSettings);
+                    DrawContent();
+                    ImGui::EndChild();
+                }
+                DrawMiddleHandle(h, 8);
+                {
+                    ImGui::BeginChild("ViewConsole_Bottom", ImVec2(0, 0), true, ImGuiWindowFlags_NoSavedSettings);
+                    DrawDetail();
+                    ImGui::EndChild();
+                }
+                ImGui::EndChild();
+            }
+        }else{
+            {
+                ImGui::BeginChild("ViewConsole_Top", ImVec2(0, 0), true, ImGuiWindowFlags_NoSavedSettings);
+                DrawContent();
+                ImGui::EndChild();
+            }
         }
     }
 
@@ -227,6 +255,7 @@ namespace January::Engine::View {
         std::lock_guard<std::mutex> lock(buffer_mtx);
         buffer.clear();
         if(instance != nullptr){
+            std::lock_guard<std::mutex> lock2(instance->log_mtx);
             instance->Clear();
         }
     }

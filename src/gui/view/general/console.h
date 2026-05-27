@@ -50,6 +50,8 @@ namespace January::Engine::View {
     protected:
         // Render top toolbar
         void DrawBar();
+        void DrawTab();
+        void DrawTabContent();
         // Render bottom content area
         void DrawContent();
         void DrawDetail();
