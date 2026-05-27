@@ -10,7 +10,6 @@ third_party/abseil_cpp
 third_party/effcee
 third_party/googletest
 third_party/re2
-third_party/spirv-cross
 third_party/tint
 android_test/app
 android_test/libs
