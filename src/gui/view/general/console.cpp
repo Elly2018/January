@@ -101,8 +101,9 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Update() {
-        if(jengine.context->logger->logger->IsChanged()){
+        if(jengine.context->logger->logger->IsChanged() || change_page){
             GetFilteredResult();
+            change_page = false;
         }
     }
 
@@ -111,13 +112,13 @@ namespace January::Engine::View {
             for(int32_t n = 0; n < 6; n++){
                 if(ImGui::Selectable( (GetName((spdlog::level::level_enum)n) + "##console_view_level_filter").c_str())){
                     level_filter = (spdlog::level::level_enum)n;
-                    changed = true;
+                    change_page = true;
                 }
             }
             ImGui::EndCombo();
         }
         if(ImGui::InputText("Search##console_view", &search)){
-            changed = true;
+            change_page = true;
         }
     }
 
@@ -137,16 +138,18 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::DrawDetail() {
-        std::lock_guard<std::mutex> lock(log_mtx);
+        JLoggerWorker* instance = GetLogger();
+        if(instance == nullptr) return;
+        std::lock_guard<std::mutex> lock(instance->log_mtx);
         if (open_bottom < 0) return;
-        if (open_bottom >= logs.size()) return;
+        if (open_bottom >= instance->logs.size()) return;
 
         int32_t counter = open_bottom;
         int32_t line = 0;
 
         bool to_end = false;
-        std::string mesg = logs.at(counter).messages;
-        ImVec4 mesg_col = GetColor(logs.at(counter).level);
+        std::string mesg = instance->logs.at(counter).messages;
+        ImVec4 mesg_col = GetColor(instance->logs.at(counter).level);
         do {
             int32_t ident = 0;
             while(mesg.starts_with("\t")){
@@ -162,11 +165,11 @@ namespace January::Engine::View {
             ImGui::PopStyleColor();
             line++;
             counter++;
-            to_end = counter >= logs.size();
+            to_end = counter >= instance->logs.size();
 
             if(!to_end){
-                mesg = logs.at(counter).messages;
-                mesg_col = GetColor(logs.at(counter).level);
+                mesg = instance->logs.at(counter).messages;
+                mesg_col = GetColor(instance->logs.at(counter).level);
             }
 
             for(int32_t j = 0; j < ident; j++) {
@@ -204,24 +207,28 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::GetFilteredResult(){
+        JLoggerWorker* instance = GetLogger();
+        if(instance == nullptr) return;
         std::lock_guard<std::mutex> lock(buffer_mtx);
-        std::lock_guard<std::mutex> lock2(log_mtx);
+        std::lock_guard<std::mutex> lock2(instance->log_mtx);
         buffer.clear();
-        for(int32_t i = 0; i < logs.size(); i++){
-            if(logs.at(i).level < level_filter){
+        for(int32_t i = 0; i < instance->logs.size(); i++){
+            if(instance->logs.at(i).level < level_filter){
                 continue;
             }
-            if(search.size() == 0 || logs.at(i).messages.find(search) != std::string::npos){
-                buffer.push_back(logs.at(i));
+            if(search.size() == 0 || instance->logs.at(i).messages.find(search) != std::string::npos){
+                buffer.push_back(instance->logs.at(i));
             }
         }
     }
 
     void JViewConsole::Clear(){
+        JLoggerWorker* instance = GetLogger();
         std::lock_guard<std::mutex> lock(buffer_mtx);
         buffer.clear();
-        logs.clear();
-        id_counter = 0;
+        if(instance != nullptr){
+            instance->Clear();
+        }
     }
 
     JLoggerWorker* JViewConsole::GetLogger() {

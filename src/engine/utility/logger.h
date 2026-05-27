@@ -63,6 +63,7 @@ namespace January::Engine {
         // Use flip to make change variable false, some sort of marker or update
         bool IsChanged(bool flip = true);
         bool IsGlobal();
+        void Clear();
     private:
         bool changed;
         bool isglobal;

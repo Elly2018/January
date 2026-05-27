@@ -45,6 +45,12 @@ namespace January::Engine {
         return isglobal;
     }
 
+    void JLoggerWorker::Clear(){
+        std::lock_guard<std::mutex> lock(log_mtx);
+        id_counter = 0;
+        logs.clear();
+    }
+
     JLogger::JLogger(){
         logger = new JLoggerWorker("Engine", true, spdlog::level::trace);
         runtime_logger = new JLoggerWorker("Runtime", false, spdlog::level::trace);
