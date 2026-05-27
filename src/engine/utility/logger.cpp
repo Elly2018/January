@@ -24,7 +24,10 @@ namespace January::Engine {
     }
 
     JLoggerWorker::~JLoggerWorker(){
-        logs.clear();
+        {
+            std::lock_guard<std::mutex> lock(log_mtx);
+            logs.clear();
+        }
         if(isglobal){
             std::vector<spdlog::sink_ptr>& sinks = spdlog::default_logger()->sinks();
             auto it = std::find(sinks.begin(), sinks.end(), callback_sink);
@@ -46,7 +49,6 @@ namespace January::Engine {
     }
 
     void JLoggerWorker::Clear(){
-        std::lock_guard<std::mutex> lock(log_mtx);
         id_counter = 0;
         logs.clear();
     }
