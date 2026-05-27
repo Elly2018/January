@@ -28,21 +28,11 @@ SOFTWARE.
 #include <string>
 #include <mutex>
 #include <spdlog/spdlog.h>
-#include <spdlog/sinks/callback_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include "../../../engine/utility/logger.h"
 
 struct ImVec4;
 
 namespace January::Engine::View {
-    //
-    // The log record from the spdlog
-    //
-    struct ConsoleLog {
-        uint32_t id;
-        spdlog::level::level_enum level;
-        std::string messages;
-    };
-
     class JViewConsole : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewConsole){}
@@ -66,21 +56,19 @@ namespace January::Engine::View {
 
         void GetFilteredResult();
         void Clear();
+        JLoggerWorker* GetLogger();
 
     private:
+        int32_t logger_index = -1;
         std::atomic_bool init = false;
+        std::atomic_bool change_page = false;
         std::atomic_bool auto_scroll_next = false;
         std::atomic_uint32_t id_counter = 0;
         std::atomic_int32_t open_bottom = -1;
         std::string search = "";
         std::atomic<float> topHeight = 0;
-        spdlog::level::level_enum level_filter = spdlog::level::level_enum::info;
-        std::vector<ConsoleLog> logs = std::vector<ConsoleLog>();
-        std::vector<ConsoleLog> buffer = std::vector<ConsoleLog>();
+        std::vector<JConsoleLog> buffer = std::vector<JConsoleLog>();
         std::mutex buffer_mtx;
-        std::mutex log_mtx;
-        bool changed = false;
-        std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
     };
 }
 #endif

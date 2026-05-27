@@ -4,25 +4,11 @@
 #include <imgui_stdlib.h>
 #include "../../../engine/engine.h"
 #include "../../../engine/struct/context.h"
+#include "../../../engine/utility/logger.h"
 
 namespace January::Engine::View {
     void JViewConsole::Init() {
-        callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([&](const spdlog::details::log_msg &msg) {
-            // for example you can be notified by sending an email to yourself
-            ConsoleLog cl = ConsoleLog();
-            cl.level = msg.level;
-            cl.messages = std::string(msg.payload.data(), msg.payload.size());;
-            cl.id = id_counter;
-            changed = true;
-            id_counter++;
-            std::lock_guard<std::mutex> lock(log_mtx);
-            auto_scroll_next = true;
-            logs.push_back(cl);
-        });
-        callback_sink->set_level(spdlog::level::trace);
-        jengine.context->logger = new spdlog::logger("engine logger", callback_sink);
-        jengine.context->logger->info("Engine log created");
-        spdlog::default_logger()->sinks().push_back(callback_sink);
+        spdlog::info("Engine log created");
     }
 
     void JViewConsole::DeInit(){
@@ -115,9 +101,8 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Update() {
-        if(changed){
+        if(jengine.context->logger->logger->IsChanged()){
             GetFilteredResult();
-            changed = false;
         }
     }
 
@@ -237,5 +222,16 @@ namespace January::Engine::View {
         buffer.clear();
         logs.clear();
         id_counter = 0;
+    }
+
+    JLoggerWorker* JViewConsole::GetLogger() {
+        if(logger_index == -1) return nullptr;
+        switch(logger_index)
+        {
+            default:
+            case 0: return jengine.context->logger->logger;
+            case 1: return jengine.context->logger->runtime_logger;
+            case 2: return jengine.context->logger->script_logger;
+        }
     }
 }
