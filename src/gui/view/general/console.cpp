@@ -232,7 +232,7 @@ namespace January::Engine::View {
     }
 
     JLoggerWorker* JViewConsole::GetLogger() {
-        if(logger_index == -1) return nullptr;
+        if(logger_index == -1 || jengine.context == nullptr || jengine.context->logger == nullptr) return nullptr;
         switch(logger_index)
         {
             default:
