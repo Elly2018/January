@@ -22,16 +22,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "asset.h"
+#include <unordered_map>
+#include <mutex>
 
 namespace January::Engine {
+    /**
+     * @brief The UUID - Asset instance map
+     */
+    std::unordered_map<std::string, JAssetBase> loadedAssets = std::unordered_map<std::string, JAssetBase>();
+    std::mutex la_mtx;
+
     std::string JAssetBase::Encode(bool pretty){
+        return EncodeHelper().dump(pretty ? 4 : -1);
+    }
+
+    json JAssetBase::EncodeHelper() {
         json buffer = json::object();
         buffer["uuid"] = uuid;
-        return buffer.dump(pretty ? 4 : -1);
+        return buffer;
     }
+
     void JAssetBase::Decode(json json){
         if(json["uuid"].is_string()){
             uuid = json.get<std::string>();
         }
+    }
+
+    JAssetBase GetJAssetHandler(fs::path target){
+        std::string ext = target.extension().string();
+        if(ext == ".txt"){
+            
+        }
+    }
+
+    void CleanLoadAsset(){
+        std::lock_guard<std::mutex> lock(la_mtx);
+        loadedAssets.clear();
     }
 }

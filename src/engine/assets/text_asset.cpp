@@ -21,19 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
-#ifndef ENGINE_NODE_COMMON_SCRIPT_RUNNER_H
-#define ENGINE_NODE_COMMON_SCRIPT_RUNNER_H
-#include <string>
+#include "text_asset.h"
 
-namespace January::Engine::Node {
-    struct script_runner_component {
-        int32_t priority;
-        // A relative path to the gravity script
-        char script_path[512];
-        // A relative path to data bank
-        char data_bank[512];
-    };
+namespace January::Engine {
+    json JTextAssetBase::EncodeHelper(){
+        json buffer = JAssetBase::EncodeHelper();
+        buffer["text"] = text;
+        return buffer;
+    }
+    void JTextAssetBase::Decode(json json){
+        JAssetBase::Decode(json);
+    }
 }
-
-#endif

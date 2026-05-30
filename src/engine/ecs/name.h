@@ -29,7 +29,7 @@ SOFTWARE.
 
 namespace January::Engine::Node {
     struct name_component {
-        char name[128];
+        char name[512];
     };
 }
 

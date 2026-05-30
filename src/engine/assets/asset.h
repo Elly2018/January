@@ -32,19 +32,48 @@ namespace fs = std::filesystem;
 using json = nlohmann::json;
 
 namespace January::Engine {
-    //
-    // The basic handle for the asset
-    //
+    /**
+     * @brief The basic handle for the asset
+     */
     struct JAssetBase {
-        // This will encode this asset instance into metadata json string
-        // Normally this is for store in the .january/Assets folder content
-        virtual std::string Encode(bool pretty);
-        // Dump the json metadata and replace the value under this object
+        /**
+         * @brief This will encode this asset instance into metadata json string
+         * Normally this is for store in the .january/Assets folder content
+         * 
+         * @param pretty Print json pretty
+         * @return std::string The json data
+         */
+        std::string Encode(bool pretty);
+        /**
+         * @brief The inherit support for form json data
+         * You can inherit this class and call this to get base json data
+         * 
+         * @return json The base form json data
+         */
+        virtual json EncodeHelper();
+        /**
+         * @brief Dump the json metadata and replace the value under this object
+         * 
+         * @param json Json to memory data
+         */
         virtual void Decode(json json);
-        // Target path will lead you to project/Assets folder
+        /**
+         * @brief Target path will lead you to project/Assets folder
+         */
         fs::path target;
-        // Asset UUID
+        /**
+         * @brief Asset UUID
+         */
         std::string uuid;
     };
+
+    /**
+     * @brief Get the Asset Handler object
+     * 
+     * @param target The relative path target from asset
+     * @return JAssetBase 
+     */
+    JAssetBase GetJAssetHandler(fs::path target);
+    void CleanLoadAsset();
 }
 #endif

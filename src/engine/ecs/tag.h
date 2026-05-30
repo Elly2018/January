@@ -29,7 +29,7 @@ SOFTWARE.
 
 namespace January::Engine::Node {
     struct tag_component {
-        char tag[128];
+        char tag[512];
     };
 }
 
