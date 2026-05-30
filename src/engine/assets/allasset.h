@@ -1,0 +1,7 @@
+#include "material_asset.h"
+#include "mesh_asset.h"
+#include "scene_asset.h"
+#include "script_asset.h"
+#include "shader_asset.h"
+#include "text_asset.h"
+#include "texture_asset.h"

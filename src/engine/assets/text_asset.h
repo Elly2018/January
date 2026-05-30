@@ -30,7 +30,9 @@ namespace January::Engine {
     /**
      * @brief The handle for the text asset
      */
-    struct JTextAssetBase : public JAssetBase {
+    class JTextAssetBase : public JAssetBase {
+    public:
+        DEFAULT_ASSET_CTOR(JTextAssetBase) {}
         /**
          * @brief This will encode this asset instance into metadata json string
          * Normally this is for store in the .january/Assets folder content
@@ -47,6 +49,11 @@ namespace January::Engine {
         void Decode(json json) override;
 
         std::string text;
+    };
+
+    class JTextAssetFactory : public JAssetFactory {
+    public:
+        DEFAULT_ASSET_FACTORY_CTOR(JTextAssetFactory, ".txt", ".yy") {}
     };
 }
 

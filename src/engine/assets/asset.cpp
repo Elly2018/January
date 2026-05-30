@@ -22,26 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "asset.h"
-#include <unordered_map>
-#include <mutex>
+
+#include "allasset.h"
 
 namespace January::Engine {
-    /**
-     * @brief The UUID - Asset instance map
-     */
-    std::unordered_map<std::string, JAssetBase> loadedAssets = std::unordered_map<std::string, JAssetBase>();
-    std::mutex la_mtx;
+    JAssetEvent::JAssetEvent(){
+
+    }
+
+    JAssetEvent::~JAssetEvent(){
+        
+    }
 
     std::shared_ptr<void> JAssetEvent::Register(Handler handle){
         std::shared_ptr<void> token = std::make_shared<int>(0);
         RegisteredHandler rh;
         rh.token = token; // weak_ptr implicitly created from shared_ptr
         rh.callback = handle;
+        std::lock_guard<std::mutex> lock(handle_mtx);
         Handlers.push_back(rh);
         return token;
     }
 
     void JAssetEvent::Execute(JAssetEventType ev, const std::string message){
+        std::lock_guard<std::mutex> lock(handle_mtx);
         Handlers.erase(
             std::remove_if(Handlers.begin(), Handlers.end(), [](const RegisteredHandler& rh) {
                 return rh.token.expired(); 
@@ -55,8 +59,21 @@ namespace January::Engine {
         }
     }
 
+    JAssetBase::JAssetBase(fs::path _target, System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
+        target = _target;
+        fs::path pp = fs::relative("Assets", _target);
+        fs::path b = ".january";
+        b /= "Assets";
+        b /= pp;
+        meta_target = b;
+    }
+
     std::string JAssetBase::Encode(bool pretty){
         return EncodeHelper().dump(pretty ? 4 : -1);
+    }
+
+    bool JAssetBase::Vaild(){
+        
     }
 
     json JAssetBase::EncodeHelper() {
@@ -71,26 +88,41 @@ namespace January::Engine {
         }
     }
 
-    JAssetBase GetJAssetHandler(fs::path target){
-        std::string ext = target.extension().string();
-        if(ext == ".txt"){
-
-        }
+    JAssetWorker::JAssetWorker(){
+        
     }
 
-    bool GetJAssetHandlerByUUID(std::string uuid, JAssetBase& asset){
+    JAssetWorker::~JAssetWorker(){
+        std::lock_guard<std::mutex> lock(EventHandler.handle_mtx);
+        for(auto& i : EventHandler.Handlers){
+            i.token.reset();
+        }
+        EventHandler.Handlers.clear();
+    }
+
+    std::shared_ptr<JAssetBase> JAssetWorker::GetJAssetHandler(fs::path target){
+        std::string ext = target.extension().string();
+        for(auto& f : loadedFactory){
+            if(f.first == ext && f.second.CheckExtension(ext)){
+                return f.second.CreateAsset(target);
+            }
+        }
+        return nullptr;
+    }
+
+    bool JAssetWorker::GetJAssetHandlerByUUID(std::string uuid, std::shared_ptr<JAssetBase>& asset){
         if(!IsJAssetHandlerLoaded(uuid)) return false;
         std::lock_guard<std::mutex> lock(la_mtx);
         asset = loadedAssets.at(uuid);
         return true;
     }
 
-    bool IsJAssetHandlerLoaded(std::string uuid){
+    bool JAssetWorker::IsJAssetHandlerLoaded(std::string uuid){
         std::lock_guard<std::mutex> lock(la_mtx);
         return loadedAssets.count(uuid);
     }
 
-    void CleanLoadAsset(){
+    void JAssetWorker::CleanLoadAsset(){
         std::lock_guard<std::mutex> lock(la_mtx);
         loadedAssets.clear();
     }
