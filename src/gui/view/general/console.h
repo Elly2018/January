@@ -92,6 +92,8 @@ namespace January::Engine::View {
         JLoggerWorker* GetLogger();
 
     private:
+        std::atomic_bool show_line_count = false;
+        std::atomic_bool show_id = false;
         /**
          * @brief Current logger selection
          * 0: Engine logger

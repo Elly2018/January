@@ -11,6 +11,7 @@ namespace January::Engine::View {
     void JViewConsole::Init() {
         spdlog::info("Engine log created");
         spdlog::info("\tSubline Testing");
+        window_flag |= ImGuiWindowFlags_MenuBar;
     }
 
     void JViewConsole::DeInit(){
@@ -18,6 +19,18 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Draw() {
+        if(ImGui::BeginMenuBar()){
+            if(ImGui::BeginMenu("Debug##Console_Log_View_Menu_Debug")){
+                if(ImGui::MenuItem("MSG_COUNT", NULL, show_line_count.load())){
+                    show_line_count.store(!show_line_count.load());
+                }
+                if(ImGui::MenuItem("MSG_ID", NULL, show_id.load())){
+                    show_id.store(!show_id.load());
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
         DrawBar();
         ImGui::Separator();
 
@@ -175,9 +188,21 @@ namespace January::Engine::View {
         std::function<void(uint32_t)> submit = std::function<void(uint32_t)>([&](uint32_t i) {
             ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
             bool is_selected = open_bottom == buffer.at(i).id;
-            if(ImGui::Selectable(
-                ("[" + std::to_string(counter) + "]" + 
-                last_line + "##Console_Log_Index_" + std::to_string(i)).c_str(), is_selected)){
+            std::string form = "";
+            if(show_line_count.load() && show_id.load()){
+                form = std::format("[{}|{}] {}##Console_Log_Index_{}", counter, buffer.at(i).id, last_line.c_str(), i);
+            }
+            else if(!show_line_count.load() && show_id.load()){
+                form = std::format("[{}] {}##Console_Log_Index_{}", buffer.at(i).id, last_line.c_str(), i);
+            }
+            else if(show_line_count.load() && !show_id.load()){
+                form = std::format("[{}] {}##Console_Log_Index_{}", counter, last_line.c_str(), i);
+            }
+            else {
+                form = std::format("{}##Console_Log_Index_{}", last_line.c_str(), i);
+            }
+            
+            if(ImGui::Selectable(form.c_str(), is_selected)){
                 open_bottom = buffer.at(i).id;
             }
             ImGui::PopStyleColor();
@@ -185,6 +210,7 @@ namespace January::Engine::View {
 
         for(int32_t i = 0; i < buffer.size(); i++){
             std::string mesg = buffer.at(i).messages;
+
             if(mesg.starts_with("\t")) {
                 counter++;
                 continue;
@@ -196,6 +222,10 @@ namespace January::Engine::View {
             last_index = i;
             last_line = mesg;
         }
+
+        if (last_index != -1) {
+            submit(last_index);
+        }
     }
 
     void JViewConsole::DrawDetail() {
@@ -205,11 +235,12 @@ namespace January::Engine::View {
         if (open_bottom < 0) return;
         if (open_bottom >= instance->logs.size()) return;
 
-        int32_t counter = open_bottom - 1;
+        int32_t counter = open_bottom;
         int32_t line = 0;
 
         bool to_end = false;
         std::string mesg = instance->logs.at(counter).messages;
+        uint32_t mesg_index = instance->logs.at(counter).id;
         ImVec4 mesg_col = GetColor(instance->logs.at(counter).level);
         do {
             int32_t ident = 0;
@@ -222,7 +253,11 @@ namespace January::Engine::View {
             }
 
             ImGui::PushStyleColor(ImGuiCol_Text, mesg_col);
-            ImGui::Text("%s", mesg.c_str());
+            if(show_id.load()){
+                ImGui::Text("[%i] %s", mesg_index, mesg.c_str());
+            }else{
+                ImGui::Text("%s", mesg.c_str());
+            }
             ImGui::PopStyleColor();
             line++;
             counter++;
@@ -230,6 +265,7 @@ namespace January::Engine::View {
 
             if(!to_end){
                 mesg = instance->logs.at(counter).messages;
+                mesg_index = instance->logs.at(counter).id;
                 mesg_col = GetColor(instance->logs.at(counter).level);
             }
 

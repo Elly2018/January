@@ -33,35 +33,55 @@ SOFTWARE.
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace January::Engine { 
-    //
-    // The log record from the spdlog
-    //
+    /**
+     * @brief The log record from the spdlog
+     */
     struct JConsoleLog {
+        /**
+         * @brief Global id from the logger
+         */
         uint32_t id;
+        /**
+         * @brief Record log level
+         */
         spdlog::level::level_enum level;
+        /**
+         * @brief Message data
+         */
         std::string messages;
     };
 
     class JLoggerWorker {
     public:
-        //
-        // Argument:
-        // * name: The logger name prefix
-        // * global: Should be merge to global spdlog function
-        // * level: logger level
-        //
+        /**
+         * @brief Create worker
+         * 
+         * @param name The logger name prefix
+         * @param global Should be merge to global spdlog function
+         * @param level logger level
+         */
         JLoggerWorker(const char* name, bool global, enum spdlog::level::level_enum _level);
         ~JLoggerWorker();
 
         std::vector<JConsoleLog> logs = std::vector<JConsoleLog>();   
         std::mutex log_mtx;
         std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
-        uint32_t id_counter;
-        spdlog::logger* logger;
-        enum spdlog::level::level_enum level;
-        // Check if logger vector is changed
-        // Use flip to make change variable false, some sort of marker or update
+        uint32_t id_counter = 0;
+        spdlog::logger* logger = nullptr;
+        enum spdlog::level::level_enum level = spdlog::level::level_enum::trace;
+        /**
+         * @brief Check if logger vector is changed
+         * Use flip to make change variable false, some sort of marker or update
+         * 
+         * @param flip Trigger a event, turn the flip off
+         * @return change state
+         */
         bool IsChanged(bool flip = true);
+        /**
+         * @brief Check if the logger merge with global logger
+         * 
+         * @return Merge checker result
+         */
         bool IsGlobal();
         void Clear();
     private:
@@ -69,23 +89,29 @@ namespace January::Engine {
         bool isglobal;
     };
 
-    //
-    // This is for console view content output
-    // Everything called here can be find in console view
-    // spdlog::info <- default logger is for os cli console output
-    //
+    /**
+     * @brief This is for console view content output
+     * Everything called here can be find in console view
+     * spdlog::info <- default logger is for os cli console output
+     */
     struct JLogger final {
     public:
         JLogger();
         ~JLogger();
 
-        // Engine level logger
-        // Vulkan stuff or application or thread output stuff
+        /**
+         * @brief Engine level logger
+         * Vulkan stuff or application or thread output stuff
+         */
         JLoggerWorker*      logger;
-        // Only for runtime, such as entt or scene, composition
+        /**
+         * @brief Only for runtime, such as entt or scene, composition
+         */
         JLoggerWorker*      runtime_logger;
-        // Gravity script logger
-        // Mostly for user
+        /**
+         * @brief Gravity script logger
+         * Mostly for user
+         */
         JLoggerWorker*      script_logger;
     };
 }

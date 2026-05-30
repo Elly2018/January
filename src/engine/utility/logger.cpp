@@ -9,8 +9,10 @@ namespace January::Engine {
             JConsoleLog cl = JConsoleLog();
             cl.level = msg.level;
             cl.messages = std::string(msg.payload.data(), msg.payload.size());;
-
             std::lock_guard<std::mutex> lock(log_mtx);
+            while(cl.messages.starts_with("\t") && id_counter == 0){
+                cl.messages.erase(cl.messages.begin());
+            }
             cl.id = id_counter;
             changed = true;
             id_counter++;
