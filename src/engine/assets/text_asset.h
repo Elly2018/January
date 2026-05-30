@@ -30,7 +30,7 @@ namespace January::Engine {
     /**
      * @brief The handle for the text asset
      */
-    class JTextAssetBase : public JAssetBase {
+    struct JTextAssetBase : public JAssetBase {
     public:
         DEFAULT_ASSET_CTOR(JTextAssetBase) {}
         /**
@@ -53,7 +53,7 @@ namespace January::Engine {
 
     class JTextAssetFactory : public JAssetFactory {
     public:
-        DEFAULT_ASSET_FACTORY_CTOR(JTextAssetFactory, ".txt", ".yy") {}
+        DEFAULT_ASSET_FACTORY_CTOR(JTextAssetFactory, ".txt") {}
     };
 }
 

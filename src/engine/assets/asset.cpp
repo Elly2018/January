@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "asset.h"
-
 #include "allasset.h"
+#include "../engine.h"
+#include "../struct/context.h"
 
 namespace January::Engine {
     JAssetEvent::JAssetEvent(){
@@ -68,12 +69,19 @@ namespace January::Engine {
         meta_target = b;
     }
 
+    JAssetBase::~JAssetBase(){}
+
     std::string JAssetBase::Encode(bool pretty){
         return EncodeHelper().dump(pretty ? 4 : -1);
     }
 
     bool JAssetBase::Vaild(){
-        
+        fs::path p = jengine.context->project_path;
+        fs::path t_p = p;
+        fs::path m_p = p;
+        t_p /= target;
+        m_p = meta_target;
+        return fs::exists(t_p) && fs::exists(m_p);
     }
 
     json JAssetBase::EncodeHelper() {
@@ -88,8 +96,28 @@ namespace January::Engine {
         }
     }
 
-    JAssetWorker::JAssetWorker(){
+    JAssetFactory::JAssetFactory(std::vector<std::string> _ext, System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
+
+    }
+
+    JAssetFactory::~JAssetFactory(){
         
+    }
+
+    std::shared_ptr<JAssetBase> JAssetFactory::CreateAsset(fs::path path) {
+        return std::make_shared<JAssetBase>(path, jwindow, jengine);
+    }
+
+    bool JAssetFactory::CheckExtension(std::string ext) {
+        for(auto& i : extension){
+            if(i == ext) return true;
+        }
+        return false;
+    }
+
+    JAssetWorker::JAssetWorker(System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
+        loadedFactory.push_back(std::make_shared<JAssetFactory>());
+        loadedFactory.push_back(std::make_shared<JTextAssetFactory>(jwindow, jengine));
     }
 
     JAssetWorker::~JAssetWorker(){
@@ -103,8 +131,8 @@ namespace January::Engine {
     std::shared_ptr<JAssetBase> JAssetWorker::GetJAssetHandler(fs::path target){
         std::string ext = target.extension().string();
         for(auto& f : loadedFactory){
-            if(f.first == ext && f.second.CheckExtension(ext)){
-                return f.second.CreateAsset(target);
+            if(f->CheckExtension(ext)){
+                return f->CreateAsset(target);
             }
         }
         return nullptr;

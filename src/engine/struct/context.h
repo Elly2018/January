@@ -36,6 +36,9 @@ namespace spdlog {
 }
 
 namespace January::Engine {
+
+    class JAssetWorker;
+
     // Current application context
     // This data cannot be store in disk, This is the memory only data
     struct AppContext {
@@ -61,6 +64,8 @@ namespace January::Engine {
         struct ImFont*              emoji_font;
         // Logger 
         struct JLogger*             logger;
+        // Asset
+        JAssetWorker*               asset;
     };
 }
 #endif

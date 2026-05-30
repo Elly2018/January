@@ -1,5 +1,6 @@
 #include "material_asset.h"
 #include "mesh_asset.h"
+#include "null_asset.h"
 #include "scene_asset.h"
 #include "script_asset.h"
 #include "shader_asset.h"

@@ -41,8 +41,8 @@ JAssetBase(_target, _win, _engine) \
 
 // Quick way to create asset factory subclass constructor
 #define DEFAULT_ASSET_FACTORY_CTOR(x, ...) \
-x () :  \
-JAssetFactory(std::vector<std::string>{ __VA_ARGS__ }) \
+x (System::JWindow& _win, JEngine& _engine) :  \
+JAssetFactory(std::vector<std::string>{ __VA_ARGS__ }, _win, _engine) \
 
 namespace January {
     namespace System {
@@ -58,7 +58,7 @@ namespace January {
         public:
             friend class JAssetWorker;
             JAssetEvent();
-            ~JAssetEvent();
+            virtual ~JAssetEvent();
             enum class JAssetEventType {
                 CLEAN = 0,
                 UPDATE = 1,
@@ -80,9 +80,10 @@ namespace January {
         /**
          * @brief The basic handle for the asset
          */
-        class JAssetBase {
-        public:
+        struct JAssetBase {
+            JAssetBase() = delete;
             JAssetBase(fs::path _target, System::JWindow& _win, JEngine& _engine);
+            virtual ~JAssetBase();
             /**
              * @brief This will encode this asset instance into metadata json string
              * Normally this is for store in the .january/Assets folder content
@@ -124,17 +125,25 @@ namespace January {
 
         class JAssetFactory {
         public:
-            JAssetFactory(std::vector<std::string> _ext);
+            JAssetFactory() = delete;
+            JAssetFactory(std::vector<std::string> _ext, System::JWindow& _win, JEngine& _engine);
+            virtual ~JAssetFactory();
             virtual std::shared_ptr<JAssetBase> CreateAsset(fs::path path);
             bool CheckExtension(std::string ext);
         private:
-            std::vector<std::string> extension;
+            std::vector<std::string> extension = std::vector<std::string>();
+            System::JWindow&    jwindow;
+            JEngine&            jengine;
         };
 
+        /**
+         * @brief The entry point for the asset management
+         * You could create factory to let engine recognize new asset type
+         */
         class JAssetWorker final {
         public:
-            JAssetWorker();
-            ~JAssetWorker();
+            JAssetWorker(System::JWindow& _win, JEngine& _engine);
+            virtual ~JAssetWorker();
             /**
              * @brief Get the Asset Handler object
              * 
@@ -168,9 +177,13 @@ namespace January {
             std::mutex la_mtx;
             /**
              * @brief The UUID - Asset factory instance map
+             * The first one will be the default asset type
              */
-            std::unordered_map<std::string, JAssetFactory> loadedFactory = std::unordered_map<std::string, JAssetFactory>();
+            std::vector<std::shared_ptr<JAssetFactory>> loadedFactory = std::vector<std::shared_ptr<JAssetFactory>>();
             std::mutex lf_mtx;
+        private:
+            System::JWindow&    jwindow;
+            JEngine&            jengine;
         };
     }
 }

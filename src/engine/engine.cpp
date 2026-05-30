@@ -36,6 +36,7 @@ SOFTWARE.
 #include "../system/window.h"
 #include "../gui/manager.h"
 #include "../engine/utility/logger.h"
+#include "../engine/assets/asset.h"
 
 using json = nlohmann::json;
 
@@ -145,6 +146,7 @@ namespace January::Engine {
         jengine.context = new AppContext();
         jengine.manager = new View::ViewManager();
         jengine.context->logger = new JLogger();
+        jengine.context->asset = new JAssetWorker(jwindow, jengine);
         LoadAppConfig(*jengine.config);
         GenerateAppContext(*jengine.context);
 
