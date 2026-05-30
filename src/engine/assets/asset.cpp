@@ -163,6 +163,7 @@ namespace January::Engine {
                 spdlog::error("\tData: {}", r);
             }
         }).detach();
+        return r;
     }
 
     bool JAssetBase::Vaild(){
