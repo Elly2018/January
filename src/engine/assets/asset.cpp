@@ -27,6 +27,7 @@ SOFTWARE.
 #include <fstream>
 #include <thread>
 #include <spdlog/spdlog.h>
+#include <uuid_v4.h>
 #include "allasset.h"
 #include "../engine.h"
 #include "../struct/context.h"
@@ -77,14 +78,18 @@ namespace January::Engine {
         b /= ".january";
         b /= relative_pro;
         meta_target = b;
-        Load_Meta();
-        Load_Data();
+
+        UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
+        UUIDv4::UUID uuid_gen = uuidGenerator.getUUID();
+        uuid = uuid_gen.str();
     }
 
     JAssetBase::~JAssetBase(){}
 
     bool JAssetBase::Load_Meta(){
         loading_meta.store(true);
+        spdlog::debug("Trying to load asset meta");
+        spdlog::debug("\tPath: {}", meta_target.string());
         if(fs::exists(target) && !fs::exists(meta_target)){
             Save_Meta();
         }
@@ -133,11 +138,20 @@ namespace January::Engine {
 
     bool JAssetBase::Save_Meta(){
         Encode(false);
+        return true;
     }
 
-    bool JAssetBase::Load_Data(){}
+    bool JAssetBase::Load_Data(){
+        spdlog::debug("Trying to load asset");
+        spdlog::debug("\tPath: {}", target.string());
+        return true;
+    }
 
-    bool JAssetBase::Save_Data(){}
+    bool JAssetBase::Save_Data(){
+        spdlog::debug("Trying to save asset");
+        spdlog::debug("\tPath: {}", target.string());
+        return true;
+    }
 
     bool JAssetBase::IsLoading() {
         return loading.load() || loading_meta.load();
@@ -145,22 +159,27 @@ namespace January::Engine {
 
     std::string JAssetBase::Encode(bool pretty){
         std::string r = EncodeHelper().dump(pretty ? 4 : -1);
-        std::thread([&](){
-            std::string p = (meta_target.string() + ".json");
+        std::thread([=](){
+            try{
+                std::string p = (meta_target.string() + ".json");
 
-            if (meta_target.has_parent_path()) {
-                fs::create_directories(meta_target.parent_path());
+                if (meta_target.has_parent_path()) {
+                    fs::create_directories(meta_target.parent_path());
+                }
+
+                std::ofstream file(p);
+                if (file.is_open()) {
+                    file << r;
+                }else{
+                    spdlog::error("Meta file output error !");
+                    spdlog::error("\tUUID: {}", uuid);
+                    spdlog::error("\tPath: {}", target.string());
+                    spdlog::error("\tMeta_Path: {}", p);
+                    spdlog::error("\tData: {}", r);
+                }
             }
-
-            std::ofstream file(p);
-            if (file.is_open()) {
-                file << r.c_str();
-            }else{
-                spdlog::error("Meta file output error !");
-                spdlog::error("\tUUID: {}", uuid);
-                spdlog::error("\tPath: {}", target.string());
-                spdlog::error("\tMeta_Path: {}", p);
-                spdlog::error("\tData: {}", r);
+            catch (const std::exception& e) {
+                spdlog::error("Exception in file writer thread: {}", e.what());
             }
         }).detach();
         return r;
@@ -191,7 +210,10 @@ namespace January::Engine {
     JAssetFactory::~JAssetFactory(){}
 
     std::shared_ptr<JAssetBase> JAssetFactory::CreateAsset(fs::path path) {
-        return std::make_shared<JAssetBase>(path, jwindow, jengine);
+        auto b = std::make_shared<JAssetBase>(path, jwindow, jengine);
+        b->Load_Meta();
+        b->Load_Data();
+        return b;
     }
 
     bool JAssetFactory::CheckExtension(std::string ext) {

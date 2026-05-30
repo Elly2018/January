@@ -27,6 +27,7 @@ SOFTWARE.
 
 namespace January::Engine {
     bool JTextAssetBase::Load_Data(){
+        JAssetBase::Load_Data();
         loading.store(true);
         if(fs::exists(target)){
             std::string p = target.string();
@@ -53,6 +54,7 @@ namespace January::Engine {
     }
 
     bool JTextAssetBase::Save_Data(){
+        JAssetBase::Save_Data();
         std::thread([&](){
             std::string p = target.string();
 
@@ -74,6 +76,9 @@ namespace January::Engine {
     }
 
     std::shared_ptr<JAssetBase> JTextAssetFactory::CreateAsset(fs::path path) {
-        return std::make_shared<JTextAssetBase>(path, jwindow, jengine);
+        auto b = std::make_shared<JTextAssetBase>(path, jwindow, jengine);
+        b->Load_Meta();
+        b->Load_Data();
+        return b;
     }
 }
