@@ -116,7 +116,7 @@ namespace January::Engine {
     }
 
     JAssetWorker::JAssetWorker(System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
-        loadedFactory.push_back(std::make_shared<JAssetFactory>());
+        loadedFactory.push_back(std::make_shared<JAssetFactory>(jwindow, jengine));
         loadedFactory.push_back(std::make_shared<JTextAssetFactory>(jwindow, jengine));
     }
 
