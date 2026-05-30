@@ -79,7 +79,7 @@ namespace January::Engine::View {
     void JViewConsole::Update() {
         if(jengine.context->logger->logger->IsChanged() || change_page){
             if(change_page){
-                logger_index = -1;
+                open_bottom = -1;
             }
             GetFilteredResult();
             change_page = false;
