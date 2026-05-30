@@ -72,7 +72,7 @@ namespace January::Engine {
     JAssetBase::JAssetBase(fs::path _target, System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
         target = _target;
         fs::path pro = jengine.context->project_path;
-        fs::path relative_pro = fs::relative(pro, _target);
+        fs::path relative_pro = fs::relative(_target, pro);
         fs::path b = jengine.context->project_path;
         b /= ".january";
         b /= relative_pro;
