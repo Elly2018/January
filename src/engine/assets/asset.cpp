@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "asset.h"
+#include <iostream>
+#include <filesystem>
+#include <fstream>
+#include <thread>
+#include <spdlog/spdlog.h>
 #include "allasset.h"
 #include "../engine.h"
 #include "../struct/context.h"
@@ -77,7 +82,25 @@ namespace January::Engine {
     JAssetBase::~JAssetBase(){}
 
     std::string JAssetBase::Encode(bool pretty){
-        return EncodeHelper().dump(pretty ? 4 : -1);
+        std::string r = EncodeHelper().dump(pretty ? 4 : -1);
+        std::thread([&](){
+            const char* p = meta_target.string().c_str();
+
+            if (meta_target.has_parent_path()) {
+                fs::create_directories(meta_target.parent_path());
+            }
+
+            std::ofstream file(p);
+            if (file.is_open()) {
+                file << r.c_str();
+            }else{
+                spdlog::error("Meta file output error !");
+                spdlog::error("\tUUID: {}", uuid);
+                spdlog::error("\tPath: {}", target.string());
+                spdlog::error("\tMeta_Path: {}", meta_target.string());
+            }
+
+        }).detach();
     }
 
     bool JAssetBase::Vaild(){

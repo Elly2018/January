@@ -31,6 +31,12 @@ namespace January::Engine::View {
     public:
         DEFAULT_VIEW_CTOR(JViewInspector) {}
         DEFAULT_VIEW_DECTOR(JViewInspector) {}
+
+        void Init() override;
+        void Update() override;
+        void Draw() override;
+        void DeInit() override;
+        void Focus(bool value) override;
     };
 }
 #endif
