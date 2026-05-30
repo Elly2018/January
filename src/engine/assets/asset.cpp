@@ -96,13 +96,13 @@ namespace January::Engine {
         }
     }
 
-    JAssetFactory::JAssetFactory(std::vector<std::string> _ext, System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
+    JAssetFactory::JAssetFactory(std::vector<std::string> _ext, System::JWindow& _win, JEngine& _engine) 
+        : extension(_ext), jwindow(_win), jengine(_engine) {}
 
-    }
+    JAssetFactory::JAssetFactory(System::JWindow& _win, JEngine& _engine) 
+        : jwindow(_win), jengine(_engine) {}
 
-    JAssetFactory::~JAssetFactory(){
-        
-    }
+    JAssetFactory::~JAssetFactory(){}
 
     std::shared_ptr<JAssetBase> JAssetFactory::CreateAsset(fs::path path) {
         return std::make_shared<JAssetBase>(path, jwindow, jengine);

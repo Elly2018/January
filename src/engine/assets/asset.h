@@ -126,6 +126,7 @@ namespace January {
         class JAssetFactory {
         public:
             JAssetFactory() = delete;
+            JAssetFactory(System::JWindow& _win, JEngine& _engine);
             JAssetFactory(std::vector<std::string> _ext, System::JWindow& _win, JEngine& _engine);
             virtual ~JAssetFactory();
             virtual std::shared_ptr<JAssetBase> CreateAsset(fs::path path);
