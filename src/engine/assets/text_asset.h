@@ -33,20 +33,9 @@ namespace January::Engine {
     struct JTextAssetBase : public JAssetBase {
     public:
         DEFAULT_ASSET_CTOR(JTextAssetBase) {}
-        /**
-         * @brief This will encode this asset instance into metadata json string
-         * Normally this is for store in the .january/Assets folder content
-         * 
-         * @param pretty Print json pretty
-         * @return std::string The json data
-         */
-        json EncodeHelper() override;
-        /**
-         * @brief Dump the json metadata and replace the value under this object
-         * 
-         * @param json Json to memory data
-         */
-        void Decode(json json) override;
+
+        bool Load_Data() override;
+        bool Save_Data() override;
 
         std::string text;
     };

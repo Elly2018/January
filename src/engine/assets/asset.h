@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef ENGINE_ASSETS_ASSET_H
 #define ENGINE_ASSETS_ASSET_H
 #include <string>
+#include <atomic>
 #include <filesystem>
 #include <functional>
 #include <unordered_map>
@@ -85,6 +86,16 @@ namespace January {
             JAssetBase(fs::path _target, System::JWindow& _win, JEngine& _engine);
             virtual ~JAssetBase();
             /**
+             * @brief Trying to load exists meta file4
+             * 
+             * @return load success or not
+             */
+            bool Load_Meta();
+            bool Save_Meta();
+            virtual bool Load_Data();
+            virtual bool Save_Data();
+            bool IsLoading();
+            /**
              * @brief This will encode this asset instance into metadata json string
              * Normally this is for store in the .january/Assets folder content
              * 
@@ -121,6 +132,8 @@ namespace January {
         protected:
             System::JWindow&    jwindow;
             JEngine&            jengine;
+            std::atomic_bool    loading = false;
+            std::atomic_bool    loading_meta = false;
         };
 
         class JAssetFactory {

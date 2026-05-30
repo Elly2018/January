@@ -77,14 +77,76 @@ namespace January::Engine {
         b /= ".january";
         b /= relative_pro;
         meta_target = b;
+        Load_Meta();
+        Load_Data();
     }
 
     JAssetBase::~JAssetBase(){}
 
+    bool JAssetBase::Load_Meta(){
+        loading_meta.store(true);
+        if(fs::exists(target) && !fs::exists(meta_target)){
+            Save_Meta();
+        }
+        if(fs::exists(meta_target)){
+            std::string p = meta_target.string();
+            std::ifstream file(p);
+            if (!file.is_open()) {
+                spdlog::error("Could not open: {}", p);
+                loading_meta.store(false);
+                return false;
+            }
+
+            std::string json_text;
+            std::string line;
+            // Loop continues until EOF (End of File) or an error occurs
+            while (std::getline(file, line)) {
+                json_text += line;
+                json_text += "\n";
+            }
+
+            try{
+                json j = json::parse(json_text);
+                Decode(j);
+                loading_meta.store(false);
+                return true;
+            }
+            catch(const json::parse_error& e){
+                spdlog::error("JSON parse error in file {}: {} (at byte {})", meta_target.string(), e.what(), e.byte);
+                loading_meta.store(false);
+                return false;
+            }
+            catch (const json::exception& e) {
+                spdlog::error("JSON data error in file {}: {}", meta_target.string(), e.what());
+                loading_meta.store(false);
+                return false;
+            }
+            catch (const std::exception& e) {
+                spdlog::error("Standard exception reading meta file {}: {}", meta_target.string(), e.what());
+                loading_meta.store(false);
+                return false;
+            }
+        }
+        loading_meta.store(false);
+        return false;
+    }
+
+    bool JAssetBase::Save_Meta(){
+        Encode(false);
+    }
+
+    bool JAssetBase::Load_Data(){}
+
+    bool JAssetBase::Save_Data(){}
+
+    bool JAssetBase::IsLoading() {
+        return loading.load() || loading_meta.load();
+    }
+
     std::string JAssetBase::Encode(bool pretty){
         std::string r = EncodeHelper().dump(pretty ? 4 : -1);
         std::thread([&](){
-            const char* p = meta_target.string().c_str();
+            std::string p = (meta_target.string() + ".json");
 
             if (meta_target.has_parent_path()) {
                 fs::create_directories(meta_target.parent_path());
@@ -97,9 +159,9 @@ namespace January::Engine {
                 spdlog::error("Meta file output error !");
                 spdlog::error("\tUUID: {}", uuid);
                 spdlog::error("\tPath: {}", target.string());
-                spdlog::error("\tMeta_Path: {}", meta_target.string());
+                spdlog::error("\tMeta_Path: {}", p);
+                spdlog::error("\tData: {}", r);
             }
-
         }).detach();
     }
 

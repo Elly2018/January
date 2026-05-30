@@ -22,19 +22,55 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "text_asset.h"
+#include <fstream>
+#include <spdlog/spdlog.h>
 
 namespace January::Engine {
-    json JTextAssetBase::EncodeHelper(){
-        json buffer = JAssetBase::EncodeHelper();
-        buffer["text"] = text;
-        return buffer;
+    bool JTextAssetBase::Load_Data(){
+        loading.store(true);
+        if(fs::exists(target)){
+            std::string p = target.string();
+            std::fstream file(p);
+
+            if(!file.is_open()){
+                spdlog::error("Could not open: {}", p);
+                loading.store(false);
+                return false;
+            }
+
+            text.clear();
+            std::string line;
+            // Loop continues until EOF (End of File) or an error occurs
+            while (std::getline(file, line)) {
+                text += line;
+                text += "\n";
+            }
+            loading.store(true);
+            return true;
+        }
+        loading.store(false);
+        return false;
     }
 
-    void JTextAssetBase::Decode(json json){
-        JAssetBase::Decode(json);
-        if(json["text"].is_string()){
-            text = json["text"].get<std::string>();
-        }
+    bool JTextAssetBase::Save_Data(){
+        std::thread([&](){
+            std::string p = target.string();
+
+            if (target.has_parent_path()) {
+                fs::create_directories(target.parent_path());
+            }
+
+            std::ofstream file(p);
+            if (file.is_open()) {
+                file << text.c_str();
+            }else{
+                spdlog::error("Text file output error !");
+                spdlog::error("\tUUID: {}", uuid);
+                spdlog::error("\tPath: {}", target.string());
+                spdlog::error("\tMeta_Path: {}", meta_target.string());
+            }
+        }).detach();
+        return true;
     }
 
     std::shared_ptr<JAssetBase> JTextAssetFactory::CreateAsset(fs::path path) {
