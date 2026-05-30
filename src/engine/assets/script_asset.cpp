@@ -21,23 +21,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "text_asset.h"
+#include "script_asset.h"
 
 namespace January::Engine {
-    json JTextAssetBase::EncodeHelper(){
+    json JScriptAssetBase::EncodeHelper(){
         json buffer = JAssetBase::EncodeHelper();
         buffer["text"] = text;
+        buffer["type"] = (int32_t)type;
         return buffer;
     }
 
-    void JTextAssetBase::Decode(json json){
+    void JScriptAssetBase::Decode(json json){
         JAssetBase::Decode(json);
         if(json["text"].is_string()){
             text = json["text"].get<std::string>();
         }
+        if(json["type"].is_number()){
+            type = (ScriptType)json["type"].get<int32_t>();
+        }
     }
 
-    std::shared_ptr<JAssetBase> JTextAssetFactory::CreateAsset(fs::path path) {
-        return std::make_shared<JTextAssetBase>(path, jwindow, jengine);
+    std::shared_ptr<JAssetBase> JScriptAssetFactory::CreateAsset(fs::path path) {
+        return std::make_shared<JScriptAssetBase>(path, jwindow, jengine);
     }
 }

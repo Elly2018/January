@@ -131,7 +131,7 @@ namespace January {
             virtual ~JAssetFactory();
             virtual std::shared_ptr<JAssetBase> CreateAsset(fs::path path);
             bool CheckExtension(std::string ext);
-        private:
+        protected:
             std::vector<std::string> extension = std::vector<std::string>();
             System::JWindow&    jwindow;
             JEngine&            jengine;

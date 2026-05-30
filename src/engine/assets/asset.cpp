@@ -32,7 +32,11 @@ namespace January::Engine {
     }
 
     JAssetEvent::~JAssetEvent(){
-        
+        std::lock_guard<std::mutex> lock(handle_mtx);
+        for(auto& i : Handlers){
+            i.token.reset();
+        }
+        Handlers.clear();
     }
 
     std::shared_ptr<void> JAssetEvent::Register(Handler handle){
@@ -121,21 +125,21 @@ namespace January::Engine {
     }
 
     JAssetWorker::~JAssetWorker(){
-        std::lock_guard<std::mutex> lock(EventHandler.handle_mtx);
-        for(auto& i : EventHandler.Handlers){
-            i.token.reset();
-        }
-        EventHandler.Handlers.clear();
+        std::lock_guard<std::mutex> lock(lf_mtx);
+        std::lock_guard<std::mutex> lock2(la_mtx);
+        loadedFactory.clear();
+        loadedAssets.clear();
     }
 
     std::shared_ptr<JAssetBase> JAssetWorker::GetJAssetHandler(fs::path target){
+        if(loadedFactory.size() == 0) return nullptr;
         std::string ext = target.extension().string();
         for(auto& f : loadedFactory){
             if(f->CheckExtension(ext)){
                 return f->CreateAsset(target);
             }
         }
-        return nullptr;
+        return loadedFactory.at(0)->CreateAsset(target);
     }
 
     bool JAssetWorker::GetJAssetHandlerByUUID(std::string uuid, std::shared_ptr<JAssetBase>& asset){

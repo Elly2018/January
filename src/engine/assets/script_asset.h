@@ -24,4 +24,58 @@ SOFTWARE.
 #pragma once
 #ifndef ENGINE_ASSETS_SCRIPT_ASSET_H
 #define ENGINE_ASSETS_SCRIPT_ASSET_H
+
+#include "asset.h"
+
+namespace January::Engine {
+    /**
+     * @brief The handle for the text asset
+     */
+    struct JScriptAssetBase : public JAssetBase {
+    public:
+        DEFAULT_ASSET_CTOR(JScriptAssetBase) {}
+
+        /**
+         * @brief The script type
+         * Affect how engine execute it
+         */
+        enum class ScriptType {
+            /**
+             * @brief Factory type 
+             * Contain two method
+             * ss
+             * ss
+             */
+            FACTORY = 0,
+            ASSET = 1,
+            ECS = 2,
+        };
+
+        /**
+         * @brief This will encode this asset instance into metadata json string
+         * Normally this is for store in the ".january/Assets" folder content
+         * 
+         * @param pretty Print json pretty
+         * @return std::string The json data
+         */
+        json EncodeHelper() override;
+        /**
+         * @brief Dump the json metadata and replace the value under this object
+         * 
+         * @param json Json to memory data
+         */
+        void Decode(json json) override;
+
+        std::string text;
+        ScriptType type;
+    };
+
+    class JScriptAssetFactory : public JAssetFactory {
+    public:
+        DEFAULT_ASSET_FACTORY_CTOR(JScriptAssetFactory, ".gravity") {}
+
+        std::shared_ptr<JAssetBase> CreateAsset(fs::path path) override;
+    };
+}
+
 #endif
