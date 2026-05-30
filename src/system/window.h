@@ -32,7 +32,7 @@ SOFTWARE.
 #include <stdlib.h>         // abort
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
-#include "vulkan_helper.h"
+#include "../core/graphics.h"
 #include "../config.h"
 
 namespace January {

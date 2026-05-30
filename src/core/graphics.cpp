@@ -1,4 +1,4 @@
-#include "vulkan_helper.h"
+#include "graphics.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdexcept>
@@ -172,14 +172,14 @@ namespace January
         spdlog::trace("Trying init vulkan instance...Finished");
     }
 
-    void VGetPhysocalDeviceFront(VkInstance &instance, VkPhysicalDevice &p_device)
+    void VGetPhysicalDeviceFront(VkInstance &instance, VkPhysicalDevice &p_device)
     {
         std::vector<VkPhysicalDevice> r = std::vector<VkPhysicalDevice>();
-        VGetPhysocalDeviceAll(instance, r);
+        VGetPhysicalDeviceAll(instance, r);
         p_device = r.front();
     }
 
-    void VGetPhysocalDeviceAll(VkInstance &instance, std::vector<VkPhysicalDevice> &arr)
+    void VGetPhysicalDeviceAll(VkInstance &instance, std::vector<VkPhysicalDevice> &arr)
     {
         uint32_t deviceCount = 0;
         VkResult result = vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -221,7 +221,7 @@ namespace January
         return (uint32_t)-1;
     }
 
-    void VGetLogicalDevice(VkPhysicalDevice& p_device, VkQueue& queue, uint32_t& queue_family_index, VkAllocationCallbacks* allocation, VkDevice& device)
+    void VGetLogicalDevice(VkPhysicalDevice& p_device, uint32_t& queue_family_index, VkAllocationCallbacks* allocation, VkQueue& queue, VkDevice& device)
     {
         std::vector<const char*> device_extensions;
         device_extensions.push_back("VK_KHR_swapchain");

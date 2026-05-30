@@ -48,14 +48,14 @@ namespace January::System {
 
         VCreateInstance(instance_extensions, win.g_Instance, win.g_Allocator);
 
-        VGetPhysocalDeviceFront(win.g_Instance, win.g_PhysicalDevice);
+        VGetPhysicalDeviceFront(win.g_Instance, win.g_PhysicalDevice);
         IM_ASSERT(win.g_PhysicalDevice != VK_NULL_HANDLE);
 
         // Select graphics queue family
         win.g_QueueFamily = VGetQueueFamily(win.g_PhysicalDevice);
         IM_ASSERT(win.g_QueueFamily != (uint32_t)-1);
 
-        VGetLogicalDevice(win.g_PhysicalDevice, win.g_Queue, win.g_QueueFamily, win.g_Allocator, win.g_Device);
+        VGetLogicalDevice(win.g_PhysicalDevice, win.g_QueueFamily, win.g_Allocator, win.g_Queue, win.g_Device);
         VGetDescriptionPool(win.g_Device, win.g_Allocator, win.g_DescriptorPool);
     }
     // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
