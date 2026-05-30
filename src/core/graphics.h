@@ -44,76 +44,81 @@ namespace January {
     VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData);
 #endif
 
-    // 
-    // Print the physical device information on the log 
-    //
+    /**
+     * @brief Print the physical device information on the log 
+     */ 
     void VPrintDeviceProperty(uint32_t index, VkPhysicalDevice &p_device);
+    /**
+     * @brief Quickly get extensions support on user's system
+     * 
+     * @return The text array of extensions
+     */
     std::vector<const char*> VGetExtensions();
 
-    //
-    // @brief Setup SDL
-    // This should be called before everything
-    //
+    /**
+     * @brief Setup SDL
+     * This should be called before everything
+     */
     void VInit();
-    //
-    // @brief Create vulkan instance
-    //
-    // @tparam extensions Better call VGetExtensions() first to fill the input
-    // @tparam instance The return vulkan instance handle
-    // @tparam allocation The return vulkan location callback allocation handler
-    //
+    /**
+     * @brief Create vulkan instance
+     *
+     * @tparam extensions Better call VGetExtensions() first to fill the input
+     * @tparam instance The return vulkan instance handle
+     * @tparam allocation The return vulkan location callback allocation handler
+     */
     void VCreateInstance(std::vector<const char*> extensions, VkInstance& instance, VkAllocationCallbacks* allocation);
-    //
-    // @brief Get the first physical device
-    // 
-    // @tparam instance The created vulkan handle
-    // @tparam p_device The return device handler
-    //
+    /**
+     * @brief Get the first physical device
+     * 
+     * @tparam instance The created vulkan handle
+     * @tparam p_device The return device handler
+     */
     void VGetPhysicalDeviceFront(VkInstance& instance, VkPhysicalDevice& p_device);
-    //
-    // @brief Get the all physical device
-    //
-    // @tparam instance The created vulkan handle
-    // @tparam arr The return devices handler
-    //
+    /**
+     * @brief Get the all physical device
+     *
+     * @tparam instance The created vulkan handle
+     * @tparam arr The return devices handler
+     */
     void VGetPhysicalDeviceAll(VkInstance& instance, std::vector<VkPhysicalDevice>& arr);
-    //
-    // @brief Get graphics queue from the phisical device
-    //
-    // @tparam p_device The physical device handler
-    // 
-    // @return The first queue index with VK_QUEUE_GRAPHICS_BIT enable
-    //
+    /**
+     * @brief Get graphics queue from the phisical device
+     *
+     * @tparam p_device The physical device handler
+     * 
+     * @return The first queue index with VK_QUEUE_GRAPHICS_BIT enable
+     */
     uint32_t VGetQueueFamily(VkPhysicalDevice& p_device);
-    //
-    // @brief Create Logical Device (with 1 queue)
-    //
-    // @tparam p_device The physical device input
-    // @tparam queue_family_index The queue index
-    // @tparam allocation The location callback handler
-    // @tparam queue The return queue handler
-    // @tparam device The return logical device
-    //
+    /**
+     * @brief Create Logical Device (with 1 queue)
+     *
+     * @tparam p_device The physical device input
+     * @tparam queue_family_index The queue index
+     * @tparam allocation The location callback handler
+     * @tparam queue The return queue handler
+     * @tparam device The return logical device
+     */
     void VGetLogicalDevice(VkPhysicalDevice& p_device, uint32_t& queue_family_index, VkAllocationCallbacks* allocation, VkQueue& queue, VkDevice& device);
-    //
-    // @brief Create Descriptor Pool
-    // If you wish to load e.g. additional textures you may need to alter pools sizes and maxSets.
-    //
-    // @tparam device The logical device handler
-    // @tparam allocation The location callback handler
-    // @tparam pool The return pool
-    // 
+    /**
+     * @brief Create Descriptor Pool
+     * If you wish to load e.g. additional textures you may need to alter pools sizes and maxSets.
+     *
+     * @tparam device The logical device handler
+     * @tparam allocation The location callback handler
+     * @tparam pool The return pool
+     */
     void VGetDescriptionPool(VkDevice& device, VkAllocationCallbacks* allocation, VkDescriptorPool& pool);
-    //
-    // @brief Compile shader
-    //
-    // @tparam sourceName The name of the shader
-    // @tparam shaderKind Shader type
-    // @tparam glslSource Shader string data
-    // @tparam optimize Optimization flag
-    //
-    // @return The binary data compiled result
-    //
+    /**
+     * @brief Compile shader
+     *
+     * @tparam sourceName The name of the shader
+     * @tparam shaderKind Shader type
+     * @tparam glslSource Shader string data
+     * @tparam optimize Optimization flag
+     *
+     * @return The binary data compiled result
+     */
     std::vector<uint32_t> VCompileGLSLToSPIRV(const std::string& sourceName, shaderc_shader_kind shaderKind, const std::string& glslSource, bool optimize = true);
     VkShaderModule VCreateShaderModule(VkDevice& logicalDevice, const std::vector<uint32_t>& spirvCode);
     VkPipelineLayout VCreatePipelineLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout = VK_NULL_HANDLE);

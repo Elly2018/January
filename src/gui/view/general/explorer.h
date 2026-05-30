@@ -36,94 +36,135 @@ SOFTWARE.
 namespace fs = std::filesystem;
 
 namespace January::Engine::View {
-    //
-    // This content the file detail description
-    //
+    /**
+     * @brief This content the file detail description
+     */
     struct JFileContent {
-        // File unique uuid for engine
+        /**
+         * @brief File unique uuid for engine
+         */
         UUIDv4::UUID uuid;
-        // File title, normally should be filename or foldername without extension
+        /**
+         * @brief File title, normally should be filename or foldername without extension
+         */
         std::string title;
-        // Absolute path for this file or folder
+        /**
+         * @brief Absolute path for this file or folder
+         */
         fs::path path;
-        // File or Folder
+        /**
+         * @brief File or Folder
+         */
         bool is_dir;
-        // The size of the file
+        /**
+         * @brief The size of the file
+         */
         uintmax_t filesize;
     };
 
-    //
-    // Folder tree node structure
-    // This use for the left side of the panel
-    //
+    /**
+     * @brief Folder tree node structure
+     * This use for the left side of the panel
+     */
     struct JFolderContent {
-        // Display label on the gui
+        /**
+         * @brief Display label on the gui
+         */
         std::string name;
-        // Relative path for this file or folder
+        /**
+         * @brief Relative path for this file or folder
+         */
         std::string path;
-        // Is user open this folder or not
+        /**
+         * @brief Is user open this folder or not
+         */
         bool is_open;
-        // Children of the folder node
+        /**
+         * @brief Children of the folder node
+         */
         std::vector<JFolderContent*> children;
-        // Destroy all the children recursivily
+        /**
+         * @brief Destroy all the children recursivily
+         */
         void CleanChildren();
     };
 
-    //
-    // The asset browser view
-    // Handle files and folder etc...
-    // Should only show the project "Assets" relative folder content
-    //
+    /**
+     * @brief The asset browser view
+     * Handle files and folder etc...
+     * Should only show the project "Assets" relative folder content
+     */
     class JViewExplorer : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewExplorer) {}
         DEFAULT_VIEW_DECTOR(JViewExplorer) {}
 
-        //
-        // The right panel display mode currently
-        // 0: Show file in the disk
-        // 1: Show search result
-        //
+        /**
+         * @brief The right panel display mode currently
+         */
         enum class DisplayMode {
+            /**
+             * @brief Show file in the disk
+             */
             NORMAL = 0,
+            /**
+             * @brief Show search result
+             */
             SEARCH = 1
         };
 
-        // 
-        // The file type filter
-        // 0: The flag == this, this mean no filter at all
-        //
+        /**
+         * @brief The file type filter
+         */
         enum class FilterFlag {
+            /**
+             * @brief The flag == this, this mean no filter at all
+             */
             NONE = 0,
             PREFAB = 1 << 1,
             MATERIAL = 1 << 2,
             TEXTURE = 1 << 3,
         };
 
-        //
-        // The path bar input mode
-        // 0: Show the path buttons
-        // 1: Show a input field let user enter relative path
-        // 2: Show search input field
-        //
+        /**
+         * @brief The path bar input mode
+         */
         enum class PathBarDisplay {
+            /**
+             * @brief Show the path buttons
+             */
             DEFAULT = 0,
+            /**
+             * @brief Show a input field let user enter relative path
+             */
             PATH_INPUT = 1,
+            /**
+             * @brief Show search input field
+             */
             SEARCH_INPUT = 2,
         };
 
-        //
-        // Search state
-        // 0: Not start search yet
-        // 1: Search background thread is running
-        // 2: It's done, scan finish
-        //
+        /**
+         * @brief Search state
+         */
         enum class SearchState {
+            /**
+             * @brief Not start search yet
+             */
             NONE = 0,
+            /**
+             * @brief Search background thread is running
+             */
             SEARCHING = 1,
+            /**
+             * @brief It's done, scan finish
+             */
             DONE = 2
         };
 
+        /**
+         * @copydoc January::Engine::View::JViewBase::Init()
+         */
         void Init() override;
         void Update() override;
         void Draw() override;
