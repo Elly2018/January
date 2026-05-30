@@ -36,91 +36,129 @@ SOFTWARE.
 namespace fs = std::filesystem;
 
 namespace January::Engine::View {
-    //
-    // This content the file detail description
-    //
+    /**
+     * @brief This content the file detail description
+     */
     struct JFileContent {
-        // File unique uuid for engine
+        /**
+         * @brief File unique uuid for engine
+         */
         UUIDv4::UUID uuid;
-        // File title, normally should be filename or foldername without extension
+        /**
+         * @brief File title, normally should be filename or foldername without extension
+         */
         std::string title;
-        // Absolute path for this file or folder
+        /**
+         * @brief Absolute path for this file or folder
+         */
         fs::path path;
-        // File or Folder
+        /**
+         * @brief File or Folder
+         */
         bool is_dir;
-        // The size of the file
+        /**
+         * @brief The size of the file
+         */
         uintmax_t filesize;
     };
 
-    //
-    // Folder tree node structure
-    // This use for the left side of the panel
-    //
+    /**
+     * @brief Folder tree node structure
+     * This use for the left side of the panel
+     */
     struct JFolderContent {
-        // Display label on the gui
+        /**
+         * @brief Display label on the gui
+         */
         std::string name;
-        // Relative path for this file or folder
+        /**
+         * @brief Relative path for this file or folder
+         */
         std::string path;
-        // Is user open this folder or not
+        /**
+         * @brief Is user open this folder or not
+         */
         bool is_open;
-        // Children of the folder node
+        /**
+         * @brief Children of the folder node
+         */
         std::vector<JFolderContent*> children;
-        // Destroy all the children recursivily
+        /**
+         * @brief Destroy all the children recursivily
+         */
         void CleanChildren();
     };
 
-    //
-    // The asset browser view
-    // Handle files and folder etc...
-    // Should only show the project "Assets" relative folder content
-    //
+    /**
+     * @brief The asset browser view
+     * Handle files and folder etc...
+     * Should only show the project "Assets" relative folder content
+     */
     class JViewExplorer : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewExplorer) {}
         DEFAULT_VIEW_DECTOR(JViewExplorer) {}
 
-        //
-        // The right panel display mode currently
-        // 0: Show file in the disk
-        // 1: Show search result
-        //
+        /**
+         * @brief The right panel display mode currently
+         */
         enum class DisplayMode {
+            /**
+             * @brief Show file in the disk
+             */
             NORMAL = 0,
+            /**
+             * @brief Show search result
+             */
             SEARCH = 1
         };
 
-        // 
-        // The file type filter
-        // 0: The flag == this, this mean no filter at all
-        //
+        /**
+         * @brief The file type filter
+         */
         enum class FilterFlag {
+            /**
+             * @brief The flag == this, this mean no filter at all
+             */
             NONE = 0,
             PREFAB = 1 << 1,
             MATERIAL = 1 << 2,
             TEXTURE = 1 << 3,
         };
 
-        //
-        // The path bar input mode
-        // 0: Show the path buttons
-        // 1: Show a input field let user enter relative path
-        // 2: Show search input field
-        //
+        /**
+         * @brief The path bar input mode
+         */
         enum class PathBarDisplay {
+            /**
+             * @brief Show the path buttons
+             */
             DEFAULT = 0,
+            /**
+             * @brief Show a input field let user enter relative path
+             */
             PATH_INPUT = 1,
+            /**
+             * @brief Show search input field
+             */
             SEARCH_INPUT = 2,
         };
 
-        //
-        // Search state
-        // 0: Not start search yet
-        // 1: Search background thread is running
-        // 2: It's done, scan finish
-        //
+        /**
+         * @brief Search state
+         */
         enum class SearchState {
+            /**
+             * @brief Not start search yet
+             */
             NONE = 0,
+            /**
+             * @brief Search background thread is running
+             */
             SEARCHING = 1,
+            /**
+             * @brief It's done, scan finish
+             */
             DONE = 2
         };
 
@@ -133,99 +171,182 @@ namespace January::Engine::View {
     protected:
         void DrawItemLine(JFileContent& target);
         void DrawItemGrid(JFileContent& target, int32_t size);
-        // Drawing path actions
-        // 0: Return last travel folder
-        // 1: Go to parent folder
-        // 2: Go to root folder, which is project path + "Assets"
+        /**
+         * @brief Drawing path actions
+         * Return last travel folder
+         * 
+         * @details It checks the path_input
+         * 1: Go to parent folder
+         * 2: Go to root folder, which is project path + "Assets"
+         */
         void DrawPathAction();
-        // Drawing path bar, with a row of folder button for quick travel
+        /**
+         * @brief Drawing path bar, with a row of folder button for quick travel
+         */
         void DrawPathBar();
-        // Left panel and right panel require splitter
-        // And this function is that splitter
-        // ImGui::SameLine is included, no need to write it
+        /**
+         * @brief Left panel and right panel require splitter
+         * And this function is that splitter
+         * ImGui::SameLine is included, no need to write it
+         */
         void DrawMiddleHandle();
-        // Render the folder tree
+        /**
+         * @brief Render the folder tree
+         * 
+         * @param[in] tree Tree instance
+         * @param[in] level Current depth level
+         */
         void DrawLeftSideTreeNode(JFolderContent& tree, int32_t level);
-        // Drawing left panel content
+        /**
+         * @brief Drawing left panel content
+         */
         void DrawLeftSide();
-        // Drawing right panel content
+        /**
+         * @brief Drawing right panel content
+         */
         void DrawRightSide();
-        // Handle item tooltip event
+        /**
+         * @brief Handle item tooltip event
+         * 
+         * @param _path The item's path
+         * @param is_dir Is item directory or file
+         * @param filesize The size of the file
+         */
         void DrawItemTooltip(fs::path _path, bool is_dir = true, uintmax_t filesize = 0);
-        // Handle item event, such as right click or double click
+        /**
+         * @brief Handle item event, such as right click or double click
+         * 
+         * @param _path The item's path
+         * @param is_dir Is item directory or file
+         * @param tree_node Is it called from tree render method
+         */
         void DrawItemEvent(fs::path _path, bool is_dir = true, bool tree_node = false);
-        // Handle right panel background context menu event
+        /**
+         * @brief Handle right panel background context menu event
+         */
         void DrawRightSide_Event();
-        // Update the folder list, this should get called when "path" variable changed
+        /**
+         * @brief Update the folder list, this should get called when "path" variable changed
+         */
         void UpdatePathNode();
-        // Fire a thread to do a folder deep searching
+        /**
+         * @brief Fire a thread to do a folder deep searching
+         */
         void StartSearch();
-        // Base on Assets folder content
-        // Create metadata for it
+        /**
+         * @brief Base on Assets folder content
+         * Create metadata for it
+         */
         void StartEncoding();
-        // Apply the filter to this function
-        // Return:
-        // True: It passed, render it
-        // False: Nope, ignore it
+        /**
+         * @brief Apply the filter to this function
+         * Return:
+         * True: It passed, render it
+         * False: Nope, ignore it
+         */
         bool FilterCheck(JFileContent& file);
-        // Help with file watcher update
-        // Monitor the "changed" value to switch focus folder
+        /**
+         * @brief Help with file watcher update
+         * Monitor the "changed" value to switch focus folder
+         */
         void UpdateFileWatcher();
     public:
-        // Reset it
-        // Should be called when load a project
+        /**
+         * @brief Reset it
+         * Should be called when load a project
+         */
         void ReloadProject();
-        // You will get project + Assets
+        /**
+         * @brief You will get project + Assets
+         * 
+         * @return Get current asset folder (Absolute)
+         */
         fs::path CurrentFolder();
-        // You will get project + .january + Assets
+        /**
+         * @brief You will get project + .january + Assets
+         * 
+         * @return Get current meta asset folder (Absolute)
+         */
         fs::path CurrentMetaFolder();
-        // The relative path base on project root folder
+        /**
+         * @brief The relative path base on project root folder
+         */
         std::string path = "Assets";
-        // For the inputText, it need a buffer value
-        // We can't just put "path" variable into there
-        // We will have no idea to get the previous path to record
+        /**
+         * @brief For the inputText, it need a buffer value
+         * We can't just put "path" variable into there
+         * We will have no idea to get the previous path to record
+         */
         std::string path_buffer = "";
-        // Use for render path bar (The top bar with list of folder button for quick traval)
+        /**
+         * @brief Use for render path bar (The top bar with list of folder button for quick traval)
+         */
         std::vector<std::string> path_node;
 
     private:
-        // The right panel content display mode
+        /**
+         * @brief The right panel content display mode
+         */
         std::atomic<DisplayMode> mode = DisplayMode::NORMAL;
-        // The filter content flag
+        /**
+         * @brief The filter content flag
+         */
         std::atomic<FilterFlag> filter = FilterFlag::NONE;
-        // Affect the button and other UI display
+        /**
+         * @brief Affect the button and other UI display
+         */
         std::atomic<SearchState> search_state = SearchState::NONE;
-        // Search text
+        /**
+         * @brief Search text
+         */
         std::string search = "";
-        // Modify by tyhe file watcher worker callback
-        // Does user change the path by input or enter folder etc...
-        // When changed is true
-        // It will re-generate the "files" variables
+        /**
+         * @brief Modify by tyhe file watcher worker callback
+         * Does user change the path by input or enter folder etc...
+         * When changed is true
+         * It will re-generate the "files" variables
+         */
         std::atomic_bool changed = false;
-        // The path bar display mode
+        /**
+         * @brief The path bar display mode
+         */
         std::atomic<PathBarDisplay> path_input = PathBarDisplay::DEFAULT;
-        // Init will be the trigger
-        // Define if the first event call is on.
+        /**
+         * @brief Init will be the trigger
+         * Define if the first event call is on.
+         */
         std::atomic_bool init = false;
-        // Because left right panel is using splitter
-        // The left width is dynamic which required a variable to record it
+        /**
+         * @brief Because left right panel is using splitter
+         * The left width is dynamic which required a variable to record it
+         */
         std::atomic<float> leftWidth = 0;
-        // The slider
-        // Range [0 - 10]
-        // Display mode will change base on variable is 0 or not
-        // 0: Line text display
-        // 1-10: Grid item display
+        /**
+         * @brief The slider
+         * Range [0 - 10]
+         * Display mode will change base on variable is 0 or not
+         * 0: Line text display
+         * 1-10: Grid item display
+         */
         std::atomic_int32_t imgSize = 1;
-        // Folder watcher extension worker
+        /**
+         * @brief Folder watcher extension worker
+         */
         filewatch::FileWatch<std::string>* watcher = nullptr;
-        // Right side files data
+        /**
+         * @brief Right side files data
+         */
         std::vector<JFileContent> files = std::vector<JFileContent>();
         std::mutex files_mtx;
-        // The left side folder tree structure
+        /**
+         * @brief The left side folder tree structure
+         */
         JFolderContent folder_node = JFolderContent();
         std::mutex folder_node_mtx;
-        // Remember the travel history
-        // In order to make return last history button works
+        /**
+         * @brief Remember the travel history
+         * In order to make return last history button works
+         */
         std::stack<std::string> travel_record;
         std::mutex travel_record_mtx;
     };

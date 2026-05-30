@@ -16,16 +16,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_definitions(VK_PROTOTYPES)
 
-# diligent_engine
-set(DILIGENT_BUILD_SAMPLES OFF CACHE BOOL "Disable Diligent samples" FORCE)
-set(DILIGENT_BUILD_TOOLS OFF CACHE BOOL "Disable Diligent tools" FORCE)
-set(DILIGENT_BUILD_FX OFF CACHE BOOL "Disable DiligentFX framework" FORCE)
-set(DILIGENT_NO_FORMAT_VALIDATION ON CACHE BOOL "Disable format validation" FORCE)
-set(DILIGENT_DIR third-party/diligent_engine)
-add_subdirectory(${DILIGENT_DIR} EXCLUDE_FROM_ALL)
+# Libraries
+find_package(Vulkan REQUIRED)
 
 # SDL3
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
+
+# shaderc
+set(SHADERC_SKIP_TESTS ON CACHE BOOL "Skip shaderc tests" FORCE)
+set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "Skip shaderc examples" FORCE)
+set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "Skip shaderc copyright check" FORCE)
+set(DISABLE_RTTI ON CACHE BOOL "Disable RTTI for shaderc dependencies" FORCE)
+set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "Use shared CRT" FORCE)
+set(SHADERC_DIR third-party/shaderc)
+add_subdirectory(${SHADERC_DIR})
 
 # clip
 set(CLIP_DIR third-party/clip)
@@ -89,9 +93,6 @@ include_directories(${Math_DIR})
 set(Notify_DIR third-party/notify/include)
 include_directories(${Notify_DIR})
 
-# Libraries
-find_package(Vulkan REQUIRED)
-
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
 
 add_executable(january
@@ -117,10 +118,7 @@ target_include_directories(january PUBLIC
     ${SDL3_INCLUDE_DIRS}
     ${LIBCURL_DIR}/include
     ${CLIP_DIR}
-)
-
-target_link_directories(january PRIVATE
-    ${DILIGENT_DIR}/DiligentCore
+    ${SHADERC_DIR}/libshaderc/include
 )
 
 target_link_libraries(january PRIVATE
@@ -130,24 +128,8 @@ target_link_libraries(january PRIVATE
     Vulkan::Vulkan
     SDL3::SDL3
     CURL::libcurl
+    shaderc
 )
-
-if(WIN32)
-    target_link_libraries(january PRIVATE
-        Diligent-GraphicsEngineD3D11-static
-        Diligent-GraphicsEngineD3D12-static
-        Diligent-GraphicsEngineVk-static
-    )
-elseif(APPLE)
-    target_link_libraries(january PRIVATE
-        Diligent-GraphicsEngineMetal-static
-    )
-else() # Linux
-    target_link_libraries(january PRIVATE
-        Diligent-GraphicsEngineVk-static
-        Diligent-GraphicsEngineOpenGL-static
-    )
-endif()
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
 

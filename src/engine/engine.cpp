@@ -35,6 +35,7 @@ SOFTWARE.
 #include "../system/cli.h"
 #include "../system/window.h"
 #include "../gui/manager.h"
+#include "../engine/utility/logger.h"
 
 using json = nlohmann::json;
 
@@ -143,12 +144,15 @@ namespace January::Engine {
         jengine.config = new AppConfig(); 
         jengine.context = new AppContext();
         jengine.manager = new View::ViewManager();
+        jengine.context->logger = new JLogger();
         LoadAppConfig(*jengine.config);
         GenerateAppContext(*jengine.context);
 
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         ImFontConfig font_cfg;
         font_cfg.FontDataOwnedByAtlas = false;
+        std::string save_path = Engine::get_config_path("imgui.ini").string();
+        io.IniFilename = save_path.c_str();
         jengine.context->text_font = io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
         jengine.context->icon_font = io.Fonts->AddFontFromFileTTF("icons.ttf", 16.0f, &font_cfg);
@@ -188,7 +192,7 @@ namespace January::Engine {
         ImGui::InsertNotification(toast);
 
         VInit(*jengine.manager, system);
-        jengine.context->logger->info("Views init finished");
+        spdlog::info("Views init finished");
 
         if(fs::exists(jengine.context->project_path)){
             std::string title = jengine.context->project_path;
@@ -207,9 +211,10 @@ namespace January::Engine {
         System::SavePreference();
 
         VDeInit(*jengine.manager);
-        delete jengine.config;
-        delete jengine.context;
+        delete jengine.context->logger;
         delete jengine.manager;
+        delete jengine.context;
+        delete jengine.config;
     }
 
     void EngineUpdate(JEngine& jengine){

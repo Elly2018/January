@@ -36,7 +36,11 @@ void configure_parser() {
     cmd.add_params({"-v", "--verbose"});
 
     bool par_v = January::CLI::GetCMDFlag("v", "verbose");
+    bool par_vv = January::CLI::GetCMDFlag("vv", "very-verbose");
     if(par_v){
+        spdlog::set_level(spdlog::level::debug);
+    }
+    else if(par_vv){
         spdlog::set_level(spdlog::level::trace);
     }
 
@@ -57,6 +61,7 @@ void configure_parser() {
         std::printf("\t\t -p, --path \t - Define where the project path location in your machine. \n");
         std::printf("\t - Flags: \n");
         std::printf("\t\t -v, --verbose \t - Print all the debug detail out. \n");
+        std::printf("\t\t -vv, --very-verbose \t - Print all the trace detail out. \n");
         exit(0);
     }
 }

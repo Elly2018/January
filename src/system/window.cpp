@@ -39,152 +39,24 @@ SOFTWARE.
 namespace January::System {
     
 #pragma region Vulkan Functions
-    static void check_vk_result(VkResult err)
-    {
-        if (err == VK_SUCCESS)
-            return;
-        fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
-        if (err < 0)
-            abort();
-    }
-
-    static bool IsExtensionAvailable(const ImVector<VkExtensionProperties>& properties, const char* extension)
-    {
-        for (const VkExtensionProperties& p : properties)
-            if (strcmp(p.extensionName, extension) == 0)
-                return true;
-        return false;
-    }
-
-#ifdef APP_USE_VULKAN_DEBUG_REPORT
-    static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
-    {
-        (void)flags; (void)object; (void)location; (void)messageCode; (void)pUserData; (void)pLayerPrefix; // Unused arguments
-        fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\nMessage: %s\n\n", objectType, pMessage);
-        return VK_FALSE;
-    }
-#endif // APP_USE_VULKAN_DEBUG_REPORT
-
-    static void SetupVulkan(JWindowRender& win, ImVector<const char*> instance_extensions)
+    static void SetupVulkan(JWindowRender& win, std::vector<const char*> instance_extensions)
     {
         VkResult err;
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
         volkInitialize();
 #endif
 
-        // Create Vulkan Instance
-        {
-            VkInstanceCreateInfo create_info = {};
-            create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        VCreateInstance(instance_extensions, win.g_Instance, win.g_Allocator);
 
-            // Enumerate available extensions
-            uint32_t properties_count;
-            ImVector<VkExtensionProperties> properties;
-            vkEnumerateInstanceExtensionProperties(nullptr, &properties_count, nullptr);
-            properties.resize(properties_count);
-            err = vkEnumerateInstanceExtensionProperties(nullptr, &properties_count, properties.Data);
-            check_vk_result(err);
-
-            // Enable required extensions
-            if (IsExtensionAvailable(properties, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
-                instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-#ifdef VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME
-            if (IsExtensionAvailable(properties, VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME))
-            {
-                instance_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-                create_info.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
-            }
-#endif
-
-            // Enabling validation layers
-#ifdef APP_USE_VULKAN_DEBUG_REPORT
-            const char* layers[] = { "VK_LAYER_KHRONOS_validation" };
-            create_info.enabledLayerCount = 1;
-            create_info.ppEnabledLayerNames = layers;
-            instance_extensions.push_back("VK_EXT_debug_report");
-#endif
-
-            // Create Vulkan Instance
-            create_info.enabledExtensionCount = (uint32_t)instance_extensions.Size;
-            create_info.ppEnabledExtensionNames = instance_extensions.Data;
-            err = vkCreateInstance(&create_info, win.g_Allocator, &win.g_Instance);
-            check_vk_result(err);
-#ifdef IMGUI_IMPL_VULKAN_USE_VOLK
-            volkLoadInstance(g_Instance);
-#endif
-            // Setup the debug report callback
-#ifdef APP_USE_VULKAN_DEBUG_REPORT
-            auto f_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(win.g_Instance, "vkCreateDebugReportCallbackEXT");
-            IM_ASSERT(f_vkCreateDebugReportCallbackEXT != nullptr);
-            VkDebugReportCallbackCreateInfoEXT debug_report_ci = {};
-            debug_report_ci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-            debug_report_ci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
-            debug_report_ci.pfnCallback = debug_report;
-            debug_report_ci.pUserData = nullptr;
-            err = f_vkCreateDebugReportCallbackEXT(win.g_Instance, &debug_report_ci, win.g_Allocator, &g_DebugReport);
-            check_vk_result(err);
-#endif
-        }
-
-        // Select Physical Device (GPU)
-        win.g_PhysicalDevice = ImGui_ImplVulkanH_SelectPhysicalDevice(win.g_Instance);
+        VGetPhysicalDeviceFront(win.g_Instance, win.g_PhysicalDevice);
         IM_ASSERT(win.g_PhysicalDevice != VK_NULL_HANDLE);
 
         // Select graphics queue family
-        win.g_QueueFamily = ImGui_ImplVulkanH_SelectQueueFamilyIndex(win.g_PhysicalDevice);
+        win.g_QueueFamily = VGetQueueFamily(win.g_PhysicalDevice);
         IM_ASSERT(win.g_QueueFamily != (uint32_t)-1);
 
-        // Create Logical Device (with 1 queue)
-        {
-            ImVector<const char*> device_extensions;
-            device_extensions.push_back("VK_KHR_swapchain");
-
-            // Enumerate physical device extension
-            uint32_t properties_count;
-            ImVector<VkExtensionProperties> properties;
-            vkEnumerateDeviceExtensionProperties(win.g_PhysicalDevice, nullptr, &properties_count, nullptr);
-            properties.resize(properties_count);
-            vkEnumerateDeviceExtensionProperties(win.g_PhysicalDevice, nullptr, &properties_count, properties.Data);
-#ifdef VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME
-            if (IsExtensionAvailable(properties, VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME))
-                device_extensions.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
-#endif
-
-            const float queue_priority[] = { 1.0f };
-            VkDeviceQueueCreateInfo queue_info[1] = {};
-            queue_info[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queue_info[0].queueFamilyIndex = win.g_QueueFamily;
-            queue_info[0].queueCount = 1;
-            queue_info[0].pQueuePriorities = queue_priority;
-            VkDeviceCreateInfo create_info = {};
-            create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-            create_info.queueCreateInfoCount = sizeof(queue_info) / sizeof(queue_info[0]);
-            create_info.pQueueCreateInfos = queue_info;
-            create_info.enabledExtensionCount = (uint32_t)device_extensions.Size;
-            create_info.ppEnabledExtensionNames = device_extensions.Data;
-            err = vkCreateDevice(win.g_PhysicalDevice, &create_info, win.g_Allocator, &win.g_Device);
-            check_vk_result(err);
-            vkGetDeviceQueue(win.g_Device, win.g_QueueFamily, 0, &win.g_Queue);
-        }
-
-        // Create Descriptor Pool
-        // If you wish to load e.g. additional textures you may need to alter pools sizes and maxSets.
-        {
-            VkDescriptorPoolSize pool_sizes[] =
-            {
-                { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE },
-            };
-            VkDescriptorPoolCreateInfo pool_info = {};
-            pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-            pool_info.maxSets = 0;
-            for (VkDescriptorPoolSize& pool_size : pool_sizes)
-                pool_info.maxSets += pool_size.descriptorCount;
-            pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
-            pool_info.pPoolSizes = pool_sizes;
-            err = vkCreateDescriptorPool(win.g_Device, &pool_info, win.g_Allocator, &win.g_DescriptorPool);
-            check_vk_result(err);
-        }
+        VGetLogicalDevice(win.g_PhysicalDevice, win.g_QueueFamily, win.g_Allocator, win.g_Queue, win.g_Device);
+        VGetDescriptionPool(win.g_Device, win.g_Allocator, win.g_DescriptorPool);
     }
     // All the ImGui_ImplVulkanH_XXX structures/functions are optional helpers used by the demo.
     // Your real engine/app may not use them.
@@ -508,13 +380,7 @@ namespace January::System {
     int32_t JInit(JWindow& jwindow, JRWindowInit init) {
         spdlog::debug("Application Initialization: Editor");
 
-        // Setup SDL
-        // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
-        {
-            //printf("Error: SDL_Init(): %s\n", SDL_GetError());
-            throw std::runtime_error(std::format("Error: SDL_Init(): {}\n", SDL_GetError()));
-        }
+        VInit();
 
         // Create window with Vulkan graphics context
         float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
@@ -531,13 +397,7 @@ namespace January::System {
         }
         spdlog::debug("\tSDL window created");
 
-        ImVector<const char*> extensions;
-        {
-            uint32_t sdl_extensions_count = 0;
-            const char* const* sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&sdl_extensions_count);
-            for (uint32_t n = 0; n < sdl_extensions_count; n++)
-                extensions.push_back(sdl_extensions[n]);
-        }
+        std::vector<const char*> extensions = VGetExtensions();
         SetupVulkan(jwindow, extensions);
         spdlog::debug("\tVulkan setup finish");
 
@@ -651,13 +511,7 @@ namespace January::System {
             throw std::runtime_error(std::format("Error: SDL_CreateWindow(): {}\n", SDL_GetError()));
         }
 
-        ImVector<const char*> extensions;
-        {
-            uint32_t sdl_extensions_count = 0;
-            const char* const* sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&sdl_extensions_count);
-            for (uint32_t n = 0; n < sdl_extensions_count; n++)
-                extensions.push_back(sdl_extensions[n]);
-        }
+        std::vector<const char*> extensions = VGetExtensions();
         SetupVulkan(jrwindow, extensions);
         return 0;
     }

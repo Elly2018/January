@@ -43,22 +43,38 @@ namespace January {
     namespace Engine{
         struct JEngine;
         namespace View {
-            // The base class for editor view
+            /**
+             * @brief The base class for editor view
+             */
             class JViewBase {
             public:
                 JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine);
                 virtual ~JViewBase();
-                // When view is shows up
+                /**
+                 * @brief When view is shows up
+                 */
                 virtual void OnEnable() {};
-                // When view is closes down
+                /**
+                 * @brief When view is closes down
+                 */
                 virtual void OnDisable() {};
-                // Constrctor called, when engine is up
+                /**
+                 * @brief Constrctor called, when engine is up
+                 */
                 virtual void Init() {}
-                // Release resource, when engine is down
+                /**
+                 * @brief Release resource, when engine is down
+                 */
                 virtual void DeInit() {}
-                // Application editor window focus event call
+                /**
+                 * @brief Application editor window focus event call
+                 * 
+                 * @param value Unfocus or focus event
+                 */
                 virtual void Focus(bool value) {}
-                // Every frame update
+                /**
+                 * @brief Every frame update
+                 */
                 virtual void Update() {}
                 // Editor view before content draw
                 virtual bool PreDraw();

@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 #ifndef ENGINE_STRUCT_CONTEXT_H
 #define ENGINE_STRUCT_CONTEXT_H
+#include <unordered_map>
 #include <string>
 #include <queue>
 #include <mutex>
@@ -48,17 +49,18 @@ namespace January::Engine {
         // Application end signal
         bool                        done                          = false;
         // Command buffer, execute next frame
+        // In order to use this in thread-safe
+        // Please lock_guard "commands_mtx" before add item or pop item to it
         std::queue<std::string>     commands                      = std::queue<std::string>();
         std::mutex                  commands_mtx;
+        // Imgui defualt text
         struct ImFont*              text_font;
+        // Imgui font with icon like graph
         struct ImFont*              icon_font;
+        // Imgui font with emoji like graph
         struct ImFont*              emoji_font;
-        // This is for console view content output
-        // Everything called here can be find in console view
-        // spdlog::info <- default logger is for os cli console output
-        struct spdlog::logger*      logger;
-        //
-        
+        // Logger 
+        struct JLogger*             logger;
     };
 }
 #endif
