@@ -26,12 +26,31 @@ SOFTWARE.
 #define ENGINE_ASSETS_ASSET_H
 #include <string>
 #include <filesystem>
+#include <functional>
 #include <nlohmann/json.hpp>
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
 namespace January::Engine {
+    class JAssetEvent {
+    public:
+        enum class JAssetEventType {
+            CLEAN = 0
+        };
+        struct RegisteredHandler {
+            std::weak_ptr<void> token;
+            std::function<void(const JAssetEventType, const std::string&)> callback;
+        };
+
+        using Handler = std::function<void(const JAssetEventType, const std::string&)>;
+
+        [[nodiscard]] std::shared_ptr<void> Register(Handler handle);
+        void Execute(JAssetEventType ev, const std::string message);
+    private:
+        std::vector<RegisteredHandler> Handlers = std::vector<RegisteredHandler>();
+    };
+
     /**
      * @brief The basic handle for the asset
      */
@@ -74,6 +93,21 @@ namespace January::Engine {
      * @return JAssetBase 
      */
     JAssetBase GetJAssetHandler(fs::path target);
+    /**
+     * @brief Get Asset from UUID 
+     * This only work when asset is load
+     * 
+     * @param uuid UUID target
+     * @return JAssetBase Target instance
+     */
+    bool GetJAssetHandlerByUUID(std::string uuid, JAssetBase& asset);
+    /**
+     * @brief Check Asset is loaded
+     * 
+     * @param uuid UUID target
+     * @return Asset checker result
+     */
+    bool IsJAssetHandlerLoaded(std::string uuid);
     void CleanLoadAsset();
 }
 #endif
