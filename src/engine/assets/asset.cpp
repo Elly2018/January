@@ -78,10 +78,6 @@ namespace January::Engine {
         b /= ".january";
         b /= relative_pro;
         meta_target = b;
-
-        UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
-        UUIDv4::UUID uuid_gen = uuidGenerator.getUUID();
-        uuid = uuid_gen.str();
     }
 
     JAssetBase::~JAssetBase(){}
@@ -90,12 +86,19 @@ namespace January::Engine {
         loading_meta.store(true);
         spdlog::debug("Trying to load asset meta");
         spdlog::debug("\tPath: {}", meta_target.string());
-        if(fs::exists(target) && !fs::exists(meta_target)){
+        if(fs::exists(target.string()) && !fs::exists(meta_target.string() + ".json")){
+            UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
+            UUIDv4::UUID uuid_gen = uuidGenerator.getUUID();
+            uuid = uuid_gen.str();
+            spdlog::debug("Asset meta file not exists !");
+            spdlog::debug("\tGenerate UUID: {}", uuid);
             Save_Meta();
         }
-        if(fs::exists(meta_target)){
-            std::string p = meta_target.string();
+        if(fs::exists((meta_target.string() + ".json"))){
+            std::string p = (meta_target.string() + ".json");
             std::ifstream file(p);
+            spdlog::debug("Trying to store meta asset !");
+            spdlog::debug("\tPath: {}", p);
             if (!file.is_open()) {
                 spdlog::error("Could not open: {}", p);
                 loading_meta.store(false);
@@ -197,7 +200,7 @@ namespace January::Engine {
 
     void JAssetBase::Decode(json json){
         if(json["uuid"].is_string()){
-            uuid = json.get<std::string>();
+            uuid = json["uuid"].get<std::string>();
         }
     }
 
