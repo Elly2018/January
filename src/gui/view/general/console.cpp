@@ -1,4 +1,5 @@
 #include "console.h"
+#include <functional>
 #include <memory>
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -9,6 +10,7 @@
 namespace January::Engine::View {
     void JViewConsole::Init() {
         spdlog::info("Engine log created");
+        spdlog::info("\tSubline Testing");
     }
 
     void JViewConsole::DeInit(){
@@ -166,16 +168,33 @@ namespace January::Engine::View {
 
     void JViewConsole::DrawContent(){
         std::lock_guard<std::mutex> lock(buffer_mtx);
-        for(int32_t i = 0; i < buffer.size(); i++){
-            std::string mesg = buffer.at(i).messages;
-            bool content = mesg.starts_with("\t");
-            if(content) continue;
+        std::string last_line = "";
+        int32_t last_index = -1;
+        uint32_t counter = 1;
+
+        std::function<void(uint32_t)> submit = std::function<void(uint32_t)>([&](uint32_t i) {
             ImGui::PushStyleColor(ImGuiCol_Text, GetColor(buffer.at(i).level));
             bool is_selected = open_bottom == buffer.at(i).id;
-            if(ImGui::Selectable((mesg + "##Console_Log_Index_" + std::to_string(i)).c_str(), is_selected)){
+            if(ImGui::Selectable(
+                ("[" + std::to_string(counter) + "]" + 
+                last_line + "##Console_Log_Index_" + std::to_string(i)).c_str(), is_selected)){
                 open_bottom = buffer.at(i).id;
             }
             ImGui::PopStyleColor();
+        }); 
+
+        for(int32_t i = 0; i < buffer.size(); i++){
+            std::string mesg = buffer.at(i).messages;
+            if(mesg.starts_with("\t")) {
+                counter++;
+                continue;
+            }
+            if(last_index != i && last_index != -1){
+                submit(last_index);
+                counter = 1;
+            }
+            last_index = i;
+            last_line = mesg;
         }
     }
 
@@ -269,7 +288,6 @@ namespace January::Engine::View {
         std::lock_guard<std::mutex> lock(buffer_mtx);
         buffer.clear();
         if(instance != nullptr){
-            std::lock_guard<std::mutex> lock2(instance->log_mtx);
             instance->Clear();
         }
     }

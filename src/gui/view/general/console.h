@@ -119,7 +119,7 @@ namespace January::Engine::View {
         std::string search = "";
         std::atomic<float> topHeight = 0;
         std::vector<JConsoleLog> buffer = std::vector<JConsoleLog>();
-        enum spdlog::level::level_enum level_filter;
+        enum spdlog::level::level_enum level_filter = spdlog::level::level_enum::info;
         std::mutex buffer_mtx;
     };
 }

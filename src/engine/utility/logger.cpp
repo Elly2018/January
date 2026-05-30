@@ -9,10 +9,11 @@ namespace January::Engine {
             JConsoleLog cl = JConsoleLog();
             cl.level = msg.level;
             cl.messages = std::string(msg.payload.data(), msg.payload.size());;
+
+            std::lock_guard<std::mutex> lock(log_mtx);
             cl.id = id_counter;
             changed = true;
             id_counter++;
-            std::lock_guard<std::mutex> lock(log_mtx);
             logs.push_back(cl);
         });
         callback_sink->set_level(spdlog::level::trace);
@@ -24,10 +25,7 @@ namespace January::Engine {
     }
 
     JLoggerWorker::~JLoggerWorker(){
-        {
-            std::lock_guard<std::mutex> lock(log_mtx);
-            logs.clear();
-        }
+        Clear();
         if(isglobal){
             std::vector<spdlog::sink_ptr>& sinks = spdlog::default_logger()->sinks();
             auto it = std::find(sinks.begin(), sinks.end(), callback_sink);
@@ -49,6 +47,7 @@ namespace January::Engine {
     }
 
     void JLoggerWorker::Clear(){
+        std::lock_guard<std::mutex> lock(log_mtx);
         id_counter = 0;
         logs.clear();
     }
