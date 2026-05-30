@@ -77,14 +77,14 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Update() {
-        if(jengine.context->logger->logger->IsChanged() || change_page || change_logger){
-            if(change_logger){
+        if(jengine.context->logger->logger->IsChanged() || change_page.load() || change_content.load()){
+            if(change_content.load()){
+                spdlog::trace("Console view: tchange_page !");
                 open_bottom = -1;
-                change_logger = false;
+                change_content.store(false);
             }
             GetFilteredResult();
-            change_page = false;
-            change_logger = false;
+            change_page.store(false);
         }
     }
 
@@ -93,34 +93,40 @@ namespace January::Engine::View {
             for(int32_t n = 0; n < 6; n++){
                 if(ImGui::Selectable( (GetName((spdlog::level::level_enum)n) + "##console_view_level_filter").c_str())){
                     level_filter = (spdlog::level::level_enum)n;
-                    change_page = true;
+                    change_page.store(true);
                 }
             }
             ImGui::EndCombo();
         }
         if(ImGui::InputText("Search##console_view", &search)){
-            change_page = true;
+            change_page.store(true);
         }
     }
 
     void JViewConsole::DrawTab(){
         if(ImGui::BeginTabBar("ViewConsole_Tag")){
             if(ImGui::BeginTabItem("Engine")){
-                logger_index = 0;
-                change_page = true;
-                change_logger = true;
+                if(logger_index != 0){
+                    logger_index = 0;
+                    change_page.store(true);
+                    change_content.store(true);
+                }
                 ImGui::EndTabItem();
             }
             if(ImGui::BeginTabItem("Runtime")){
-                logger_index = 1;
-                change_page = true;
-                change_logger = true;
+                if(logger_index != 1){
+                    logger_index = 1;
+                    change_page.store(true);
+                    change_content.store(true);
+                }
                 ImGui::EndTabItem();
             }
             if(ImGui::BeginTabItem("Script")){
-                logger_index = 2;
-                change_page = true;
-                change_logger = true;
+                if(logger_index != 2){
+                    logger_index = 2;
+                    change_page.store(true);
+                    change_content.store(true);
+                }
                 ImGui::EndTabItem();
             }
             ImGui::EndTabBar();
@@ -180,7 +186,7 @@ namespace January::Engine::View {
         if (open_bottom < 0) return;
         if (open_bottom >= instance->logs.size()) return;
 
-        int32_t counter = open_bottom;
+        int32_t counter = open_bottom - 1;
         int32_t line = 0;
 
         bool to_end = false;
