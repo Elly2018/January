@@ -66,10 +66,11 @@ namespace January::Engine {
 
     JAssetBase::JAssetBase(fs::path _target, System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
         target = _target;
-        fs::path pp = fs::relative("Assets", _target);
-        fs::path b = ".january";
-        b /= "Assets";
-        b /= pp;
+        fs::path pro = jengine.context->project_path;
+        fs::path relative_pro = fs::relative(pro, _target);
+        fs::path b = jengine.context->project_path;
+        b /= ".january";
+        b /= relative_pro;
         meta_target = b;
     }
 
@@ -80,12 +81,7 @@ namespace January::Engine {
     }
 
     bool JAssetBase::Vaild(){
-        fs::path p = jengine.context->project_path;
-        fs::path t_p = p;
-        fs::path m_p = p;
-        t_p /= target;
-        m_p = meta_target;
-        return fs::exists(t_p) && fs::exists(m_p);
+        return fs::exists(target) && fs::exists(meta_target);
     }
 
     json JAssetBase::EncodeHelper() {
@@ -122,6 +118,7 @@ namespace January::Engine {
     JAssetWorker::JAssetWorker(System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
         loadedFactory.push_back(std::make_shared<JAssetFactory>(jwindow, jengine));
         loadedFactory.push_back(std::make_shared<JTextAssetFactory>(jwindow, jengine));
+        loadedFactory.push_back(std::make_shared<JScriptAssetFactory>(jwindow, jengine));
     }
 
     JAssetWorker::~JAssetWorker(){

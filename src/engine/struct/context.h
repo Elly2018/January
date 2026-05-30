@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef ENGINE_STRUCT_CONTEXT_H
 #define ENGINE_STRUCT_CONTEXT_H
 #include <unordered_map>
+#include <memory>
 #include <string>
 #include <queue>
 #include <mutex>
@@ -38,6 +39,9 @@ namespace spdlog {
 namespace January::Engine {
 
     class JAssetWorker;
+    struct JAssetBase;
+
+    using Assets = std::vector<std::shared_ptr<JAssetBase>>;
 
     // Current application context
     // This data cannot be store in disk, This is the memory only data
@@ -66,6 +70,9 @@ namespace January::Engine {
         struct JLogger*             logger;
         // Asset
         JAssetWorker*               asset;
+        // Select asset
+        Assets                      asset_selection;
+        std::mutex                  asset_selection_mtx;
     };
 }
 #endif

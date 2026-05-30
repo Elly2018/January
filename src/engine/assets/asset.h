@@ -148,7 +148,7 @@ namespace January {
             /**
              * @brief Get the Asset Handler object
              * 
-             * @param target The relative path target from asset
+             * @param target The absolute path target from asset
              * @return JAssetBase 
              */
             std::shared_ptr<JAssetBase> GetJAssetHandler(fs::path target);
