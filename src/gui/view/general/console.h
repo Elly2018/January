@@ -33,10 +33,10 @@ SOFTWARE.
 struct ImVec4;
 
 namespace January::Engine::View {
-    //
-    // The console view
-    // Handle viewer for background logger informations
-    //
+    /**
+     * @brief The console view
+     * Handle viewer for background logger informations
+     */
     class JViewConsole : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewConsole){}
@@ -48,42 +48,71 @@ namespace January::Engine::View {
         void Update() override;
 
     protected:
-        // Render top toolbar
+        /**
+         * @brief Render top toolbar
+         */
         void DrawBar();
         void DrawTab();
         void DrawTabContent();
-        // Render bottom content area
+        /**
+         * @brief Render bottom content area
+         */
         void DrawContent();
         void DrawDetail();
         void DrawMiddleHandle(float total_window_height, float splitterHeight);
 
-        // Get logger level color
+        /**
+         * @brief Get the Color objectGet logger level color
+         * 
+         * @param col Log level
+         * @return Color vector result
+         */
         const struct ImVec4 GetColor(spdlog::level::level_enum col);
-        // Get logger level prefix
+        /**
+         * @brief Get the Name objectGet logger level prefix
+         * 
+         * @param col Log level
+         * @return log level string
+         */
         std::string GetName(spdlog::level::level_enum col);
-
-        // Get filtered data into "buffer" variable
+        /**
+         * @brief Get filtered data into "buffer" variable
+         */
         void GetFilteredResult();
-        // Clear the logger list
-        // This will clear the logger record in the global state as well
+        /**
+         * @brief Clear the logger list
+         * This will clear the logger record in the global state as well
+         */
         void Clear();
-        // Get current logger instance
+        /**
+         * @brief Get current logger instance
+         * 
+         * @return The logger handler
+         */
         JLoggerWorker* GetLogger();
 
     private:
-        // Current logger selection
-        // 0: Engine logger
-        // 1: Runtime logger
-        // 2: Script logger
+        /**
+         * @brief Current logger selection
+         * 0: Engine logger
+         * 1: Runtime logger
+         * 2: Script logger
+         */
         int32_t logger_index = -1;
-        // Init will be the trigger
-        // Define if the first event call is on.
+        /**
+         * @brief Init will be the trigger
+         * Define if the first event call is on.
+         */
         std::atomic_bool init = false;
-        // Check user have change the filter or change the logger to view or not
-        // When it's true, the update get called at next frame
+        /**
+         * @brief Check user have change the filter or change the logger to view or not
+         * When it's true, the update get called at next frame
+         */
         std::atomic_bool change_page = false;
-        // The toggle which when new log added
-        // Scroll the list view to the very bottom
+        /**
+         * @brief The toggle which when new log added
+         * Scroll the list view to the very bottom
+         */
         std::atomic_bool auto_scroll_next = false;
         std::atomic_int32_t open_bottom = -1;
         std::string search = "";
