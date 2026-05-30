@@ -109,6 +109,7 @@ namespace January::Engine::View {
          * When it's true, the update get called at next frame
          */
         std::atomic_bool change_page = false;
+        std::atomic_bool change_logger = false;
         /**
          * @brief The toggle which when new log added
          * Scroll the list view to the very bottom

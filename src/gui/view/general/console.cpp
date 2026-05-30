@@ -77,12 +77,14 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Update() {
-        if(jengine.context->logger->logger->IsChanged() || change_page){
-            if(change_page){
+        if(jengine.context->logger->logger->IsChanged() || change_page || change_logger){
+            if(change_logger){
                 open_bottom = -1;
+                change_logger = false;
             }
             GetFilteredResult();
             change_page = false;
+            change_logger = false;
         }
     }
 
@@ -106,16 +108,19 @@ namespace January::Engine::View {
             if(ImGui::BeginTabItem("Engine")){
                 logger_index = 0;
                 change_page = true;
+                change_logger = true;
                 ImGui::EndTabItem();
             }
             if(ImGui::BeginTabItem("Runtime")){
                 logger_index = 1;
                 change_page = true;
+                change_logger = true;
                 ImGui::EndTabItem();
             }
             if(ImGui::BeginTabItem("Script")){
                 logger_index = 2;
                 change_page = true;
+                change_logger = true;
                 ImGui::EndTabItem();
             }
             ImGui::EndTabBar();
