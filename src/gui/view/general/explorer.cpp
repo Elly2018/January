@@ -481,8 +481,11 @@ namespace January::Engine::View {
             }
             ImGui::EndPopup();
         }
-        bool tree_node_single = tree_node && ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left);
-        bool none_tree_double = !tree_node && is_dir && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+        bool single_click = ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left);
+        bool double_click = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+        bool tree_node_single = tree_node && single_click;
+        bool none_tree_double = !tree_node && is_dir && double_click;
+        bool select_single = !tree_node && single_click;
         if(tree_node_single || none_tree_double){ // Enter or trigger
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             travel_record.push(path);
@@ -494,7 +497,7 @@ namespace January::Engine::View {
             UpdatePathNode();
             changed = true;
         }
-        if(tree_node_single){ // Selection
+        if(select_single){ // Selection
             std::lock_guard<std::mutex> lock(jengine.context->asset_selection_mtx);
             jengine.context->asset_selection.clear();
             jengine.context->asset_selection.push_back(
