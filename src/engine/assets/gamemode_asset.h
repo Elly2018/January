@@ -22,29 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_STRUCT_CAMERA_H
-#define ENGINE_STRUCT_CAMERA_H
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
+#ifndef ENGINE_ASSETS_GAMEMODE_ASSET_H
+#define ENGINE_ASSETS_GAMEMODE_ASSET_H
+#include "asset.h"
+#include <atomic>
 
 namespace January::Engine {
-    //
-    // Basic 
-    //
-    struct JCamera {
-        enum class MODE {
-            PERSPECTIVE,
-            ORTHOGRAPHIC,
-            CUSTOM
-        };
-        
-        glm::vec3 pos;
-        glm::vec3 rot;
-        float fov;
-        glm::mat4 projection;
+    /**
+     * @brief The handle for the text asset
+     */
+    struct JGamemodeAssetBase : public JAssetBase {
+    public:
+        DEFAULT_ASSET_CTOR(JGamemodeAssetBase) {}
 
-        glm::mat4 GetViewMatrix();
-        glm::mat4 GetProjectionMatrix();
+        bool Load_Data() override;
+        bool Save_Data() override;
+
+        /**
+         * @brief When open the project, it will automatically start the timer
+         */
+        std::atomic_bool auto_start;
+        /**
+         * @brief When open the project, it will download the register resource from internet first
+         */
+        std::atomic_bool auto_sync;
+    };
+
+    class JGamemodeAssetFactory : public JAssetFactory {
+    public:
+        DEFAULT_ASSET_FACTORY_CTOR(JGamemodeAssetFactory, ".gamemode") {}
+
+        std::shared_ptr<JAssetBase> CreateAsset(fs::path path) override;
     };
 }
+
 #endif

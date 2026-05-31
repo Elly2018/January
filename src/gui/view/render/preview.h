@@ -32,7 +32,11 @@ namespace January::Engine::View {
         DEFAULT_VIEW_CTOR(JViewPreview) {}
         DEFAULT_VIEW_DECTOR(JViewPreview) {}
 
+        void Init() override;
+        void Update() override;
         void Draw() override;
+        void DeInit() override;
+        void Focus(bool value) override;
     protected:
         void DrawRenderTexture();
         void DrawToolbar();

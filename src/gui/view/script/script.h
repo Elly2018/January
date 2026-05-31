@@ -31,6 +31,19 @@ namespace January::Engine::View {
     public:
         DEFAULT_VIEW_CTOR(JViewScript) {}
         DEFAULT_VIEW_DECTOR(JViewScript) {}
+
+        void Init() override;
+        void Update() override;
+        void Draw() override;
+        void DeInit() override;
+        void Focus(bool value) override;
+
+    protected:
+        void DrawTopBar();
+        void DrawLeftList();
+        void DrawRightContent();
+
+    private:
     };
 }
 #endif

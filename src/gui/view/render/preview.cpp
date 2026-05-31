@@ -22,10 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "preview.h"
+#include <spdlog/spdlog.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
 
 namespace January::Engine::View {
-    void JViewPreview::Draw(){
+    void JViewPreview::Init() {
+        JViewBase::Init();
+        spdlog::info("Loaded View: Preview");
+    }
 
+    void JViewPreview::Update() {
+        
+    }
+
+    void JViewPreview::Draw() {
+        ImGui::Text("Preview");
+    }
+
+    void JViewPreview::DeInit() {
+        
+    }
+
+    void JViewPreview::Focus(bool value) {
+        
     }
 
     void JViewPreview::DrawRenderTexture(){

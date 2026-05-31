@@ -21,16 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "text_asset.h"
+#include "gamemode_asset.h"
 #include <fstream>
 #include <spdlog/spdlog.h>
 
 namespace January::Engine {
-    bool JTextAssetBase::Load_Data(){
+    bool JGamemodeAssetBase::Load_Data(){
         JAssetBase::Load_Data();
         loading.store(true);
         if(fs::exists(target)){
-            text = QuickReadFile(target.string());
+            std::string text = QuickReadFile(target.string());
+            json j = json::parse(text);
+            if(j["auto_start"].is_boolean()){
+                auto_start.store(j["auto_start"].get<bool>());
+            }
+            if(j["auto_sync"].is_boolean()){
+                auto_sync.store(j["auto_sync"].get<bool>());
+            }
             loading.store(true);
             return true;
         }
@@ -38,8 +45,12 @@ namespace January::Engine {
         return false;
     }
 
-    bool JTextAssetBase::Save_Data(){
+    bool JGamemodeAssetBase::Save_Data(){
         JAssetBase::Save_Data();
+        json j;
+        j["auto_start"] = auto_start.load();
+        j["auto_sync"] = auto_sync.load();
+
         std::thread([&](){
             std::string p = target.string();
 
@@ -49,9 +60,9 @@ namespace January::Engine {
 
             std::ofstream file(p);
             if (file.is_open()) {
-                file << text.c_str();
+                file << j.dump().c_str();
             }else{
-                spdlog::error("Text file output error !");
+                spdlog::error("Gamemode file output error !");
                 spdlog::error("\tUUID: {}", uuid);
                 spdlog::error("\tPath: {}", target.string());
                 spdlog::error("\tMeta_Path: {}", meta_target.string());
@@ -60,8 +71,8 @@ namespace January::Engine {
         return true;
     }
 
-    std::shared_ptr<JAssetBase> JTextAssetFactory::CreateAsset(fs::path path) {
-        auto b = std::make_shared<JTextAssetBase>(path, jwindow, jengine);
+    std::shared_ptr<JAssetBase> JGamemodeAssetFactory::CreateAsset(fs::path path) {
+        auto b = std::make_shared<JGamemodeAssetBase>(path, jwindow, jengine);
         b->Load_Meta();
         b->Load_Data();
         return b;

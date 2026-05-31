@@ -22,3 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "script.h"
+#include <spdlog/spdlog.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
+
+namespace January::Engine::View {
+    void JViewScript::Init() {
+        JViewBase::Init();
+        spdlog::info("Loaded View: Script");
+    }
+
+    void JViewScript::Update() {
+        
+    }
+
+    void JViewScript::Draw() {
+        ImGui::Text("Script");
+    }
+
+    void JViewScript::DeInit() {
+        
+    }
+
+    void JViewScript::Focus(bool value) {
+        
+    }
+
+    void JViewScript::DrawTopBar(){
+
+    }
+
+    void JViewScript::DrawLeftList(){
+
+    }
+
+    void JViewScript::DrawRightContent(){
+
+    }
+}

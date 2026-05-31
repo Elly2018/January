@@ -250,6 +250,7 @@ namespace January::Engine::View {
          * Monitor the "changed" value to switch focus folder
          */
         void UpdateFileWatcher();
+        bool CheckSelection(JFileContent& target);
     public:
         /**
          * @brief Reset it

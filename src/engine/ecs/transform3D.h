@@ -22,19 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_NODE_3D_TRANSFORM_H
-#define ENGINE_NODE_3D_TRANSFORM_H
+#ifndef ENGINE_ECS_3D_TRANSFORM_H
+#define ENGINE_ECS_3D_TRANSFORM_H
 #include <string>
 #include <glm/glm.hpp>
 
-namespace January::Engine::Node {
-    struct transform3D_Global_component {
-        glm::vec3 position;
-        glm::vec3 rotation;
-        glm::vec3 scale;
-    };
-
-    struct transform3D_Local_component {
+namespace January::Engine::ECS {
+    struct transform3D_component {
         glm::vec3 position;
         glm::vec3 rotation;
         glm::vec3 scale;

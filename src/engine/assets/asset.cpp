@@ -204,6 +204,25 @@ namespace January::Engine {
         }
     }
 
+    std::string JAssetBase::QuickReadFile(std::string path) {
+        std::string result = "";
+        std::fstream file(path);
+
+        if(!file.is_open()){
+            spdlog::error("Could not open: {}", path);
+            loading.store(false);
+            return "";
+        }
+
+        std::string line;
+        // Loop continues until EOF (End of File) or an error occurs
+        while (std::getline(file, line)) {
+            result += line;
+            result += "\n";
+        }
+        return result;
+    }
+
     JAssetFactory::JAssetFactory(std::vector<std::string> _ext, System::JWindow& _win, JEngine& _engine) 
         : extension(_ext), jwindow(_win), jengine(_engine) {}
 

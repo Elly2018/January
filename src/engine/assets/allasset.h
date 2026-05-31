@@ -1,3 +1,4 @@
+#include "gamemode_asset.h"
 #include "material_asset.h"
 #include "mesh_asset.h"
 #include "null_asset.h"

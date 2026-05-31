@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_NODE_2D_TRANSFORM_H
-#define ENGINE_NODE_2D_TRANSFORM_H
+#ifndef ENGINE_ECS_2D_TRANSFORM_H
+#define ENGINE_ECS_2D_TRANSFORM_H
 #include <glm/glm.hpp>
 
-namespace January::Engine::Node {
+namespace January::Engine::ECS {
     struct transform2D_component {
         glm::vec2 position;
         glm::vec2 rotation;

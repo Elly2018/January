@@ -129,6 +129,10 @@ namespace January {
              * @brief Asset UUID
              */
             std::string uuid;
+
+        protected:
+            std::string QuickReadFile(std::string path);
+
         protected:
             System::JWindow&    jwindow;
             JEngine&            jengine;

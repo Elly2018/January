@@ -146,8 +146,10 @@ namespace January::Engine::View {
         ImGuiStyle& style = ImGui::GetStyle();
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
+        ImVec2 padding = ImVec2(5, 5);
         
         ImU32 white_color = IM_COL32(255, 255, 255, 255);
+        ImU32 light_grey_color = IM_COL32(200, 200, 200, 255);
 
         std::string icon_text = "";
         if(target.is_dir){
@@ -161,11 +163,11 @@ namespace January::Engine::View {
             size * 0.7f,
             0, icon_text.c_str()
         );
-
+        // Drawing the icon
         draw_list->AddText(
             jengine.context->icon_font, 
-            size * 0.7f, 
-            ImVec2(canvas_pos.x + (size * 0.15f), canvas_pos.y), 
+            size * 0.7f,
+            ImVec2(canvas_pos.x + (size * 0.15f) + padding.x, canvas_pos.y + padding.y),
             white_color, 
             icon_text.c_str()
         );
@@ -187,15 +189,22 @@ namespace January::Engine::View {
             text_starter = (size - text_size.x) / 2.0f;
         }
 
+        // Drawing the text
         draw_list->AddText(
-            ImVec2(canvas_pos.x + text_starter, canvas_pos.y + (size * 0.7f)),
+            ImVec2(canvas_pos.x + text_starter + padding.x, canvas_pos.y + (size * 0.7f) + padding.y),
             white_color,
             text_display.c_str()
         );
         
-        ImGui::Dummy(ImVec2(size, size));
-        if(ImGui::IsItemHovered()){
-            draw_list->AddRect(canvas_pos, canvas_pos + ImVec2(size, size), white_color, 5.0f);
+        ImGui::Dummy(ImVec2(size, size) + padding);
+
+        bool hovered = ImGui::IsItemHovered();
+        bool selection = CheckSelection(target);
+        if(hovered && !selection){
+            draw_list->AddRect(canvas_pos, canvas_pos + ImVec2(size, size) + padding, white_color, 5.0f);
+        }
+        else if(selection){
+            draw_list->AddRect(canvas_pos, canvas_pos + ImVec2(size, size) + padding, light_grey_color, 5.0f);
         }
 
         DrawItemTooltip(target.path, target.is_dir, target.filesize);
@@ -503,7 +512,7 @@ namespace January::Engine::View {
             jengine.context->asset_selection.push_back(
                 jengine.context->asset->GetJAssetHandler(_path)
             );
-            spdlog::info("Asset select: {}", _path.string());
+            spdlog::debug("Asset select: {}", _path.string());
         }
     }
 
@@ -635,6 +644,16 @@ namespace January::Engine::View {
             path_node.push_back("Assets");
         }
         changed = false;
+    }
+
+    bool JViewExplorer::CheckSelection(JFileContent& target) {
+        Assets assets = jengine.context->asset_selection;
+        if(assets.size() == 0) return false;
+
+        for(auto& i : assets){
+            if(i->target == target.path) return true;
+        }
+        return false;
     }
 
     void JViewExplorer::ReloadProject(){

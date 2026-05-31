@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_NODE_COMMON_TREE_H
-#define ENGINE_NODE_COMMON_TREE_H
+#ifndef ENGINE_ECS_TREE_H
+#define ENGINE_ECS_TREE_H
 #include <string>
 #include <glm/glm.hpp>
 #include <entt/entt.hpp>
 
-namespace January::Engine::Node {
+namespace January::Engine::ECS {
     struct tree_component {
         std::size_t children_count{0};
 
