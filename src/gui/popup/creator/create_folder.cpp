@@ -37,7 +37,7 @@ namespace January::Engine::View {
     }
 
     void JPopupCreateFolder::Init(){
-        SetPopupSize(ImVec2(500, 100), false, false);
+        SetPopupSize(ImVec2(800, 250), false, false);
         spdlog::info("Loaded Popup: Create Folder");
     }
 
