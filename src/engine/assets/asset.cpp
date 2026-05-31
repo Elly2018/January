@@ -157,9 +157,7 @@ namespace January::Engine {
     }
 
     void JAssetBase::Init() {
-        if(!Load_Meta()){
-            Save_Meta();
-        }
+        Load_Meta();
         Load_Data();
     }
 
@@ -169,7 +167,7 @@ namespace January::Engine {
 
     std::string JAssetBase::Encode(bool pretty){
         std::string r = EncodeHelper().dump(pretty ? 4 : -1);
-        std::thread([=](){
+        std::thread([=, this](){
             try{
                 std::string p = (meta_target.string() + ".json");
 
