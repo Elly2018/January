@@ -22,8 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "create_folder.h"
+#include <filesystem>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
+#include <spdlog/spdlog.h>
+
+namespace fs = std::filesystem;
 
 namespace January::Engine::View {
     void JPopupCreateFolder::RegisterFolder(std::string _folder){
@@ -31,6 +36,77 @@ namespace January::Engine::View {
     }
 
     void JPopupCreateFolder::Init(){
-        SetPopupSize(ImVec2(0.8f, 0.8f), true, false);
+        SetPopupSize(ImVec2(500, 100), false, false);
+        spdlog::info("Loaded Popup: Create Folder");
+    }
+
+    void JPopupCreateFolder::Update() {
+        if (!trigger_create.load(std::memory_order_relaxed)) {
+            return; 
+        }
+
+        std::string buffer = "";
+        {
+            std::lock_guard<std::mutex> lock(input_mtx);
+            buffer = input;
+        }
+
+        if(fs::exists(folder)){
+            fs::path f = folder;
+            f /= buffer;
+            if(fs::exists(f)){
+                {
+                    std::lock_guard<std::mutex> lock(message_mtx);
+                    message = "Folder is already exist";
+                }
+                can_be_confirm.store(false, std::memory_order_release);
+            }else{
+                {
+                    std::lock_guard<std::mutex> lock(message_mtx);
+                    message = "";
+                }
+                can_be_confirm.store(true, std::memory_order_release);
+            }
+        }else{
+            spdlog::error("Create folder failed, the base folder path does not exist: {}", folder);
+            {
+                std::lock_guard<std::mutex> lock(message_mtx);
+                message = "Base folder is not exist, You can exit now";
+            }
+            can_be_confirm.store(false, std::memory_order_release);
+        }
+
+        trigger_create.store(false, std::memory_order_relaxed);
+    }
+
+    void JPopupCreateFolder::Draw(){
+        {
+            std::lock_guard<std::mutex> lock(input_mtx);
+            trigger_create.store(
+                ImGui::InputText("Folder Name##Create_Folder_Field", &input), 
+                std::memory_order_release);
+        }
+        ImGui::BeginDisabled(!can_be_confirm.load(std::memory_order_acquire));
+        if(ImGui::Button("Confirm")){
+            fs::path f = folder;
+            f /= input;
+            std::thread([f]() {
+                try{
+                    fs::create_directories(f);
+                } catch (const std::exception& e) {
+                    spdlog::error("Failed to create directory background: {}", e.what());
+                }
+            }).detach();
+            SetEnable(false);
+        }
+        ImGui::EndDisabled();
+        ImGui::SameLine();
+        if(ImGui::Button("Cancel")){
+            SetEnable(false);
+        }
+        {
+            std::lock_guard<std::mutex> lock(message_mtx);
+            ImGui::TextColored(ImVec4(255, 100, 100, 255), "%s", message.c_str());
+        }
     }
 }

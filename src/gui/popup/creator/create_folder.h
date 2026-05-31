@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef GUI_POPUP_CREATOR_CREATE_FOLDER_H
 #define GUI_POPUP_CREATOR_CREATE_FOLDER_H
 #include "../popupbase.h"
+#include <mutex>
 #include <string>
 
 namespace January::Engine::View {
@@ -34,12 +35,20 @@ namespace January::Engine::View {
         DEFAULT_POPUP_DECTOR(JPopupCreateFolder) {}
 
         void Init() override;
-
+        void Update() override;
+        void Draw() override;
     public:
         void RegisterFolder(std::string _folder);
 
     private:
+        
         std::string folder;
+        std::string input;
+        std::mutex input_mtx;
+        std::string message;
+        std::mutex message_mtx;
+        std::atomic_bool can_be_confirm;
+        std::atomic_bool trigger_create;
     };
 }
 #endif
