@@ -167,6 +167,7 @@ namespace January::Engine {
 
     std::string JAssetBase::Encode(bool pretty){
         std::string r = EncodeHelper().dump(pretty ? 4 : -1);
+        // Use copy, so it become thread safe. i guess
         std::thread([=, this](){
             try{
                 std::string p = (meta_target.string() + ".json");
