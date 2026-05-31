@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef GUI_POPUP_CREATOR_CREATE_FOLDER_H
 #define GUI_POPUP_CREATOR_CREATE_FOLDER_H
 #include "../popupbase.h"
+#include <atomic>
 #include <mutex>
 #include <string>
 

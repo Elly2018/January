@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "create_folder.h"
 #include <filesystem>
+#include <thread>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
