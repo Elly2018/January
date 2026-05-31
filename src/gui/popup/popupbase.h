@@ -25,6 +25,8 @@ SOFTWARE.
 #ifndef GUI_POPUP_POPUP_BASE_H
 #define GUI_POPUP_POPUP_BASE_H
 #include "../view/viewbase.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui.h>
 
 #define DEFAULT_POPUP_CTOR(x) \
 x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) :  \
@@ -48,9 +50,18 @@ namespace January::Engine::View {
             bool PreDraw() override;
             void PostDraw() override;
             void PopupEvent(SIDE side);
+
+        protected:
+            ImVec2 GetScreenSize();
+            void SetPopupSize(ImVec2 size, bool useRatio, bool use_free_float);
+
         private:
             // 0: no action, 1: Needs to open, 2: Needs to close
+            bool ratio = false;
+            bool free_float = true;
+            bool startup;
             int32_t popup_flag = 0;
+            ImVec2 popup_size = ImVec2(0, 0);
     };
 }
 #endif

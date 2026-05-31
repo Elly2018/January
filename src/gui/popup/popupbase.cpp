@@ -1,5 +1,6 @@
 #include "popupbase.h"
 #include <string>
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include "../../engine/engine.h"
 #include "../../engine/struct/context.h"
@@ -14,6 +15,7 @@ namespace January::Engine::View {
 
     void JPopupBase::OnEnable() {
         popup_flag = 1;
+        startup = true;
     }
 
     void JPopupBase::OnDisable() {
@@ -21,6 +23,17 @@ namespace January::Engine::View {
     }
 
     bool JPopupBase::PreDraw(){
+        ImVec2 screenSize = GetScreenSize();
+        ImVec2 actualSize = popup_size;
+        if(ratio){
+            actualSize = ImVec2(screenSize.x * popup_size.x, screenSize.y * popup_size.y);
+        }
+        if(actualSize != ImVec2(0, 0)) ImGui::SetNextWindowSize(actualSize);
+        
+        if(!free_float || startup){
+            ImGui::SetNextWindowPos( (screenSize - actualSize)/2.0f );
+            startup = false;
+        }
         return ImGui::BeginPopupModal(title.c_str(), NULL, window_flag);
     }
 
@@ -36,5 +49,15 @@ namespace January::Engine::View {
             ImGui::CloseCurrentPopup();
             popup_flag = 0;
         }
+    }
+
+    ImVec2 JPopupBase::GetScreenSize(){
+        return ImGui::GetMainViewport()->Size;
+    }
+
+    void JPopupBase::SetPopupSize(ImVec2 size, bool useRatio, bool use_free_float){
+        popup_size = size;
+        ratio = useRatio;
+        free_float = use_free_float;
     }
 }

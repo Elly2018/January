@@ -43,7 +43,7 @@ namespace January::Engine {
         /**
          * @brief Local project setting path
          */
-        std::string j_project_game_mode                          = json::object();
+        std::string j_project_game_mode                          = "";
     };
 }
 #endif

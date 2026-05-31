@@ -22,9 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "create_script.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui.h>
 
 namespace January::Engine::View {
     void JPopupCreateScript::RegisterFolder(std::string _folder){
         folder = _folder;
+    }
+
+    void JPopupCreateScript::Init(){
+        SetPopupSize(ImVec2(0.8f, 0.8f), true, false);
     }
 }

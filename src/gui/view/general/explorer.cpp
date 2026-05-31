@@ -33,6 +33,7 @@ SOFTWARE.
 #include "../../../engine/engine.h"
 #include "../../../engine/struct/config.h"
 #include "../../../engine/struct/context.h"
+#include "../../../engine/utility/command.h"
 #include "../../../engine/utility/format.h"
 #include "../../../engine/assets/asset.h"
 
@@ -474,12 +475,13 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Cut##" + popup_id).c_str())){
+
             }
             if (ImGui::MenuItem(("Copy##" + popup_id).c_str())){
 
             }
             if (ImGui::MenuItem(("Paste##" + popup_id).c_str())){
-
+                
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Copy Path##" + popup_id).c_str())){
@@ -521,13 +523,13 @@ namespace January::Engine::View {
 
         if(ImGui::BeginPopupContextWindow("ViewExplorer_Right_ContextItem", background_flags)){
             if (ImGui::MenuItem("Create Folder##ViewExplorer_Right_ContextItem")){
-                
+                PushCommand(*jengine.context, "create_folder " + CurrentFolder().string());
             }
             if (ImGui::MenuItem("Create Resource##ViewExplorer_Right_ContextItem")){
-                
+                PushCommand(*jengine.context, "create_resource " + CurrentFolder().string());
             }
             if (ImGui::MenuItem("Create Script##ViewExplorer_Right_ContextItem")){
-                
+                PushCommand(*jengine.context, "create_script " + CurrentFolder().string());
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Open File Explorer Here##ViewExplorer_Right_ContextItem")){

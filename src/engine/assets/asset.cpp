@@ -162,7 +162,7 @@ namespace January::Engine {
 
     std::string JAssetBase::Encode(bool pretty){
         std::string r = EncodeHelper().dump(pretty ? 4 : -1);
-        std::thread([=](){
+        std::thread([&](){
             try{
                 std::string p = (meta_target.string() + ".json");
 

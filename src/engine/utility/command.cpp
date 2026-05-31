@@ -95,6 +95,9 @@ namespace January::Engine {
     }
 
     void multi_command(struct System::JSystem& jsystem, std::vector<std::string> cmds){
+        //
+        // open_recent <path>
+        //
         if(cmds.size() >= 2 && cmds.at(0) == "open_recent"){
             std::string r_path = GetPath(cmds);
             bool exist = true;
@@ -148,16 +151,25 @@ namespace January::Engine {
             ImGui::InsertNotification(toast);
             AddRecent(*jsystem.engine, r_path);
         }
+        //
+        // create_folder <path>
+        //
         else if(cmds.size() >= 2 && cmds.at(0) == "create_folder"){
             std::string r_path = GetPath(cmds);
             jsystem.engine->manager->create_folder->RegisterFolder(r_path);
             jsystem.engine->manager->create_folder->SetEnable(true);
         }
+        //
+        // create_resource <path>
+        //
         else if(cmds.size() >= 2 && cmds.at(0) == "create_resource"){
             std::string r_path = GetPath(cmds);
             jsystem.engine->manager->create_resource->RegisterFolder(r_path);
             jsystem.engine->manager->create_resource->SetEnable(true);
         }
+        //
+        // create_script <path>
+        //
         else if(cmds.size() >= 2 && cmds.at(0) == "create_script"){
             std::string r_path = GetPath(cmds);
             jsystem.engine->manager->create_script->RegisterFolder(r_path);
