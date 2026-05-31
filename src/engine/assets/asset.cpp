@@ -156,6 +156,13 @@ namespace January::Engine {
         return true;
     }
 
+    void JAssetBase::Init() {
+        if(!Load_Meta()){
+            Save_Meta();
+        }
+        Load_Data();
+    }
+
     bool JAssetBase::IsLoading() {
         return loading.load() || loading_meta.load();
     }
@@ -233,8 +240,7 @@ namespace January::Engine {
 
     std::shared_ptr<JAssetBase> JAssetFactory::CreateAsset(fs::path path) {
         auto b = std::make_shared<JAssetBase>(path, jwindow, jengine);
-        b->Load_Meta();
-        b->Load_Data();
+        b->Init();
         return b;
     }
 

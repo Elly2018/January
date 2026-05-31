@@ -62,8 +62,7 @@ namespace January::Engine {
 
     std::shared_ptr<JAssetBase> JTextAssetFactory::CreateAsset(fs::path path) {
         auto b = std::make_shared<JTextAssetBase>(path, jwindow, jengine);
-        b->Load_Meta();
-        b->Load_Data();
+        b->Init();
         return b;
     }
 }

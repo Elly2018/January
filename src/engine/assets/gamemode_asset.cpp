@@ -73,8 +73,7 @@ namespace January::Engine {
 
     std::shared_ptr<JAssetBase> JGamemodeAssetFactory::CreateAsset(fs::path path) {
         auto b = std::make_shared<JGamemodeAssetBase>(path, jwindow, jengine);
-        b->Load_Meta();
-        b->Load_Data();
+        b->Init();
         return b;
     }
 }
