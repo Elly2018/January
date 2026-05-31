@@ -37,7 +37,7 @@ namespace January::Engine::View {
     }
 
     void JPopupCreateFolder::Init(){
-        SetPopupSize(ImVec2(800, 250), false, false);
+        SetPopupSize(ImVec2(1000, 300), false, false);
         spdlog::info("Loaded Popup: Create Folder");
     }
 
@@ -50,6 +50,15 @@ namespace January::Engine::View {
         {
             std::lock_guard<std::mutex> lock(input_mtx);
             buffer = input;
+        }
+
+        if(buffer.size() == 0){
+            {
+                std::lock_guard<std::mutex> lock(message_mtx);
+                message = "";
+            }
+            can_be_confirm.store(false, std::memory_order_release);
+            return;
         }
 
         if(fs::exists(folder)){
