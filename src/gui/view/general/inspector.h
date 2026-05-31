@@ -25,6 +25,9 @@ SOFTWARE.
 #ifndef GUI_VIEW_INSPECTOR_H
 #define GUI_VIEW_INSPECTOR_H
 #include "../viewbase.h"
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace January::Engine::View {
     class JViewInspector : public JViewBase {
@@ -37,6 +40,9 @@ namespace January::Engine::View {
         void Draw() override;
         void DeInit() override;
         void Focus(bool value) override;
+
+    protected:
+        void DrawJsonSerialized(json _json);
     };
 }
 #endif
