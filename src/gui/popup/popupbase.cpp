@@ -34,7 +34,11 @@ namespace January::Engine::View {
             ImGui::SetNextWindowPos( (screenSize - actualSize)/2.0f );
             startup = false;
         }
-        return ImGui::BeginPopupModal(title.c_str(), NULL, window_flag);
+        int32_t flag = window_flag;
+        if(!free_float){
+            flag |= ImGuiWindowFlags_NoResize;
+        }
+        return ImGui::BeginPopupModal(title.c_str(), NULL, flag);
     }
 
     void JPopupBase::PostDraw(){
