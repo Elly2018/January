@@ -26,6 +26,7 @@ SOFTWARE.
 #define ENGINE_ENGINE_H
 #include <cinttypes>
 #include <filesystem>
+#include <memory>
 
 namespace January {
     namespace System {
@@ -54,9 +55,9 @@ namespace January {
         {
             JEngine() = default;
             ~JEngine() = default;
-            struct AppConfig*                  config;
-            struct AppContext*                 context;
-            struct View::ViewManager*          manager;
+            std::unique_ptr<AppConfig>                  config;
+            std::unique_ptr<AppContext>                 context;
+            std::unique_ptr<View::ViewManager>          manager;
         };
 
         // Engine init

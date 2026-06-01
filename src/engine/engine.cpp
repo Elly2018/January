@@ -142,9 +142,9 @@ namespace January::Engine {
 
     int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow, struct System::JSystem& system){
         spdlog::debug("Engine Init");
-        jengine.config = new AppConfig(); 
-        jengine.context = new AppContext();
-        jengine.manager = new View::ViewManager();
+        jengine.config = std::make_unique<AppConfig>(); 
+        jengine.context = std::make_unique<AppContext>();
+        jengine.manager = std::make_unique<View::ViewManager>();
         jengine.context->logger = std::make_unique<JLogger>();
         jengine.context->asset = std::make_unique<JAssetWorker>(jwindow, jengine);
         LoadAppConfig(*jengine.config);
