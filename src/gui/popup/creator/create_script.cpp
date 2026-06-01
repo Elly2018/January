@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "create_script.h"
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <filesystem>
 #include <thread>
@@ -30,6 +31,8 @@ SOFTWARE.
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
 #include <spdlog/spdlog.h>
+#include "script_template.h"
+#include "../../../engine/assets/script_asset.h"
 
 namespace fs = std::filesystem;
 
@@ -99,11 +102,23 @@ namespace January::Engine::View {
                 ImGui::InputText("Script Name##Create_Script_Field", &input), 
                 std::memory_order_release);
         }
+        size_t type_size = sizeof(JScriptAssetBase::ScriptTypeString) / sizeof(JScriptAssetBase::ScriptTypeString[0]);
+        std::string type_text = JScriptAssetBase::ScriptTypeString[type.load()];
+        if(ImGui::BeginCombo("Type", type_text.c_str())){
+            for(int32_t i = 0; i < type_size; i++){
+                std::string buffer = JScriptAssetBase::ScriptTypeString[i];
+                if(ImGui::Selectable((buffer + "##Create_Script_Type_Option").c_str(), type == i)){
+                    type.store(i, std::memory_order_release);
+                }
+            }
+            ImGui::EndCombo();
+        }
         ImGui::BeginDisabled(!can_be_confirm.load(std::memory_order_acquire));
         if(ImGui::Button("Confirm")){
             fs::path f = folder;
             f /= input;
-            std::thread([f]() {
+            std::string ct = GetScriptTemplate(type.load());
+            std::thread([f, ct]() {
                 try{
                     std::fstream file(f.string());
                     
@@ -111,6 +126,13 @@ namespace January::Engine::View {
                         spdlog::error("Failed to create script: {}", f.string());
                         return;
                     }
+
+                    if (file.is_open()) {
+                        file << ct;
+                    }else{
+                        spdlog::error("Script file output error !");
+                    }
+                    file << ct;
                     
                 } catch (const std::exception& e) {
                     spdlog::error("Failed to create script background: {}", e.what());

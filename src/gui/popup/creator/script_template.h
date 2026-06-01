@@ -24,22 +24,27 @@ SOFTWARE.
 #pragma once
 #ifndef GUI_POPUP_CREATOR_SCRIPT_TEMPLATE_H
 #define GUI_POPUP_CREATOR_SCRIPT_TEMPLATE_H
+#include <cinttypes>
+#include <string>
 
 namespace January::Engine::View {
-    const char* ScriptFactoryTemplate = R"raw(
-
-sss
-
+    static const std::string ScriptFactoryTemplate = R"raw(
+factory
 )raw";
-    const char* ScriptAssetTemplate = R"raw(
-
-sss
-
+    static const std::string ScriptAssetTemplate = R"raw(
+asset
 )raw";
-    const char* ScriptECSTemplate = R"raw(
-
-sss
-
+    static const std::string ScriptECSTemplate = R"raw(
+ecs
 )raw";
+    inline std::string GetScriptTemplate(int32_t type){
+        switch(type){
+            default:
+            case 0: return ScriptFactoryTemplate;
+            case 1: return ScriptAssetTemplate;
+            case 2: return ScriptECSTemplate;
+        }
+    }
 }
+
 #endif

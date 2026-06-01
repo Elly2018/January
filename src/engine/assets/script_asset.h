@@ -52,7 +52,7 @@ namespace January::Engine {
             ECS = 2,
         };
 
-        const char* ScriptTypeString[3] = {
+        static inline const char* ScriptTypeString[3] = {
             "Factory",
             "Asset",
             "ECS"
