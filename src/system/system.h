@@ -26,6 +26,7 @@ SOFTWARE.
 #define SYSTEM_SYSTEM_H
 #include <cinttypes>
 #include <vector>
+#include <memory>
 
 namespace January {
     namespace Engine {
@@ -34,14 +35,15 @@ namespace January {
     namespace System {
         struct JWindow;
         struct JWindowRender;
+        using JWR = std::unique_ptr<JWindowRender>;
 
         // System context
         // Contain all window objects
         struct JSystem {
             // Editor window instance
-            struct JWindow*                     window;
+            std::unique_ptr<JWindow>            window;
             // Extra pure windows
-            std::vector<struct JWindowRender*>  windows;
+            std::vector<JWR>                    windows;
             // Engine instance for backgroud calculation
             struct Engine::JEngine*             engine;
         };

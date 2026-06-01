@@ -43,8 +43,10 @@ namespace January {
 
     namespace System {
         struct JSystem;
-        // Pure render window struct
-        // This should be generate by engine or editor
+        /**
+         * @brief Pure render window struct 
+         * This should be generate by engine or editor
+         */
         struct JWindowRender {
             // SDL window flag, you can define fullscreen or hidden or no background etc flags here
             SDL_WindowFlags          g_windowFlags;
