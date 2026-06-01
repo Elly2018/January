@@ -230,8 +230,8 @@ namespace January::Engine {
         std::chrono::duration<double, std::nano> elapsed = clock_now - clock_last;
         clock_last = clock_now;
 
-        jengine.context->delta.store(elapsed.count(), std::memory_order_release);
-        jengine.context->time.store(total.count(), std::memory_order_release);
+        jengine.context->delta.store(elapsed.count() / 1000000.0, std::memory_order_release);
+        jengine.context->time.store(total.count() / 1000000.0, std::memory_order_release);
 
         VUpdate(*jengine.manager);
     }
