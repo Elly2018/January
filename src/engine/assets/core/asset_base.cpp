@@ -119,20 +119,30 @@ namespace January::Engine {
     }
 
     bool JAssetBase::Delete() {
-        if(fs::exists(target.string())){
-            std::thread([=, this]() {
-                if(fs::is_directory(target.string())){
-                    fs::remove_all(target);
+        spdlog::info("Delete asset: {}", target.string());
+        fs::path local_target = target;
+        fs::path local_meta_target = meta_target;
+        if(fs::exists(local_target.string())){
+            std::thread([local_target]() {
+                if(fs::is_directory(local_target.string())){
+                    fs::remove_all(local_target);
                 }else{
-                    fs::remove(target);
+                    fs::remove(local_target);
                 }
+                spdlog::info("Delete asset success: {}", local_target.string());
             }).detach();
+        }else{
+            spdlog::warn("Asset file does not exist: {}", local_target.string());
         }
-        if(fs::exists(meta_target.string() + ".json")){
-            std::thread([=, this]() {
-                fs::remove(meta_target.string() + ".json");
+        if(fs::exists(local_meta_target.string() + ".json")){
+            std::thread([local_meta_target]() {
+                fs::remove(local_meta_target.string() + ".json");
+                spdlog::info("Delete asset meta success: {}", local_meta_target.string() + ".json");
             }).detach();
+        }else{
+            spdlog::warn("Meta file does not exist: {}", local_meta_target.string() + ".json");
         }
+        return true;
     }
 
     void JAssetBase::Init() {

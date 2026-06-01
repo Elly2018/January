@@ -24,10 +24,10 @@ namespace January::Engine::View {
 
     bool JPopupBase::PreDraw(){
         ImVec2 screenSize = GetScreenSize();
-        ImVec2 actualSize = popup_size;
-        if(ratio){
-            actualSize = ImVec2(screenSize.x * popup_size.x, screenSize.y * popup_size.y);
-        }
+        ImVec2 actualSize = ImVec2(
+            ratio[0] ? screenSize.x * popup_size.x : popup_size.x, 
+            ratio[1] ? screenSize.y * popup_size.y : popup_size.y
+        );
         if(actualSize != ImVec2(0, 0)) ImGui::SetNextWindowSize(actualSize);
         
         if(!free_float || startup){
@@ -59,9 +59,10 @@ namespace January::Engine::View {
         return ImGui::GetMainViewport()->Size;
     }
 
-    void JPopupBase::SetPopupSize(ImVec2 size, bool useRatio, bool use_free_float){
+    void JPopupBase::SetPopupSize(ImVec2 size, bool useRatio_x, bool useRatio_y, bool use_free_float){
         popup_size = size;
-        ratio = useRatio;
+        ratio[0] = useRatio_x;
+        ratio[1] = useRatio_y;
         free_float = use_free_float;
     }
 }

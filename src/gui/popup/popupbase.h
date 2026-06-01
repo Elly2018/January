@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef GUI_POPUP_POPUP_BASE_H
 #define GUI_POPUP_POPUP_BASE_H
 #include "../view/viewbase.h"
+#include <atomic>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 
@@ -53,14 +54,14 @@ namespace January::Engine::View {
 
         protected:
             ImVec2 GetScreenSize();
-            void SetPopupSize(ImVec2 size, bool useRatio, bool use_free_float);
+            void SetPopupSize(ImVec2 size, bool useRatio_x, bool useRatio_y, bool use_free_float);
 
         private:
             // 0: no action, 1: Needs to open, 2: Needs to close
-            bool ratio = false;
-            bool free_float = true;
-            bool startup;
-            int32_t popup_flag = 0;
+            std::atomic_bool ratio[2] = {false, false};
+            std::atomic_bool free_float = true;
+            std::atomic_bool startup;
+            std::atomic_int32_t popup_flag = 0;
             ImVec2 popup_size = ImVec2(0, 0);
     };
 }
