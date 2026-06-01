@@ -17,6 +17,7 @@ namespace January::Engine::View {
     void JViewApplication::Draw(){
         if(ImGui::Button("Play")){
             jengine.context->runtime_state.store(true, std::memory_order_release);
+            RuntimeStart(*jengine.context);
         }
         ImGui::SameLine();
         if(ImGui::Button("Stop")){

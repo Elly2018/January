@@ -150,6 +150,11 @@ namespace January::Engine {
         }
     }
 
+    void RuntimeStart(struct AppContext& ctx) {
+        clock_runtime_start = std::chrono::steady_clock::now();
+        clock_runtime_last = clock_runtime_start;
+    }
+
     JEngine::JEngine() = default;
     JEngine::~JEngine() = default;
 

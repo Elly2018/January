@@ -47,6 +47,7 @@ namespace January {
         void LoadAppConfig(struct AppConfig& config);
         // Generate a app context data struct
         void GenerateAppContext(struct AppContext& ctx);
+        void RuntimeStart(struct AppContext& ctx);
 
         /**
          * @brief The core january engine context container. 
