@@ -55,6 +55,7 @@ namespace January::Engine::View {
         protected:
             ImVec2 GetScreenSize();
             void SetPopupSize(ImVec2 size, bool useRatio_x, bool useRatio_y, bool use_free_float);
+            void SetPopupSize(ImVec2 size, bool useRatio, bool use_free_float);
 
         private:
             // 0: no action, 1: Needs to open, 2: Needs to close

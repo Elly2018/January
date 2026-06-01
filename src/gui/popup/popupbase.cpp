@@ -65,4 +65,11 @@ namespace January::Engine::View {
         ratio[1] = useRatio_y;
         free_float = use_free_float;
     }
+
+    void JPopupBase::SetPopupSize(ImVec2 size, bool useRatio, bool use_free_float){
+        popup_size = size;
+        ratio[0] = useRatio;
+        ratio[1] = useRatio;
+        free_float = use_free_float;
+    }
 }
