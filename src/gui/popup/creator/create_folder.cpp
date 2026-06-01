@@ -117,7 +117,7 @@ namespace January::Engine::View {
         }
         {
             std::lock_guard<std::mutex> lock(message_mtx);
-            ImGui::TextColored(ImVec4(255, 100, 100, 255), "%s", message.c_str());
+            ImGui::TextColored(ImVec4(1.0, 0.2f, 0.2f, 1.0f), "%s", message.c_str());
         }
     }
 }
