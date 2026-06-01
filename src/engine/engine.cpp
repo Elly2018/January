@@ -24,6 +24,7 @@ SOFTWARE.
 #include "engine.h"
 #include <iostream>
 #include <fstream>
+#include <chrono>
 #include <imgui.h>
 #include <imgui_notify.h>
 #include <tahoma.h>
@@ -41,6 +42,10 @@ SOFTWARE.
 using json = nlohmann::json;
 
 namespace January::Engine {
+
+    std::chrono::steady_clock::time_point clock_start;
+    std::chrono::steady_clock::time_point clock_now;
+    std::chrono::steady_clock::time_point clock_last;
 
     fs::path get_config_path(const char* path){
         fs::path p = get_home_directory();
@@ -216,12 +221,18 @@ namespace January::Engine {
         System::SavePreference();
 
         VDeInit(*jengine.manager);
+        clock_start = std::chrono::steady_clock::now();
     }
 
     void EngineUpdate(JEngine& jengine){
-        double current = ImGui::GetTime();
-        jengine.context->delta = current - jengine.context->time;
-        jengine.context->time = current;
+        clock_now = std::chrono::steady_clock::now();
+        std::chrono::duration<double, std::nano> total = clock_now - clock_start;
+        std::chrono::duration<double, std::nano> elapsed = clock_now - clock_last;
+        clock_last = clock_now;
+
+        jengine.context->delta.store(elapsed.count(), std::memory_order_release);
+        jengine.context->time.store(total.count(), std::memory_order_release);
+
         VUpdate(*jengine.manager);
     }
 

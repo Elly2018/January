@@ -23,7 +23,7 @@ namespace January::Engine::View {
             
         }
 
-        ImGui::Text("FPS: %f", (1.0f / jengine.context->delta.load(std::memory_order_relaxed)));
+        ImGui::Text("FPS: %.2f", (1.0 / jengine.context->delta.load(std::memory_order_relaxed)));
         ImGui::Text("Time: %f", jengine.context->time.load(std::memory_order_relaxed));
         ImGui::Text("DeltaTime: %f", jengine.context->delta.load(std::memory_order_relaxed));
     }
