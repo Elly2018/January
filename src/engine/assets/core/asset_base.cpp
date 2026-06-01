@@ -119,12 +119,27 @@ namespace January::Engine {
     }
 
     bool JAssetBase::Delete() {
-
+        if(fs::exists(target.string())){
+            std::thread([=, this]() {
+                if(fs::is_directory(target.string())){
+                    fs::remove_all(target);
+                }else{
+                    fs::remove(target);
+                }
+            }).detach();
+        }
+        if(fs::exists(meta_target.string() + ".json")){
+            std::thread([=, this]() {
+                fs::remove(meta_target.string() + ".json");
+            }).detach();
+        }
     }
 
     void JAssetBase::Init() {
-        Load_Meta();
-        Load_Data();
+        if(Vaild()){
+            Load_Meta();
+            Load_Data();
+        }
     }
 
     bool JAssetBase::IsLoading() {
@@ -161,7 +176,7 @@ namespace January::Engine {
     }
 
     bool JAssetBase::Vaild(){
-        return fs::exists(target) && fs::exists(meta_target);
+        return fs::exists(target);
     }
 
     json JAssetBase::EncodeHelper() {
