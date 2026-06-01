@@ -33,6 +33,9 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include "script_template.h"
 #include "../../../engine/assets/script_asset.h"
+#include "../../../engine/assets/asset.h"
+#include "../../../engine/struct/context.h"
+#include "../../../engine/engine.h"
 
 namespace fs = std::filesystem;
 
@@ -118,7 +121,7 @@ namespace January::Engine::View {
             fs::path f = folder;
             f /= input;
             std::string ct = GetScriptTemplate(type.load());
-            std::thread([f, ct]() {
+            std::thread([f, ct, &jengine]() {
                 try{
                     std::fstream file(f.string());
                     
@@ -134,6 +137,8 @@ namespace January::Engine::View {
                     }
                     file << ct;
                     
+                    auto f = 
+
                 } catch (const std::exception& e) {
                     spdlog::error("Failed to create script background: {}", e.what());
                 }
