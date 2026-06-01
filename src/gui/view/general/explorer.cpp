@@ -42,22 +42,6 @@ namespace fs = std::filesystem;
 
 namespace January::Engine::View {
 
-    void openFolder(const std::string& path) {
-        std::string command;
-
-        #if defined(_WIN32) || defined(_WIN64)
-            command = "explorer \"" + path + "\"";
-        #elif defined(__APPLE__)
-            command = "open \"" + path + "\"";
-        #elif defined(__linux__)
-            command = "xdg-open \"" + path + "\"";
-        #else
-            #error "Unsupported platform"
-        #endif
-
-        std::system(command.c_str());
-    }
-
     void JFolderContent::CleanChildren(){
         for(auto c : children){
             c->CleanChildren();
@@ -461,7 +445,8 @@ namespace January::Engine::View {
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
             if(is_dir){
                 if (ImGui::MenuItem(("Open File Explorer Here##" + popup_id).c_str())){
-                    openFolder(_path);
+                    auto folder_handle = jengine.context->asset->GetJAssetHandler(_path.string());
+                    folder_handle->Open();
                 }
             }else{
                 if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
@@ -537,7 +522,8 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Open File Explorer Here##ViewExplorer_Right_ContextItem")){
-                openFolder(CurrentFolder().string());
+                auto folder_handle = jengine.context->asset->GetJAssetHandler(CurrentFolder().string());
+                folder_handle->Open();
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Cut##ViewExplorer_Right_ContextItem")){

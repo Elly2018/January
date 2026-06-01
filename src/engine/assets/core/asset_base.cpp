@@ -153,21 +153,19 @@ namespace January::Engine {
     }
 
     void JAssetBase::Open() {
+        std::string command;
+
         #if defined(_WIN32) || defined(_WIN64)
-        // Windows command to launch a file with its default app
-        std::string command = std::string("start ") + target.string();
+            command = "explorer \"" + target.string() + "\"";
+        #elif defined(__APPLE__)
+            command = "open \"" + target.string() + "\"";
+        #elif defined(__linux__)
+            command = "xdg-open \"" + target.string() + "\"";
+        #else
+            #error "Unsupported platform"
+        #endif
+
         std::system(command.c_str());
-#elif defined(__APPLE__)
-        // macOS command
-        std::string command = std::string("open ") + target.string();
-        std::system(command.c_str());
-#elif defined(__linux__)
-        // Linux desktop command
-        std::string command = std::string("xdg-open ") + target.string();
-        std::system(command.c_str());
-#else
-    #error "Unknown Operating System"
-#endif
     }
 
     bool JAssetBase::IsLoading() {
