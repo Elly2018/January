@@ -23,9 +23,11 @@ namespace January::Engine::View {
             
         }
 
-        ImGui::Text("FPS: %.2f", (1.0 / jengine.context->delta.load(std::memory_order_relaxed)));
-        ImGui::Text("Time: %f", jengine.context->time.load(std::memory_order_relaxed));
-        ImGui::Text("DeltaTime: %f", jengine.context->delta.load(std::memory_order_relaxed));
+        double delta_ms = jengine.context->delta.load(std::memory_order_relaxed);
+        double fps = (delta_ms > 0.0) ? (1000.0 / delta_ms) : 0.0;
+        ImGui::Text("FPS: %.2f frame/sec", fps);
+        ImGui::Text("Time: %.2f sec", jengine.context->time.load(std::memory_order_relaxed) / 1000.0);
+        ImGui::Text("DeltaTime: %.4f ms", jengine.context->delta.load(std::memory_order_relaxed));
     }
     void JViewApplication::DeInit(){
 

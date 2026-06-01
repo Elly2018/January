@@ -25,6 +25,7 @@ SOFTWARE.
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <thread>
 #include <imgui.h>
 #include <imgui_notify.h>
 #include <tahoma.h>
@@ -212,6 +213,9 @@ namespace January::Engine {
             std::string title = "January: a real-time interactive multimedia content creator";
             SDL_SetWindowTitle(jwindow.g_window, title.c_str());
         }
+
+        clock_start = std::chrono::steady_clock::now();
+        clock_last = clock_start;
         return 0;
     }
 
@@ -221,19 +225,19 @@ namespace January::Engine {
         System::SavePreference();
 
         VDeInit(*jengine.manager);
-        clock_start = std::chrono::steady_clock::now();
     }
 
     void EngineUpdate(JEngine& jengine){
         clock_now = std::chrono::steady_clock::now();
-        std::chrono::duration<double> total = clock_now - clock_start;
-        std::chrono::duration<double> elapsed = clock_now - clock_last;
+        std::chrono::duration<double, std::milli> total = clock_now - clock_start;
+        std::chrono::duration<double, std::milli> elapsed = clock_now - clock_last;
         clock_last = clock_now;
 
         jengine.context->delta.store(elapsed.count(), std::memory_order_release);
         jengine.context->time.store(total.count(), std::memory_order_release);
 
         VUpdate(*jengine.manager);
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 
     void AddRecent(JEngine& jengine, std::string& path){
