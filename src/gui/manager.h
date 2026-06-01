@@ -26,6 +26,7 @@ SOFTWARE.
 #define GUI_MANAGER_H
 #include <cinttypes>
 #include <vector>
+#include <memory>
 
 namespace January {
     namespace System {
@@ -40,12 +41,14 @@ namespace January {
         struct JViewBase;
         struct JPopupBase;
 
-        struct JViewAction;
+        struct JViewApplication;
         struct JViewBlueprint;
         struct JViewConsole;
         struct JViewExplorer;
+        struct JViewHierarchy;
         struct JViewInspector;
         struct JViewPreview;
+        struct JViewProfiler;
         struct JViewProfile;
         struct JViewScript;
         struct JViewTimeline;
@@ -116,26 +119,29 @@ namespace January {
             CREATE_SCRIPT = 12,
         };
 
+        /**
+         * @brief A list of the view and popup object
+         */
         struct ViewManager {
-            struct JViewApplication*        application;
-            struct JViewBlueprint*          blueprint;
-            struct JViewConsole*            console;
-            struct JViewExplorer*           explorer;
-            struct JViewHierarchy*          hierarchy;
-            struct JViewInspector*          inspector;
-            struct JViewPreview*            preview;
-            struct JViewProfiler*           profiler;
-            struct JViewScript*             script;
-            struct JViewTimeline*           timeline;
-            struct JViewVolumn*             volumn;
+            std::shared_ptr<JViewApplication>        application;
+            std::shared_ptr<JViewBlueprint>          blueprint;
+            std::shared_ptr<JViewConsole>            console;
+            std::shared_ptr<JViewExplorer>           explorer;
+            std::shared_ptr<JViewHierarchy>          hierarchy;
+            std::shared_ptr<JViewInspector>          inspector;
+            std::shared_ptr<JViewPreview>            preview;
+            std::shared_ptr<JViewProfiler>           profiler;
+            std::shared_ptr<JViewScript>             script;
+            std::shared_ptr<JViewTimeline>           timeline;
+            std::shared_ptr<JViewVolumn>             volumn;
 
-            struct JPopupCreateFolder*      create_folder;
-            struct JPopupCreateResource*    create_resource;
-            struct JPopupCreateScript*      create_script;
-            struct JPopupProjectDashboard*  project_dashboard;
+            std::shared_ptr<JPopupCreateFolder>      create_folder;
+            std::shared_ptr<JPopupCreateResource>    create_resource;
+            std::shared_ptr<JPopupCreateScript>      create_script;
+            std::shared_ptr<JPopupProjectDashboard>  project_dashboard;
 
-            std::vector<struct JViewBase*>  views;
-            std::vector<struct JPopupBase*>  popups;
+            std::vector<std::shared_ptr<JViewBase>>  views;
+            std::vector<std::shared_ptr<JPopupBase>> popups;
             std::vector<int32_t> popup_orders;
         };
 

@@ -1,4 +1,6 @@
 #include "application.h"
+#include <atomic>
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <spdlog/spdlog.h>
 #include "../../../engine/engine.h"
@@ -21,9 +23,9 @@ namespace January::Engine::View {
             
         }
 
-        ImGui::Text("FPS: %f", (1.0f / jengine.context->delta));
-        ImGui::Text("Time: %f", jengine.context->time);
-        ImGui::Text("DeltaTime: %f", jengine.context->delta);
+        ImGui::Text("FPS: %f", (1.0f / jengine.context->delta.load(std::memory_order_relaxed)));
+        ImGui::Text("Time: %f", jengine.context->time.load(std::memory_order_relaxed));
+        ImGui::Text("DeltaTime: %f", jengine.context->delta.load(std::memory_order_relaxed));
     }
     void JViewApplication::DeInit(){
 

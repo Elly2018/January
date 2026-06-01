@@ -130,7 +130,7 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawItemLine(JFileContent& target){
-        ImGui::PushFont(jengine.context->icon_font);
+        ImGui::PushFont(jengine.context->icon_font.get());
         if(target.is_dir){
             ImGui::Text("%s", "\uf07b");
         }else{
@@ -166,7 +166,7 @@ namespace January::Engine::View {
         );
         // Drawing the icon
         draw_list->AddText(
-            jengine.context->icon_font, 
+            jengine.context->icon_font.get(), 
             size * 0.7f,
             ImVec2(canvas_pos.x + (size * 0.15f) + padding.x, canvas_pos.y + padding.y),
             white_color, 
@@ -213,7 +213,7 @@ namespace January::Engine::View {
     }
 
     void JViewExplorer::DrawPathAction() {
-        ImGui::PushFont(jengine.context->icon_font);
+        ImGui::PushFont(jengine.context->icon_font.get());
         if(path_input == PathBarDisplay::DEFAULT) {
             ImGui::BeginDisabled(travel_record.size() == 0);
             if(ImGui::Button("\uf053##Exploere_Icon_Action")){ // Return

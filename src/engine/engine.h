@@ -47,7 +47,13 @@ namespace January {
         // Generate a app context data struct
         void GenerateAppContext(struct AppContext& ctx);
 
-        struct JEngine {
+        /**
+         * @brief The core january engine context container. 
+         */
+        struct JEngine 
+        {
+            JEngine() = default;
+            ~JEngine() = default;
             struct AppConfig*                  config;
             struct AppContext*                 context;
             struct View::ViewManager*          manager;

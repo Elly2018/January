@@ -1,6 +1,7 @@
 #include "console.h"
 #include <functional>
 #include <memory>
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <imgui_stdlib.h>
 #include "../../../engine/engine.h"

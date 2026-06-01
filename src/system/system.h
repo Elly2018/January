@@ -40,6 +40,8 @@ namespace January {
         // System context
         // Contain all window objects
         struct JSystem {
+            JSystem();
+            ~JSystem();
             // Editor window instance
             std::unique_ptr<JWindow>            window;
             // Extra pure windows

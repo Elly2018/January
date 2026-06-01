@@ -34,6 +34,9 @@ SOFTWARE.
 namespace January::System {
     using namespace Engine;
 
+    JSystem::JSystem() = default;
+    JSystem::~JSystem() = default;
+
     void UpdateLoop(JSystem& jsystem){
         while(!jsystem.window->g_done){
             EngineUpdate(*jsystem.engine);
