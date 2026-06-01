@@ -140,6 +140,9 @@ namespace January::Engine {
         }
     }
 
+    JEngine::JEngine() = default;
+    JEngine::~JEngine() = default;
+
     int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow, struct System::JSystem& system){
         spdlog::debug("Engine Init");
         jengine.config = std::make_unique<AppConfig>(); 
@@ -155,11 +158,11 @@ namespace January::Engine {
         font_cfg.FontDataOwnedByAtlas = false;
         std::string save_path = Engine::get_config_path("imgui.ini").string();
         io.IniFilename = save_path.c_str();
-        jengine.context->text_font = std::make_unique<ImFont>(io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f, &font_cfg));
+        jengine.context->text_font = io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
-        jengine.context->icon_font = std::make_unique<ImFont>(io.Fonts->AddFontFromFileTTF("icons.ttf", 16.0f, &font_cfg));
+        jengine.context->icon_font = io.Fonts->AddFontFromFileTTF("icons.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
-        jengine.context->emoji_font = std::make_unique<ImFont>(io.Fonts->AddFontFromFileTTF("NotoEmoji-VariableFont_wght.ttf", 16.0f, &font_cfg));
+        jengine.context->emoji_font = io.Fonts->AddFontFromFileTTF("NotoEmoji-VariableFont_wght.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
 #ifdef _WIN32
         io.Fonts->AddFontFromFileTTF("SourceHanSans-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());

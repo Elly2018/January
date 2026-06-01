@@ -74,11 +74,11 @@ namespace January::Engine
         std::queue<std::string> commands = std::queue<std::string>();
         std::mutex commands_mtx;
         // Imgui defualt text
-        std::unique_ptr<ImFont> text_font;
+        ImFont* text_font;
         // Imgui font with icon like graph
-        std::unique_ptr<ImFont> icon_font;
+        ImFont* icon_font;
         // Imgui font with emoji like graph
-        std::unique_ptr<ImFont> emoji_font;
+        ImFont* emoji_font;
         // Logger
         std::unique_ptr<JLogger> logger;
         // Asset

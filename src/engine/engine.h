@@ -53,8 +53,8 @@ namespace January {
          */
         struct JEngine 
         {
-            JEngine() = default;
-            ~JEngine() = default;
+            JEngine();
+            ~JEngine();
             std::unique_ptr<AppConfig>                  config;
             std::unique_ptr<AppContext>                 context;
             std::unique_ptr<View::ViewManager>          manager;
