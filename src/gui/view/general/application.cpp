@@ -16,18 +16,25 @@ namespace January::Engine::View {
     }
     void JViewApplication::Draw(){
         if(ImGui::Button("Play")){
-
+            jengine.context->runtime_state.store(true, std::memory_order_relaxed);
         }
         ImGui::SameLine();
         if(ImGui::Button("Stop")){
-            
+            jengine.context->runtime_state.store(false, std::memory_order_relaxed);
         }
 
         double delta_ms = jengine.context->delta.load(std::memory_order_relaxed);
         double fps = (delta_ms > 0.0) ? (1000.0 / delta_ms) : 0.0;
+
+        ImGui::Text("Engine State");
         ImGui::Text("FPS: %.2f frame/sec", fps);
         ImGui::Text("Time: %.2f sec", jengine.context->time.load(std::memory_order_relaxed) / 1000.0);
         ImGui::Text("DeltaTime: %.4f ms", jengine.context->delta.load(std::memory_order_relaxed));
+        ImGui::Separator();
+        ImGui::Text("Runtime State");
+        ImGui::Text("FPS: %.2f frame/sec", fps);
+        ImGui::Text("Time: %.2f sec", jengine.context->runtime_time.load(std::memory_order_relaxed) / 1000.0);
+        ImGui::Text("DeltaTime: %.4f ms", jengine.context->runtime_delta.load(std::memory_order_relaxed));
     }
     void JViewApplication::DeInit(){
 

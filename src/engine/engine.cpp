@@ -48,6 +48,10 @@ namespace January::Engine {
     std::chrono::steady_clock::time_point clock_now;
     std::chrono::steady_clock::time_point clock_last;
 
+    std::chrono::steady_clock::time_point clock_runtime_start;
+    std::chrono::steady_clock::time_point clock_runtime_now;
+    std::chrono::steady_clock::time_point clock_runtime_last;
+
     fs::path get_config_path(const char* path){
         fs::path p = get_home_directory();
         p = p.append("january");
@@ -235,6 +239,19 @@ namespace January::Engine {
 
         jengine.context->delta.store(elapsed.count(), std::memory_order_release);
         jengine.context->time.store(total.count(), std::memory_order_release);
+
+        if(jengine.context->runtime_state){
+            clock_runtime_now = std::chrono::steady_clock::now();
+            std::chrono::duration<double, std::milli> total = clock_runtime_now - clock_runtime_start;
+            std::chrono::duration<double, std::milli> elapsed = clock_runtime_now - clock_runtime_last;
+            clock_runtime_last = clock_runtime_now;
+
+            jengine.context->runtime_delta.store(elapsed.count(), std::memory_order_release);
+            jengine.context->runtime_time.store(total.count(), std::memory_order_release);
+        }else{
+            jengine.context->runtime_delta.store(0.0, std::memory_order_release);
+            jengine.context->runtime_time.store(0.0, std::memory_order_release);
+        }
 
         VUpdate(*jengine.manager);
         std::this_thread::sleep_for(std::chrono::milliseconds(16));

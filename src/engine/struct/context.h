@@ -64,8 +64,11 @@ namespace January::Engine
         std::atomic_bool load_project = false;
         // Application global time
         std::atomic<double> time = 0;
+        std::atomic<double> runtime_time = 0;
         // Application delta time
         std::atomic<double> delta = 0;
+        std::atomic<double> runtime_delta = 0;
+        std::atomic_bool runtime_state = false;
         // Application end signal
         std::atomic_bool done = false;
         // Command buffer, execute next frame
