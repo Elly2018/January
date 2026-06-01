@@ -121,7 +121,7 @@ namespace January::Engine::View {
             fs::path f = folder;
             f /= input;
             std::string ct = GetScriptTemplate(type.load());
-            std::thread([f, ct, &jengine]() {
+            std::thread([f, ct, this]() {
                 try{
                     std::fstream file(f.string());
                     
@@ -134,10 +134,11 @@ namespace January::Engine::View {
                         file << ct;
                     }else{
                         spdlog::error("Script file output error !");
+                        return;
                     }
-                    file << ct;
+                    file.close();
                     
-                    auto f = 
+                    std::shared_ptr<January::Engine::JAssetBase> file_handle = jengine.context->asset->GetJAssetHandler(f);
 
                 } catch (const std::exception& e) {
                     spdlog::error("Failed to create script background: {}", e.what());
