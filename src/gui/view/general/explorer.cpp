@@ -471,7 +471,7 @@ namespace January::Engine::View {
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Delete##" + popup_id).c_str())){
-                
+                auto asset = jengine.context->asset->GetJAssetHandler(_path);
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Cut##" + popup_id).c_str())){

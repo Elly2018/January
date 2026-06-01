@@ -94,6 +94,7 @@ namespace January {
             bool Save_Meta();
             virtual bool Load_Data();
             virtual bool Save_Data();
+            bool Delete();
             void Init();
             bool IsLoading();
             /**
