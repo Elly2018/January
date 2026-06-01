@@ -96,6 +96,7 @@ namespace January {
             virtual bool Save_Data();
             bool Delete();
             void Init();
+            virtual void Open();
             bool IsLoading();
             /**
              * @brief This will encode this asset instance into metadata json string

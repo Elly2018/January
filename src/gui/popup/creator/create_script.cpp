@@ -138,8 +138,11 @@ namespace January::Engine::View {
                     }
                     file.close();
                     
-                    std::shared_ptr<January::Engine::JAssetBase> file_handle = jengine.context->asset->GetJAssetHandler(f);
-
+                    std::shared_ptr<JAssetBase> file_handle = jengine.context->asset->GetJAssetHandler(f);
+                    JScriptAssetBase* jsab = (JScriptAssetBase*)file_handle.get();
+                    if(jsab == nullptr) return;
+                    jsab->type = (JScriptAssetBase::ScriptType)type.load();
+                    jsab->Save_Meta();
                 } catch (const std::exception& e) {
                     spdlog::error("Failed to create script background: {}", e.what());
                 }

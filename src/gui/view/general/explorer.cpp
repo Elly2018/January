@@ -496,9 +496,10 @@ namespace January::Engine::View {
         bool single_click = ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left);
         bool double_click = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
         bool tree_node_single = tree_node && single_click;
-        bool none_tree_double = !tree_node && is_dir && double_click;
+        bool none_tree_double_dir = !tree_node && is_dir && double_click;
+        bool none_tree_double_file = !tree_node && !is_dir && double_click;
         bool select_single = !tree_node && single_click;
-        if(tree_node_single || none_tree_double){ // Enter or trigger
+        if(tree_node_single || none_tree_double_dir){ // Enter or trigger
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             travel_record.push(path);
             path = fs::relative(_path, root).string();
@@ -508,6 +509,10 @@ namespace January::Engine::View {
             spdlog::debug("\tAsset browse _path: {}", _path.string());
             UpdatePathNode();
             changed = true;
+        }
+        if(none_tree_double_file){
+            auto file_handle = jengine.context->asset->GetJAssetHandler(path);
+            file_handle->Open();
         }
         if(select_single){ // Selection
             std::lock_guard<std::mutex> lock(jengine.context->asset_selection_mtx);
