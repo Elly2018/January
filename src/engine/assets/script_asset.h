@@ -75,6 +75,7 @@ namespace January::Engine {
         DEFAULT_ASSET_FACTORY_CTOR(JScriptAssetFactory, ".gravity") {}
 
         std::shared_ptr<JAssetBase> CreateAsset(fs::path path) override;
+        std::string GetResourceName() override;
     };
 }
 

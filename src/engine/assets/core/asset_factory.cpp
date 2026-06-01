@@ -38,6 +38,10 @@ namespace January::Engine {
         return b;
     }
 
+    std::string JAssetFactory::GetResourceName(){
+        return "Base";
+    }
+
     bool JAssetFactory::CheckExtension(std::string ext) {
         for(auto& i : extension){
             if(i == ext) return true;

@@ -33,4 +33,12 @@ namespace January::Engine::View {
     void JPopupCreateResource::Init(){
         SetPopupSize(ImVec2(0.8f, 0.8f), true, true, false);
     }
+
+    void JPopupCreateResource::Update() {
+
+    }
+
+    void JPopupCreateResource::Draw() {
+
+    }
 }

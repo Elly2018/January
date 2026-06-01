@@ -45,6 +45,7 @@ namespace January::Engine {
         DEFAULT_ASSET_FACTORY_CTOR(JTextAssetFactory, ".txt") {}
 
         std::shared_ptr<JAssetBase> CreateAsset(fs::path path) override;
+        std::string GetResourceName() override;
     };
 }
 

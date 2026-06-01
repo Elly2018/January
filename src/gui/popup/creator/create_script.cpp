@@ -33,4 +33,12 @@ namespace January::Engine::View {
     void JPopupCreateScript::Init(){
         SetPopupSize(ImVec2(0.8f, 0.8f), true, true, false);
     }
+
+    void JPopupCreateScript::Update() {
+
+    }
+
+    void JPopupCreateScript::Draw() {
+
+    }
 }

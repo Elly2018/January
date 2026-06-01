@@ -65,4 +65,8 @@ namespace January::Engine {
         b->Init();
         return b;
     }
+
+    std::string JTextAssetFactory::GetResourceName(){
+        return "Text";
+    }
 }

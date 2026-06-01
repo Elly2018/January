@@ -46,4 +46,8 @@ namespace January::Engine {
         b->Init();
         return b;
     }
+
+    std::string JScriptAssetFactory::GetResourceName(){
+        return "Script";
+    }
 }

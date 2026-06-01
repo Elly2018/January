@@ -34,7 +34,8 @@ namespace January::Engine::View {
         DEFAULT_POPUP_DECTOR(JPopupCreateScript) {}
 
         void Init() override;
-
+        void Update() override;
+        void Draw() override;
     public:
         void RegisterFolder(std::string _folder);
 

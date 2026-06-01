@@ -71,4 +71,17 @@ namespace January::Engine {
         std::lock_guard<std::mutex> lock(la_mtx);
         loadedAssets.clear();
     }
+
+    std::vector<std::string> JAssetWorker::GetAllResourceName() {
+        std::lock_guard<std::mutex> lock(lf_mtx);
+        std::vector<std::string> f;
+        for(auto& i : loadedFactory){
+            f.push_back(i->GetResourceName());
+        }
+        return f;
+    }
+
+    size_t JAssetWorker::GetResourceTypeLength() {
+        return loadedFactory.size();
+    }
 }

@@ -149,6 +149,7 @@ namespace January {
             JAssetFactory(std::vector<std::string> _ext, System::JWindow& _win, JEngine& _engine);
             virtual ~JAssetFactory();
             virtual std::shared_ptr<JAssetBase> CreateAsset(fs::path path);
+            virtual std::string GetResourceName();
             bool CheckExtension(std::string ext);
         protected:
             std::vector<std::string> extension = std::vector<std::string>();
@@ -187,6 +188,9 @@ namespace January {
              */
             bool IsJAssetHandlerLoaded(std::string uuid);
             void CleanLoadAsset();
+
+            std::vector<std::string> GetAllResourceName();
+            size_t GetResourceTypeLength();
 
             JAssetEvent EventHandler = JAssetEvent();
         protected:
