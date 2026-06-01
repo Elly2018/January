@@ -22,34 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef GUI_POPUP_CREATOR_CREATE_FOLDER_H
-#define GUI_POPUP_CREATOR_CREATE_FOLDER_H
-#include "../popupbase.h"
-#include <atomic>
-#include <mutex>
-#include <string>
+#ifndef GUI_POPUP_CREATOR_SCRIPT_TEMPLATE_H
+#define GUI_POPUP_CREATOR_SCRIPT_TEMPLATE_H
 
 namespace January::Engine::View {
-    class JPopupCreateFolder : public JPopupBase {
-    public:
-        DEFAULT_POPUP_CTOR(JPopupCreateFolder) {}
-        DEFAULT_POPUP_DECTOR(JPopupCreateFolder) {}
+    const char* ScriptFactoryTemplate = R"raw(
 
-        void Init() override;
-        void Update() override;
-        void Draw() override;
+sss
 
-    public:
-        void RegisterFolder(std::string _folder);
+)raw";
+    const char* ScriptAssetTemplate = R"raw(
 
-    private:
-        std::string folder;
-        std::string input;
-        std::mutex input_mtx;
-        std::string message;
-        std::mutex message_mtx;
-        std::atomic_bool can_be_confirm;
-        std::atomic_bool trigger_create;
-    };
+sss
+
+)raw";
+    const char* ScriptECSTemplate = R"raw(
+
+sss
+
+)raw";
 }
 #endif

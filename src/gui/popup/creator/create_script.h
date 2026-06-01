@@ -25,7 +25,9 @@ SOFTWARE.
 #ifndef GUI_POPUP_CREATOR_CREATE_SCRIPT_H
 #define GUI_POPUP_CREATOR_CREATE_SCRIPT_H
 #include "../popupbase.h"
+#include <atomic>
 #include <string>
+#include <mutex>
 
 namespace January::Engine::View {
     class JPopupCreateScript : public JPopupBase {
@@ -36,11 +38,19 @@ namespace January::Engine::View {
         void Init() override;
         void Update() override;
         void Draw() override;
+        
     public:
         void RegisterFolder(std::string _folder);
 
     private:
         std::string folder;
+        std::string input;
+        std::mutex input_mtx;
+        std::string message;
+        std::mutex message_mtx;
+        std::atomic_bool can_be_confirm;
+        std::atomic_bool trigger_create;
+        std::atomic_int32_t type;
     };
 }
 #endif

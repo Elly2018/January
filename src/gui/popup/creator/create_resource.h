@@ -36,6 +36,7 @@ namespace January::Engine::View {
         void Init() override;
         void Update() override;
         void Draw() override;
+        
     public:
         void RegisterFolder(std::string _folder);
 

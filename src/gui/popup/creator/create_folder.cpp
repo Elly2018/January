@@ -34,12 +34,12 @@ namespace fs = std::filesystem;
 namespace January::Engine::View {
     void JPopupCreateFolder::RegisterFolder(std::string _folder){
         folder = _folder;
-        window_flag |= ImGuiWindowFlags_NoScrollbar;
     }
 
     void JPopupCreateFolder::Init(){
         SetPopupSize(ImVec2(0.5f, 140), true, false, false);
         spdlog::info("Loaded Popup: Create Folder");
+        window_flag |= ImGuiWindowFlags_NoScrollbar;
     }
 
     void JPopupCreateFolder::Update() {

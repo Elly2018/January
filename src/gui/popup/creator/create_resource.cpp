@@ -39,6 +39,6 @@ namespace January::Engine::View {
     }
 
     void JPopupCreateResource::Draw() {
-
+        
     }
 }

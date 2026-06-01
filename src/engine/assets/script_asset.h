@@ -43,12 +43,19 @@ namespace January::Engine {
             /**
              * @brief Factory type 
              * Contain two method
-             * ss
-             * ss
+             * @param FACTORY Custom factory worker
+             * @param ASSET Pure asset, can be execute directly
+             * @param ECS System-Component type of script
              */
             FACTORY = 0,
             ASSET = 1,
             ECS = 2,
+        };
+
+        const char* ScriptTypeString[3] = {
+            "Factory",
+            "Asset",
+            "ECS"
         };
 
         /**
@@ -66,8 +73,8 @@ namespace January::Engine {
          */
         void Decode(json json) override;
 
-        std::string text;
-        ScriptType type;
+        std::string text = "";
+        ScriptType type = ScriptType::ASSET;
     };
 
     class JScriptAssetFactory : public JAssetFactory {
