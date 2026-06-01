@@ -31,6 +31,18 @@ SOFTWARE.
 #include "../../engine.h"
 #include "../../struct/context.h"
 
+#if defined(_WIN32) || defined(_WIN64)
+    #ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+    #endif
+    #include <windows.h>
+    #include <shellapi.h>
+#elif defined(__APPLE__) || defined(__linux__)
+    #include <unistd.h>
+    #include <sys/wait.h>
+    #include <fcntl.h>
+#endif
+
 namespace January::Engine {
     JAssetBase::JAssetBase(fs::path _target, System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
         target = _target;
@@ -153,19 +165,51 @@ namespace January::Engine {
     }
 
     void JAssetBase::Open() {
-        std::string command;
+        std::string buffer = target.string();
+#if defined(_WIN32) || defined(_WIN64)
+        int len = MultiByteToWideChar(CP_UTF8, 0, buffer.c_str(), -1, NULL, 0);
+        std::wstring wFilename(len, 0);
+        MultiByteToWideChar(CP_UTF8, 0, buffer.c_str(), -1, &wFilename[0], len);
 
-        #if defined(_WIN32) || defined(_WIN64)
-            command = "explorer \"" + target.string() + "\"";
-        #elif defined(__APPLE__)
-            command = "open \"" + target.string() + "\"";
-        #elif defined(__linux__)
-            command = "xdg-open \"" + target.string() + "\"";
-        #else
-            #error "Unsupported platform"
-        #endif
+        HINSTANCE result = ShellExecuteW(
+            NULL,          // No parent window
+            L"open",       // Operation to perform
+            wFilename.c_str(), // File path
+            NULL,          // No parameters
+            NULL,          // Use default working directory
+            SW_SHOWNORMAL  // Show window normally
+        );
+        if (reinterpret_cast<INT_PTR>(result) <= 32) {
+            std::cerr << "Windows failed to launch file. Error code: " << reinterpret_cast<INT_PTR>(result) << "\n";
+        }
 
-        std::system(command.c_str());
+#elif defined(__linux__) || defined(__APPLE__)
+        pid_t pid = fork();
+        if (pid == 0) {
+            setsid(); 
+
+            int devNull = open("/dev/null", O_WRONLY);
+            if (devNull != -1) {
+                dup2(devNull, STDOUT_FILENO);
+                dup2(devNull, STDERR_FILENO);
+                close(devNull);
+            }
+
+            #if defined(__APPLE__)
+                char* args[] = {(char*)"open", (char*)buffer.c_str(), nullptr};
+            #else
+                char* args[] = {(char*)"xdg-open", (char*)buffer.c_str(), nullptr};
+            #endif
+
+            execvp(args[0], args);
+            _exit(1); 
+        } 
+        else if (pid < 0) {
+            std::cerr << "Failed to fork process for file launching.\n";
+        }
+#else
+        #error "Unsupported Operating System"
+#endif
     }
 
     bool JAssetBase::IsLoading() {

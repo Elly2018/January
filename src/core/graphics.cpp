@@ -105,6 +105,7 @@ namespace January
 
     void VInit()
     {
+        SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
         {
             // printf("Error: SDL_Init(): %s\n", SDL_GetError());

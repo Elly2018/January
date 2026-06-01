@@ -493,8 +493,8 @@ namespace January::Engine::View {
             UpdatePathNode();
             changed = true;
         }
-        if(none_tree_double_file){
-            auto file_handle = jengine.context->asset->GetJAssetHandler(path);
+        if(none_tree_double_file){ // Open the file by double click
+            auto file_handle = jengine.context->asset->GetJAssetHandler(_path.string());
             file_handle->Open();
         }
         if(select_single){ // Selection
