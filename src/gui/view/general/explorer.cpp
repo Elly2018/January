@@ -46,13 +46,10 @@ namespace January::Engine::View {
         std::string command;
 
         #if defined(_WIN32) || defined(_WIN64)
-            // Windows: use "explorer" command
             command = "explorer \"" + path + "\"";
         #elif defined(__APPLE__)
-            // macOS: use "open" command
             command = "open \"" + path + "\"";
         #elif defined(__linux__)
-            // Linux: use "xdg-open" (standard for most desktops)
             command = "xdg-open \"" + path + "\"";
         #else
             #error "Unsupported platform"
