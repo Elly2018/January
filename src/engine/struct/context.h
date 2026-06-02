@@ -86,9 +86,12 @@ namespace January::Engine
         std::unique_ptr<JLogger> logger;
         // Asset
         std::unique_ptr<JAssetWorker> asset;
-        // Select asset
+        // Select assets
         Assets asset_selection;
         std::mutex asset_selection_mtx;
+        // Clipboard assets
+        Assets asset_clipboard;
+        std::mutex asset_clipboard_mtx;
     };
 }
 #endif
