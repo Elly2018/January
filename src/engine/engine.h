@@ -28,6 +28,8 @@ SOFTWARE.
 #include <filesystem>
 #include <memory>
 
+namespace fs = std::filesystem;
+
 namespace January {
     namespace System {
         struct JSystem;
@@ -40,13 +42,37 @@ namespace January {
         namespace View {
             struct ViewManager;
         }
-        std::filesystem::path get_config_path(const char* path);
-        // Save app config to app preference location
+        fs::path GetConfigDirPath();
+        /**
+         * @brief Get the global config path
+         * 
+         * @param filename Config filename
+         * @return The global config location
+         */
+        fs::path GetConfigPath(const char* filename);
+        /**
+         * @brief Save app config to app preference location
+         * 
+         * @param target The config instance
+         */
         void SaveAppConfig(struct AppConfig& target);
-        // Load app config from app preference location
+        /**
+         * @brief Load app config from app preference location
+         * 
+         * @param config The config instance
+         */
         void LoadAppConfig(struct AppConfig& config);
-        // Generate a app context data struct
+        /**
+         * @brief Generate a app context data struct
+         * 
+         * @param ctx The context instance
+         */
         void GenerateAppContext(struct AppContext& ctx);
+        /**
+         * @brief This will start the timer for runtime clock
+         * 
+         * @param ctx The context instance
+         */
         void RuntimeStart(struct AppContext& ctx);
 
         /**

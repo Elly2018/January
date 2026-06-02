@@ -52,20 +52,24 @@ namespace January::Engine {
     std::chrono::steady_clock::time_point clock_runtime_now;
     std::chrono::steady_clock::time_point clock_runtime_last;
 
-    fs::path get_config_path(const char* path){
+    fs::path GetConfigDirPath() {
         fs::path p = get_home_directory();
         p = p.append("january");
-        spdlog::debug("Try Load AppConfig: {}", p.string());
         if(!fs::exists(p)){
             spdlog::warn("[home]/january not exist, create one right now");
             fs::create_directory(p);
         }
-        p = p.append(path);
+        return p;
+    }
+
+    fs::path GetConfigPath(const char* filename){
+        fs::path p = GetConfigDirPath();
+        p = p.append(filename);
         return p;
     }
 
     void SaveAppConfig(struct AppConfig& target){
-        fs::path p = get_config_path("config.json");
+        fs::path p = GetConfigPath("config.json");
         json data = json::object();
         data["j_FPS"] = target.j_FPS;
         data["j_last_open"] = target.j_last_open;
@@ -91,7 +95,7 @@ namespace January::Engine {
     }
 
     void LoadAppConfig(struct AppConfig& config){
-        fs::path p = get_config_path("config.json");
+        fs::path p = GetConfigPath("config.json");
         if(!fs::exists(p)){
             spdlog::warn("Detect config.json not exist, create default one right now");
             SaveAppConfig(config);
@@ -171,7 +175,7 @@ namespace January::Engine {
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         ImFontConfig font_cfg;
         font_cfg.FontDataOwnedByAtlas = false;
-        std::string save_path = Engine::get_config_path("imgui.ini").string();
+        std::string save_path = Engine::GetConfigPath("imgui.ini").string();
         io.IniFilename = save_path.c_str();
         jengine.context->text_font = io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
