@@ -41,6 +41,10 @@ namespace January::Engine {
         }
     }
 
+    void JScriptAssetBase::Open() {
+
+    }
+
     std::shared_ptr<JAssetBase> JScriptAssetFactory::CreateAsset(fs::path path) {
         auto b = std::make_shared<JScriptAssetBase>(path, jwindow, jengine);
         b->Init();

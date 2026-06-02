@@ -72,6 +72,7 @@ namespace January::Engine {
          * @param json Json to memory data
          */
         void Decode(json json) override;
+        void Open() override;
 
         std::string text = "";
         ScriptType type = ScriptType::ASSET;
