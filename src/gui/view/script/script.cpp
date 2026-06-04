@@ -38,7 +38,26 @@ namespace January::Engine::View {
     }
 
     void JViewScript::Draw() {
-        ImGui::Text("Script");
+        ImGuiStyle& style = ImGui::GetStyle();
+        ImGuiIO& io = ImGui::GetIO();
+        float w = std::max(ImGui::GetWindowWidth(), 20.f);
+        if(!init){
+            init = true;
+            leftWidth = w * (1.f / 3.f);
+        }
+
+        DrawTopBar();
+        {
+            ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true, ImGuiWindowFlags_NoScrollbar);
+            DrawLeftList();
+            ImGui::EndChild();
+        }
+        DrawMiddleHandle();
+        {
+            ImGui::BeginChild("ViewExplorer_Right", ImVec2(0, 0), true, ImGuiWindowFlags_NoScrollbar);
+            DrawRightContent();
+            ImGui::EndChild();
+        }
     }
 
     void JViewScript::DeInit() {
@@ -59,5 +78,33 @@ namespace January::Engine::View {
 
     void JViewScript::DrawRightContent(){
 
+    }
+
+    void JViewScript::DrawMiddleHandle(){
+        const float minWidth = 100.0f;    // Minimum allowable width
+        const float maxWidth = 800.0f;   // Maximum allowable width
+        const float splitterWidth = 8.0f; // Thickness of the draggable hit-box
+
+        ImGui::SameLine();
+        // Set cursor position to overlap slightly for a seamless look, then create hit-box
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x); 
+        ImGui::InvisibleButton("v_splitter##Explorer_Splitter", ImVec2(splitterWidth, -1));
+
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+        }
+
+        if (ImGui::IsItemActive()) {
+            // Adjust width based on mouse movement speed (io.MouseDelta)
+            leftWidth += ImGui::GetIO().MouseDelta.x;
+            
+            // Clamp the values so the panels don't break or disappear
+            if (leftWidth < minWidth) leftWidth = minWidth;
+            if (leftWidth > maxWidth) leftWidth = maxWidth;
+        }
+
+        // 4. Right Panel
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + splitterWidth);
     }
 }

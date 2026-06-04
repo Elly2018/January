@@ -25,6 +25,9 @@ SOFTWARE.
 #ifndef GUI_VIEW_SCRIPT_H
 #define GUI_VIEW_SCRIPT_H
 #include "../viewbase.h"
+#include <ned_embed.h>
+#include <string>
+#include <memory>
 
 namespace January::Engine::View {
     class JViewScript : public JViewBase {
@@ -43,7 +46,26 @@ namespace January::Engine::View {
         void DrawLeftList();
         void DrawRightContent();
 
+        /**
+         * @brief Left panel and right panel require splitter
+         * And this function is that splitter
+         * ImGui::SameLine is included, no need to write it
+         */
+        void DrawMiddleHandle();
     private:
+        /**
+         * @brief Init will be the trigger
+         * Define if the first event call is on.
+         */
+        std::atomic_bool init = false;
+        /**
+         * @brief Because left right panel is using splitter
+         * The left width is dynamic which required a variable to record it
+         */
+        std::atomic<float> leftWidth = 0;
+        std::unique_ptr<NedEditor> m_editorContext;
+        bool m_isOpen = true;
+        std::string m_currentFile;
     };
 }
 #endif
