@@ -14,16 +14,11 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DVK_PROTOTYPES")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_PROTOTYPES")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_compile_definitions(VK_PROTOTYPES)
 
 # Libraries
 find_package(Vulkan REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
 # SDL3
 add_subdirectory(third-party/SDL3 EXCLUDE_FROM_ALL)
@@ -50,14 +45,6 @@ add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)
 # entt
 set(ENTT_DIR third-party/entt)
 add_subdirectory(${ENTT_DIR} EXCLUDE_FROM_ALL)
-
-# ned
-set(NED_DIR third-party/ned)
-add_subdirectory(${NED_DIR} EXCLUDE_FROM_ALL)
-include_directories(${NED_DIR}/editor ${NED_DIR}/lsp ${NED_DIR}/lib ${NED_DIR}/util)
-file(COPY ${NED_DIR}/shaders
-    DESTINATION ${CMAKE_BINARY_DIR}/
-)
 
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
@@ -95,6 +82,10 @@ include_directories(${JSON_DIR})
 set(INI_DIR third-party/mINI)
 include_directories(${INI_DIR}/src/mini)
 
+# text-edit
+set(TEXTEDIT_DIR third-party/imgui-textedit)
+include_directories(${TEXTEDIT_DIR})
+
 # spdlog
 set(LOG_DIR third-party/spdlog)
 include_directories(${LOG_DIR}/include)
@@ -108,17 +99,9 @@ set(Notify_DIR third-party/notify/include)
 include_directories(${Notify_DIR})
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
-file(GLOB_RECURSE ned_sources
-    ${NED_DIR}/editor/*.cpp 
-    ${NED_DIR}/lsp/*.cpp 
-    ${NED_DIR}/lib/*.cpp 
-    ${NED_DIR}/util/*.cpp
-    ${NED_DIR}/lib/*.c      # Crucial: ned contains some pure C helper frameworks
-)
 
 add_executable(january
     ${sources}
-    ${ned_sources}
     ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
     ${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp
@@ -131,6 +114,8 @@ add_executable(january
     ${Node_DIR}/imgui_canvas.cpp
     ${Node_DIR}/imgui_node_editor.cpp
     ${Node_DIR}/imgui_node_editor_api.cpp
+    ${TEXTEDIT_DIR}/TextDiff.cpp
+    ${TEXTEDIT_DIR}/TextEditor.cpp
 )
 
 target_compile_options(january PRIVATE -mavx2)
@@ -141,8 +126,6 @@ target_include_directories(january PUBLIC
     ${LIBCURL_DIR}/include
     ${CLIP_DIR}
     ${SHADERC_DIR}/libshaderc/include
-    ${FREETYPE_INCLUDE_DIRS}
-    ${GTK3_INCLUDE_DIRS}
 )
 
 target_link_libraries(january PRIVATE
@@ -153,8 +136,6 @@ target_link_libraries(january PRIVATE
     SDL3::SDL3
     CURL::libcurl
     shaderc
-    ${FREETYPE_LIBRARIES}
-    ${GTK3_LIBRARIES}
 )
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)

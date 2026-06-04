@@ -25,9 +25,10 @@ SOFTWARE.
 #ifndef GUI_VIEW_SCRIPT_H
 #define GUI_VIEW_SCRIPT_H
 #include "../viewbase.h"
-#include <ned_embed.h>
+#include <atomic>
 #include <string>
 #include <memory>
+#include <TextEditor.h>
 
 namespace January::Engine::View {
     class JViewScript : public JViewBase {
@@ -63,7 +64,7 @@ namespace January::Engine::View {
          * The left width is dynamic which required a variable to record it
          */
         std::atomic<float> leftWidth = 0;
-        std::unique_ptr<NedEditor> m_editorContext;
+        std::unique_ptr<TextEditor> m_editorContext;
         bool m_isOpen = true;
         std::string m_currentFile;
     };
