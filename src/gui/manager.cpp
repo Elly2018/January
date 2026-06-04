@@ -219,7 +219,7 @@ namespace January::Engine::View {
                 }
                 if(ImGui::BeginMenu("Render##MainMenuBar_View")){
                     if(ImGui::MenuItem("Preview##MainMenuBar_View_Render", NULL, vm.inspector->IsEnable())){
-                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        //
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     if(ImGui::MenuItem("Material##MainMenuBar_View_Render", NULL, vm.inspector->IsEnable())){
@@ -234,7 +234,7 @@ namespace January::Engine::View {
                 }
                 if(ImGui::BeginMenu("Script##MainMenuBar_View")){
                     if(ImGui::MenuItem("Script##MainMenuBar_View_Script", NULL, vm.inspector->IsEnable())){
-                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        vm.script->SetEnable(!vm.script->IsEnable());
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     if(ImGui::MenuItem("Plugin Manager##MainMenuBar_View_Script", NULL, vm.inspector->IsEnable())){
