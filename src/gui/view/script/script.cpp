@@ -31,6 +31,7 @@ namespace January::Engine::View {
     void JViewScript::Init() {
         JViewBase::Init();
         spdlog::info("Loaded View: Script");
+        m_editorContext.SetLanguage(TextEditor::Language::AngelScript());
     }
 
     void JViewScript::Update() {
@@ -40,7 +41,7 @@ namespace January::Engine::View {
     void JViewScript::Draw() {
         ImGuiStyle& style = ImGui::GetStyle();
         ImGuiIO& io = ImGui::GetIO();
-        float w = std::max(ImGui::GetWindowWidth(), 20.f);
+        float w = std::max(ImGui::GetContentRegionAvail().x, 20.f);
         if(!init){
             init = true;
             leftWidth = w * (1.f / 3.f);
@@ -77,7 +78,7 @@ namespace January::Engine::View {
     }
 
     void JViewScript::DrawRightContent(){
-
+        m_editorContext.Render("TextEdit");
     }
 
     void JViewScript::DrawMiddleHandle(){

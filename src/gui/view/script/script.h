@@ -64,7 +64,7 @@ namespace January::Engine::View {
          * The left width is dynamic which required a variable to record it
          */
         std::atomic<float> leftWidth = 0;
-        std::unique_ptr<TextEditor> m_editorContext;
+        TextEditor m_editorContext;
         bool m_isOpen = true;
         std::string m_currentFile;
     };
