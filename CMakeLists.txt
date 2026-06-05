@@ -46,6 +46,10 @@ add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)
 set(ENTT_DIR third-party/entt)
 add_subdirectory(${ENTT_DIR} EXCLUDE_FROM_ALL)
 
+# angel script
+set(ANGEL_DIR third-party/angelscript)
+add_subdirectory(${ANGEL_DIR}/angelscript/projects/cmake EXCLUDE_FROM_ALL)
+
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ${IMGUI_DIR}/misc/cpp)
@@ -126,6 +130,7 @@ target_include_directories(january PUBLIC
     ${LIBCURL_DIR}/include
     ${CLIP_DIR}
     ${SHADERC_DIR}/libshaderc/include
+    ${ANGEL_DIR}/angelscript/include
 )
 
 target_link_libraries(january PRIVATE
@@ -136,6 +141,7 @@ target_link_libraries(january PRIVATE
     SDL3::SDL3
     CURL::libcurl
     shaderc
+    angelscript
 )
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
