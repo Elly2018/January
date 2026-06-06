@@ -102,12 +102,12 @@ namespace January::Engine {
             p_path = jengine.context->project_path;
         }
         if(!fs::exists(p_path)){
-            spdlog::error("Cannot update vm, Project is not load: {}", p_path);
+            spdlog::error("Cannot update vm, Project is not load: {}", p_path.string());
             return;
         }
         p_path /= "Assets";
         if(!fs::exists(p_path)){
-            spdlog::error("Cannot update vm, Asset folder does not exist: {}", p_path);
+            spdlog::error("Cannot update vm, Asset folder does not exist: {}", p_path.string());
             return;
         }
         std::thread([&](){
