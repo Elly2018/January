@@ -112,7 +112,10 @@ set(Notify_DIR third-party/notify/include)
 include_directories(${Notify_DIR})
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
-file(GLOB_RECURSE angel_sources ${ANGEL_DIR}/add_on/**.c ${ANGEL_DIR}/add_on/**.cpp)
+file(GLOB_RECURSE angel_sources 
+    ${ANGEL_DIR}/add_on/scriptbuilder/**.c ${ANGEL_DIR}/add_on/scriptbuilder/**.cpp
+    ${ANGEL_DIR}/add_on/scriptstdstring/**.c ${ANGEL_DIR}/add_on/scriptstdstring/**.cpp
+)
 
 add_executable(january
     ${sources}
