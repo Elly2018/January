@@ -32,7 +32,7 @@ set(SPIRV_SKIP_EXECUTABLES ON CACHE BOOL "Skip building SPIRV-Tools executables"
 set(SPIRV_SKIP_TESTS ON CACHE BOOL "Skip SPIRV-Tools tests" FORCE)
 set(GLSLANG_ENABLE_INSTALL OFF CACHE BOOL "Disable glslang installation" FORCE)
 set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "Disable building glslang binaries" FORCE)
-set(SHADERC_SKIP_GLSLC_EXE ON CACHE BOOL "Skip building glslc executable" FORCE)
+set(SHADERC_SKIP_EXECUTABLES ON CACHE BOOL "Skip building shaderc executables" FORCE)
 
 set(SHADERC_DIR third-party/shaderc)
 add_subdirectory(${SHADERC_DIR})
