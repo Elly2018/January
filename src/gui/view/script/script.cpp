@@ -87,9 +87,8 @@ namespace January::Engine::View {
                 if(ImGui::MenuItem("New File")){
                     {
                         std::lock_guard<std::mutex> lock(files_buffer_mtx);
-                        
                         ScriptContent sc = ScriptContent();
-                        UUIDv4::UUIDGenerator<std::string> generate = UUIDv4::UUIDGenerator<std::string>();
+                        UUIDv4::UUIDGenerator<std::mt19937_64> generate = UUIDv4::UUIDGenerator<std::mt19937_64>();
                         sc.uuid = generate.getUUID().str();
                         sc.path = "";
                         sc.dirty = true;
@@ -119,10 +118,9 @@ namespace January::Engine::View {
     }
 
     void JViewScript::DrawBottomBar(){
-        if(ImGui::BeginChild("Statu_bar##Script_Status_Bar", ImVec2(0, 36), ImGuiChildFlags_NavFlattened, ImGuiWindowFlags_NoScrollbar)){
-            ImGui::Text("Line: %i, Col: %i", line.load(), column.load());
-            ImGui::EndChild();
-        }
+        ImGui::BeginChild("Statu_bar##Script_Status_Bar", ImVec2(0, 36), ImGuiChildFlags_NavFlattened, ImGuiWindowFlags_NoScrollbar);
+        ImGui::Text("Line: %i, Col: %i", line.load(), column.load());
+        ImGui::EndChild();
     }
 
     void JViewScript::DrawLeftList(){
