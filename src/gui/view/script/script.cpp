@@ -24,7 +24,7 @@ SOFTWARE.
 #include "script.h"
 #include <functional>
 #include <spdlog/spdlog.h>
-#include <uuid_v4/uuid_v4.h>
+#include <uuid_v4.h>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
