@@ -22,13 +22,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "vm.h"
+#include <spdlog/spdlog.h>
+#include "../engine.h"
+#include "../struct/context.h"
+#include "../utility/command.h"
+#include <scriptbuilder/scriptbuilder.h>
 
 namespace January::Engine {
-    AngelVM::AngelVM(){
+    AngelVM::AngelVM(System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine){
         engine = std::unique_ptr<asIScriptEngine, ASEngineDeleter>(asCreateScriptEngine(ANGELSCRIPT_VERSION));
+        engine->SetMessageCallback(asMETHOD(AngelVM, ScriptMessageCallback), this, asCALL_THISCALL);
     }
 
     AngelVM::~AngelVM(){
         engine.release();
+    }
+
+    void AngelVM::UpdateVMContent() {
+        fs::path p_path = "";
+        {
+            JLOCK(jengine.context->project_path, 1)
+            p_path = jengine.context->project_path;
+        }
+        if(!fs::exists(p_path)){
+            spdlog::error("Cannot update vm, Project is not load: {}", p_path);
+            return;
+        }
+        p_path /= "Assets";
+        if(!fs::exists(p_path)){
+            spdlog::error("Cannot update vm, Asset folder does not exist: {}", p_path);
+            return;
+        }
+        
+    }
+
+    void AngelVM::ScriptMessageCallback(const asSMessageInfo* msg) {
+        // Format the error trace location accurately
+        std::string location = fmt::format("{}:({},{})", msg->section, msg->row, msg->col);
+
+        // Route message types cleanly to your engine's logging system
+        if (msg->type == asMSGTYPE_ERROR) {
+            spdlog::error("[AngelScript Compiling Exception] {} : {}", location, msg->message);
+        } 
+        else if (msg->type == asMSGTYPE_WARNING) {
+            spdlog::warn("[AngelScript Compilation Warn] {} : {}", location, msg->message);
+        } 
+        else {
+            spdlog::info("[AngelScript Compiler Trace] {} : {}", location, msg->message);
+        }
     }
 }

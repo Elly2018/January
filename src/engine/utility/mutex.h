@@ -22,50 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_SCRIPT_VM_H
-#define ENGINE_SCRIPT_VM_H
-#include <iostream>
-#include <vector>
-#include <string>
+#ifndef ENGINE_UTILITY_MUTEX_H
+#define ENGINE_UTILITY_MUTEX_H
 #include <mutex>
-#include <memory>
-#include <angelscript.h>
-#include "../utility/mutex.h"
 
-namespace January {
-    namespace System {
-        struct JWindow;
-    }
-    namespace Engine {
-        struct JEngine;
-
-        struct ASEngineDeleter {
-            void operator()(asIScriptEngine* engine) const {
-                if (engine) {
-                    engine->ShutDownAndRelease();
-                }
-            }
-        };
-        
-        class AngelVM {
-        public:
-            AngelVM(System::JWindow& _win, JEngine& _engine);
-            virtual ~AngelVM();
-
-            void UpdateVMContent();
-
-        protected:
-            void ScriptMessageCallback(const asSMessageInfo* msg);
-            
-        protected:
-            System::JWindow&    jwindow;
-            JEngine&            jengine;
-            std::unique_ptr<asIScriptEngine, ASEngineDeleter> engine;
-
-            std::vector<std::string> modules;
-            JMUTEX(modules)
-        };
-    }
-}
+/**
+ * @brief Simply create mutex match it's target name with _mtx at the end
+ */
+#define JMUTEX(name) std::mutex name##_mtx;
+/**
+ * @brief Quick use lock_guard for target name
+ */
+#define JLOCK(name, level) std::lock_guard<std::mutex> lock##level(name##_mtx);
 
 #endif

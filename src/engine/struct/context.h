@@ -30,6 +30,7 @@ SOFTWARE.
 #include <string>
 #include <queue>
 #include <mutex>
+#include "../utility/mutex.h"
 
 struct ImFont;
 
@@ -43,6 +44,7 @@ namespace January::Engine
     class JAssetWorker;
     class JLogger;
     struct JAssetBase;
+    class AngelVM;
 
     using Assets = std::vector<std::shared_ptr<JAssetBase>>;
 
@@ -59,7 +61,7 @@ namespace January::Engine
         ~AppContext() = default;
         
         std::string project_path = "";
-        std::mutex project_path_mtx;
+        JMUTEX(project_path)
         // Does application needs load project right now
         std::atomic_bool load_project = false;
         // Application global time
@@ -75,7 +77,7 @@ namespace January::Engine
         // In order to use this in thread-safe
         // Please lock_guard "commands_mtx" before add item or pop item to it
         std::queue<std::string> commands = std::queue<std::string>();
-        std::mutex commands_mtx;
+        JMUTEX(commands)
         // Imgui defualt text
         ImFont* text_font;
         // Imgui font with icon like graph
@@ -88,12 +90,14 @@ namespace January::Engine
         std::unique_ptr<JLogger> logger;
         // Asset
         std::unique_ptr<JAssetWorker> asset;
+        // VM
+        std::unique_ptr<AngelVM> vm;
         // Select assets
         Assets asset_selection;
-        std::mutex asset_selection_mtx;
+        JMUTEX(asset_selection)
         // Clipboard assets
         Assets asset_clipboard;
-        std::mutex asset_clipboard_mtx;
+        JMUTEX(asset_clipboard)
     };
 }
 #endif

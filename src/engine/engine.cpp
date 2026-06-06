@@ -39,6 +39,7 @@ SOFTWARE.
 #include "../gui/manager.h"
 #include "../engine/utility/logger.h"
 #include "../engine/assets/asset.h"
+#include "../engine/script/vm.h"
 
 using json = nlohmann::json;
 
@@ -169,6 +170,7 @@ namespace January::Engine {
         jengine.manager = std::make_unique<View::ViewManager>();
         jengine.context->logger = std::make_unique<JLogger>();
         jengine.context->asset = std::make_unique<JAssetWorker>(jwindow, jengine);
+        jengine.context->vm = std::make_unique<AngelVM>(jwindow, jengine);
         LoadAppConfig(*jengine.config);
         GenerateAppContext(*jengine.context);
 
