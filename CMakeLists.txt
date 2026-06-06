@@ -28,8 +28,15 @@ set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "Skip shaderc examples" FORCE)
 set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "Skip shaderc copyright check" FORCE)
 set(DISABLE_RTTI ON CACHE BOOL "Disable RTTI for shaderc dependencies" FORCE)
 set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "Use shared CRT" FORCE)
-set(SHADERC_SKIP_SPVTR_EXECUTABLES ON CACHE BOOL "Skip building SPIRV-Tools executables" FORCE)
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
+# FIX 1: Stop SPIRV-Tools from building its executables (spirv-as, spirv-dis, spirv-opt, etc.)
+set(SPIRV_SKIP_EXECUTABLES ON CACHE BOOL "Skip building SPIRV-Tools executables" FORCE)
+set(SPIRV_SKIP_TESTS ON CACHE BOOL "Skip SPIRV-Tools tests" FORCE)
+
+# FIX 2: Stop glslang from building its standalone compilers (glslang, glslangValidator)
+set(GLSLANG_ENABLE_INSTALL OFF CACHE BOOL "Disable glslang installation" FORCE)
+set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "Disable building glslang binaries" FORCE)
+
 set(SHADERC_DIR third-party/shaderc)
 add_subdirectory(${SHADERC_DIR})
 
@@ -50,6 +57,7 @@ add_subdirectory(${ENTT_DIR} EXCLUDE_FROM_ALL)
 # angel script
 set(ANGEL_DIR third-party/angelscript)
 add_subdirectory(${ANGEL_DIR}/angelscript/projects/cmake EXCLUDE_FROM_ALL)
+include_directories(${ANGEL_DIR}/add_on)
 
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
@@ -104,9 +112,11 @@ set(Notify_DIR third-party/notify/include)
 include_directories(${Notify_DIR})
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
+file(GLOB_RECURSE angel_sources ${ANGEL_DIR}/add_on/**.c ${ANGEL_DIR}/add_on/**.cpp)
 
 add_executable(january
     ${sources}
+    ${angel_sources}
     ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
     ${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp
