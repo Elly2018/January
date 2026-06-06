@@ -25,10 +25,10 @@ SOFTWARE.
 
 namespace January::Engine {
     AngelVM::AngelVM(){
-
+        engine = std::unique_ptr<asIScriptEngine, ASEngineDeleter>(asCreateScriptEngine(ANGELSCRIPT_VERSION));
     }
 
     AngelVM::~AngelVM(){
-        
+        engine.release();
     }
 }

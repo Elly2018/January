@@ -175,6 +175,7 @@ namespace January::Engine {
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         ImFontConfig font_cfg;
         font_cfg.FontDataOwnedByAtlas = false;
+        font_cfg.GlyphExtraAdvanceX = 0.0f;
         std::string save_path = Engine::GetConfigPath("imgui.ini").string();
         io.IniFilename = save_path.c_str();
         jengine.context->text_font = io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f, &font_cfg);

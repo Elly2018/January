@@ -82,6 +82,8 @@ namespace January::Engine
         ImFont* icon_font;
         // Imgui font with emoji like graph
         ImFont* emoji_font;
+        // Imgui code text
+        ImFont* code_font;
         // Logger
         std::unique_ptr<JLogger> logger;
         // Asset

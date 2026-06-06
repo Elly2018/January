@@ -29,13 +29,21 @@ SOFTWARE.
 #include <angelscript.h>
 
 namespace January::Engine {
+    struct ASEngineDeleter {
+        void operator()(asIScriptEngine* engine) const {
+            if (engine) {
+                engine->ShutDownAndRelease();
+            }
+        }
+    };
+    
     class AngelVM {
     public:
         AngelVM();
         virtual ~AngelVM();
 
     protected:
-        std::unique_ptr<asIScriptEngine> engine;
+        std::unique_ptr<asIScriptEngine, ASEngineDeleter> engine;
     };
 }
 

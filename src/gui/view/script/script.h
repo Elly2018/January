@@ -28,6 +28,7 @@ SOFTWARE.
 #include <atomic>
 #include <string>
 #include <memory>
+#include <mutex>
 #include <TextEditor.h>
 
 namespace January::Engine::View {
@@ -67,6 +68,11 @@ namespace January::Engine::View {
         TextEditor m_editorContext;
         bool m_isOpen = true;
         std::string m_currentFile;
+        std::string m_text;
+        std::atomic<float> fontSize = 17.0f;
+        std::atomic<size_t> version = 0;
+        std::vector<std::string> files_buffer;
+        std::mutex files_buffer_mtx;
     };
 }
 #endif

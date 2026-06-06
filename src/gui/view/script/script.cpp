@@ -26,11 +26,14 @@ SOFTWARE.
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
+#include "../../../engine/engine.h"
+#include "../../../engine/struct/context.h"
 
 namespace January::Engine::View {
     void JViewScript::Init() {
         JViewBase::Init();
         spdlog::info("Loaded View: Script");
+        m_editorContext.SetText(m_text);
         m_editorContext.SetLanguage(TextEditor::Language::AngelScript());
     }
 
@@ -44,18 +47,18 @@ namespace January::Engine::View {
         float w = std::max(ImGui::GetContentRegionAvail().x, 20.f);
         if(!init){
             init = true;
-            leftWidth = w * (1.f / 3.f);
+            leftWidth = w * (1.f / 10.f);
         }
 
         DrawTopBar();
         {
-            ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true, ImGuiWindowFlags_NoScrollbar);
+            ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings);
             DrawLeftList();
             ImGui::EndChild();
         }
         DrawMiddleHandle();
         {
-            ImGui::BeginChild("ViewExplorer_Right", ImVec2(0, 0), true, ImGuiWindowFlags_NoScrollbar);
+            ImGui::BeginChild("ViewExplorer_Right", ImVec2(0, 0), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings);
             DrawRightContent();
             ImGui::EndChild();
         }
@@ -78,7 +81,9 @@ namespace January::Engine::View {
     }
 
     void JViewScript::DrawRightContent(){
+        ImGui::PushFont(jengine.context->text_font, fontSize);
         m_editorContext.Render("TextEdit");
+        ImGui::PopFont();
     }
 
     void JViewScript::DrawMiddleHandle(){
