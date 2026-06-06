@@ -52,12 +52,15 @@ namespace January {
             AngelVM(System::JWindow& _win, JEngine& _engine);
             virtual ~AngelVM();
 
+            bool IsCompiling();
             void UpdateVMContent();
 
         protected:
+            void Compile();
             void ScriptMessageCallback(const asSMessageInfo* msg);
             
         protected:
+            bool compiling = false;
             System::JWindow&    jwindow;
             JEngine&            jengine;
             std::unique_ptr<asIScriptEngine, ASEngineDeleter> engine;

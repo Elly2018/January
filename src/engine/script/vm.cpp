@@ -38,7 +38,15 @@ namespace January::Engine {
         engine.release();
     }
 
+    bool AngelVM::IsCompiling() {
+        return compiling;
+    }
+
     void AngelVM::UpdateVMContent() {
+        if(compiling){
+            spdlog::error("It is compiling currently, Please wait...");
+            return;
+        }
         fs::path p_path = "";
         {
             JLOCK(jengine.context->project_path, 1)
@@ -52,6 +60,18 @@ namespace January::Engine {
         if(!fs::exists(p_path)){
             spdlog::error("Cannot update vm, Asset folder does not exist: {}", p_path);
             return;
+        }
+        std::thread([&](){
+            compiling = true;
+            Compile();
+            compiling = false;
+        }).detach();
+    }
+
+    void AngelVM::Compile() {
+        {
+            JLOCK(modules, 1)
+            modules.clear();
         }
         
     }

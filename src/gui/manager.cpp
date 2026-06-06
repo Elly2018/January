@@ -27,6 +27,7 @@ SOFTWARE.
 #include "../engine/engine.h"
 #include "../engine/struct/config.h"
 #include "../engine/struct/context.h"
+#include "../engine/script/vm.h"
 #include "../engine/utility/command.h"
 #include "../system/system.h"
 #include "../system/window.h"
@@ -265,6 +266,15 @@ namespace January::Engine::View {
                     }
                     ImGui::EndMenu();
                 }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Action##MainMenuBar")) {
+                if(ImGui::MenuItem("Compile")){
+                    jengine.context->vm->UpdateVMContent();
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Tool##MainMenuBar")) {
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("Help##MainMenuBar")){
