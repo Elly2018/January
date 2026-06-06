@@ -184,6 +184,8 @@ namespace January::Engine {
         ImGui::MergeIconsWithLatestFont(16.f, false);
         jengine.context->emoji_font = io.Fonts->AddFontFromFileTTF("NotoEmoji-VariableFont_wght.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
+        jengine.context->code_font = io.Fonts->AddFontFromFileTTF("JetBrainsMono-Regular.ttf", 16.0f, &font_cfg);
+        ImGui::MergeIconsWithLatestFont(16.f, false);
 #ifdef _WIN32
         io.Fonts->AddFontFromFileTTF("SourceHanSans-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
         io.Fonts->AddFontFromFileTTF("SourceHanSansK-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesKorean());
