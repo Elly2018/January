@@ -135,6 +135,13 @@ namespace January::Engine::View {
                     display_name += "*";
                 }
                 if(ImGui::Selectable(display_name.c_str(), m_currentFile != nullptr && m_currentFile->uuid == file.uuid)){
+                    if(m_currentFile != nullptr){
+                        m_currentFile->text = m_editorContext.GetText();
+                    }
+                    if(m_currentFile == &file){
+                        m_currentFile = nullptr;
+                        continue;
+                    }
                     m_currentFile = &file;
                     m_editorContext.SetText(file.text);
                     should_load.store(true, std::memory_order_release);
