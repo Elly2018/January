@@ -45,6 +45,7 @@ namespace January::Engine::View {
 
     protected:
         void DrawTopBar();
+        void DrawBottomBar();
         void DrawLeftList();
         void DrawRightContent();
 
@@ -73,6 +74,8 @@ namespace January::Engine::View {
         std::atomic<size_t> version = 0;
         std::vector<std::string> files_buffer;
         std::mutex files_buffer_mtx;
+        std::atomic_int32_t line;
+        std::atomic_int32_t column;
     };
 }
 #endif

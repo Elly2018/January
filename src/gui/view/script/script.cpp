@@ -38,7 +38,11 @@ namespace January::Engine::View {
     }
 
     void JViewScript::Update() {
-        
+        int l; 
+        int c;
+        m_editorContext.GetCurrentCursor(l, c);
+        line.store(l, std::memory_order_relaxed);
+        column.store(c, std::memory_order_relaxed);
     }
 
     void JViewScript::Draw() {
@@ -51,6 +55,7 @@ namespace January::Engine::View {
         }
 
         DrawTopBar();
+        DrawBottomBar();
         {
             ImGui::BeginChild("ViewExplorer_Left", ImVec2(leftWidth - (style.DisplayWindowPadding.x / 1.5f), 0), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings);
             DrawLeftList();
@@ -73,7 +78,38 @@ namespace January::Engine::View {
     }
 
     void JViewScript::DrawTopBar(){
+        if(ImGui::BeginMenuBar()){
+            if(ImGui::BeginMenu("File")){
+                if(ImGui::MenuItem("New File")){
 
+                }
+                ImGui::Separator();
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Edit")){
+                if(ImGui::MenuItem("Cut")){
+
+                }
+                if(ImGui::MenuItem("Copy")){
+
+                }
+                if(ImGui::MenuItem("Paste")){
+
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Help")){
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+    }
+
+    void JViewScript::DrawBottomBar(){
+        if(ImGui::BeginChild("Statu_bar##Script_Status_Bar", ImVec2(0, 30), ImGuiChildFlags_NavFlattened)){
+            ImGui::Text("Line: %i, Col: %i", line.load(), column.load());
+            ImGui::EndChild();
+        }
     }
 
     void JViewScript::DrawLeftList(){
