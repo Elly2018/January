@@ -29,9 +29,18 @@ SOFTWARE.
 #include <string>
 #include <memory>
 #include <mutex>
+#include <filesystem>
 #include <TextEditor.h>
 
+namespace fs = std::filesystem;
+
 namespace January::Engine::View {
+
+    struct ScriptContent {
+        fs::path path;
+        bool dirty;
+    };
+
     class JViewScript : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewScript) {}
@@ -68,11 +77,11 @@ namespace January::Engine::View {
         std::atomic<float> leftWidth = 0;
         TextEditor m_editorContext;
         bool m_isOpen = true;
-        std::string m_currentFile;
+        fs::path m_currentFile;
         std::string m_text;
         std::atomic<float> fontSize = 17.0f;
         std::atomic<size_t> version = 0;
-        std::vector<std::string> files_buffer;
+        std::vector<ScriptContent> files_buffer;
         std::mutex files_buffer_mtx;
         std::atomic_int32_t line;
         std::atomic_int32_t column;

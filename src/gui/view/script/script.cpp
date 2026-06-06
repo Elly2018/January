@@ -82,7 +82,13 @@ namespace January::Engine::View {
         if(ImGui::BeginMenuBar()){
             if(ImGui::BeginMenu("File")){
                 if(ImGui::MenuItem("New File")){
-
+                    {
+                        std::lock_guard<std::mutex> lock(files_buffer_mtx);
+                        ScriptContent sc = ScriptContent();
+                        sc.path = "";
+                        sc.dirty = true;
+                        files_buffer.push_back(sc);
+                    }
                 }
                 ImGui::Separator();
                 ImGui::EndMenu();
@@ -114,7 +120,18 @@ namespace January::Engine::View {
     }
 
     void JViewScript::DrawLeftList(){
+        {
+            std::lock_guard<std::mutex> lock(files_buffer_mtx);
+            for(auto& file : files_buffer){
+                std::string display_name = file.path.filename().string();
+                if(file.dirty){
+                    display_name += "*";
+                }
+                if(ImGui::Selectable(display_name.c_str(), file.path == m_currentFile)){
 
+                }
+            }
+        }
     }
 
     void JViewScript::DrawRightContent(){
