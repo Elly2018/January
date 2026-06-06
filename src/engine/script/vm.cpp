@@ -71,9 +71,11 @@ namespace January::Engine {
     void AngelVM::Compile() {
         {
             JLOCK(modules, 1)
+            for(auto& m : modules){
+                engine->DiscardModule(m.c_str());
+            }
             modules.clear();
         }
-        
     }
 
     void AngelVM::ScriptMessageCallback(const asSMessageInfo* msg) {
