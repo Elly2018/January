@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 4.1)
 project(january C CXX)
 
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -16,14 +15,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_PROTOTYPES")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_definitions(VK_PROTOTYPES)
-
-if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_options(january PRIVATE -O3 -ffunction-sections -fdata-sections)
-    target_link_options(january PRIVATE -Wl,--gc-sections -Wl,-s)
-else()
-    target_compile_options(january PRIVATE -O0)
-    target_link_options(january PRIVATE -g)
-endif()
 
 # Libraries
 find_package(Vulkan REQUIRED)
@@ -130,6 +121,14 @@ add_executable(january
     ${TEXTEDIT_DIR}/TextDiff.cpp
     ${TEXTEDIT_DIR}/TextEditor.cpp
 )
+
+if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_options(january PRIVATE -O3 -ffunction-sections -fdata-sections)
+    target_link_options(january PRIVATE -Wl,--gc-sections -Wl,-s)
+else()
+    target_compile_options(january PRIVATE -O0)
+    target_link_options(january PRIVATE -g)
+endif()
 
 target_compile_options(january PRIVATE -mavx2)
 
