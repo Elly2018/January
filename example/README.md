@@ -20,4 +20,7 @@ It fires up the log function writen in embedded gravity script which fires up at
 
 Testing for project management editor window features
 
+### 中文路徑
+
+Testing for wchar support for path
 
