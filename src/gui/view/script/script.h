@@ -37,8 +37,10 @@ namespace fs = std::filesystem;
 namespace January::Engine::View {
 
     struct ScriptContent {
+        std::string uuid;
         fs::path path;
         bool dirty;
+        std::string text = "";
     };
 
     class JViewScript : public JViewBase {
@@ -57,13 +59,15 @@ namespace January::Engine::View {
         void DrawBottomBar();
         void DrawLeftList();
         void DrawRightContent();
-
         /**
          * @brief Left panel and right panel require splitter
          * And this function is that splitter
          * ImGui::SameLine is included, no need to write it
          */
         void DrawMiddleHandle();
+
+        void OnChanged();
+        void OnTransaction(std::vector<TextEditor::Change>& changed);
     private:
         /**
          * @brief Init will be the trigger
@@ -77,14 +81,14 @@ namespace January::Engine::View {
         std::atomic<float> leftWidth = 0;
         TextEditor m_editorContext;
         bool m_isOpen = true;
-        fs::path m_currentFile;
-        std::string m_text;
+        ScriptContent* m_currentFile = nullptr;
         std::atomic<float> fontSize = 17.0f;
         std::atomic<size_t> version = 0;
         std::vector<ScriptContent> files_buffer;
         std::mutex files_buffer_mtx;
         std::atomic_int32_t line;
         std::atomic_int32_t column;
+        std::atomic_bool should_load = false;
     };
 }
 #endif

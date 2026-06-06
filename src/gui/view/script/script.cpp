@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "script.h"
+#include <functional>
 #include <spdlog/spdlog.h>
+#include <uuid_v4/uuid_v4.h>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
@@ -33,8 +35,9 @@ namespace January::Engine::View {
     void JViewScript::Init() {
         JViewBase::Init();
         spdlog::info("Loaded View: Script");
-        m_editorContext.SetText(m_text);
         m_editorContext.SetLanguage(TextEditor::Language::AngelScript());
+        m_editorContext.SetChangeCallback(std::bind(&JViewScript::OnChanged, this));
+        m_editorContext.SetTransactionCallback(std::bind(&JViewScript::OnTransaction, this, std::placeholders::_1));
         window_flag |= ImGuiWindowFlags_MenuBar;
     }
 
@@ -84,7 +87,10 @@ namespace January::Engine::View {
                 if(ImGui::MenuItem("New File")){
                     {
                         std::lock_guard<std::mutex> lock(files_buffer_mtx);
+                        
                         ScriptContent sc = ScriptContent();
+                        UUIDv4::UUIDGenerator<std::string> generate = UUIDv4::UUIDGenerator<std::string>();
+                        sc.uuid = generate.getUUID().str();
                         sc.path = "";
                         sc.dirty = true;
                         files_buffer.push_back(sc);
@@ -124,11 +130,16 @@ namespace January::Engine::View {
             std::lock_guard<std::mutex> lock(files_buffer_mtx);
             for(auto& file : files_buffer){
                 std::string display_name = file.path.filename().string();
+                if(display_name.size() == 0){
+                    display_name += "untitled";
+                }
                 if(file.dirty){
                     display_name += "*";
                 }
-                if(ImGui::Selectable(display_name.c_str(), file.path == m_currentFile)){
-
+                if(ImGui::Selectable(display_name.c_str(), m_currentFile != nullptr && m_currentFile->uuid == file.uuid)){
+                    m_currentFile = &file;
+                    m_editorContext.SetText(file.text);
+                    should_load.store(true, std::memory_order_release);
                 }
             }
         }
@@ -166,5 +177,15 @@ namespace January::Engine::View {
         // 4. Right Panel
         ImGui::SameLine();
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + splitterWidth);
+    }
+
+    void JViewScript::OnChanged(){
+        if(m_currentFile != nullptr){
+            m_currentFile->dirty = true;
+        }
+    }
+
+    void JViewScript::OnTransaction(std::vector<TextEditor::Change>& changed){
+
     }
 }
