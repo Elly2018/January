@@ -60,9 +60,9 @@ namespace January::Engine {
             return;
         }
 
-        asIScriptFunction* func = mod->GetFunctionByDecl("void Main()");
+        asIScriptFunction* func = mod->GetFunctionByDecl("void main()");
         if (func == nullptr) {
-            spdlog::warn("Function 'void Main()' not found in script: {}", path);
+            spdlog::warn("Function 'void main()' not found in script: {}", path);
             return;
         }
 
