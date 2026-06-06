@@ -28,8 +28,9 @@ set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "Skip shaderc examples" FORCE)
 set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "Skip shaderc copyright check" FORCE)
 set(DISABLE_RTTI ON CACHE BOOL "Disable RTTI for shaderc dependencies" FORCE)
 set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "Use shared CRT" FORCE)
-set(SHADERC_DIR third-party/shaderc)
+set(SHADERC_SKIP_SPVTR_EXECUTABLES ON CACHE BOOL "Skip building SPIRV-Tools executables" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(SHADERC_DIR third-party/shaderc)
 add_subdirectory(${SHADERC_DIR})
 
 # clip
