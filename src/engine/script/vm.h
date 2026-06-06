@@ -29,6 +29,7 @@ SOFTWARE.
 #include <string>
 #include <mutex>
 #include <memory>
+#include <filesystem>
 #include <angelscript.h>
 #include "../utility/mutex.h"
 
@@ -38,6 +39,8 @@ namespace January {
     }
     namespace Engine {
         struct JEngine;
+
+        namespace fs = std::filesystem;
 
         struct ASEngineDeleter {
             void operator()(asIScriptEngine* engine) const {
