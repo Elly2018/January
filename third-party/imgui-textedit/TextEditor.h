@@ -910,7 +910,12 @@ protected:
 
 		// translate visible column to line index (and visa versa)
 		size_t getIndex(const Line& line, int column) const;
-		inline size_t getIndex(Coordinate coordinate) const { return getIndex(at(coordinate.line), coordinate.column); }
+		inline size_t getIndex(Coordinate coordinate) const { 
+			if(isEmpty() || lineCount() == 0) {
+				return 0;
+			} 
+			return getIndex(at(coordinate.line), coordinate.column);
+		}
 		int getColumn(const Line& line, size_t index) const;
 		inline int getColumn(int line, size_t index) const { return getColumn(at(line), index); }
 

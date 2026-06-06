@@ -144,9 +144,11 @@ namespace January::Engine::View {
     }
 
     void JViewScript::DrawRightContent(){
-        ImGui::PushFont(jengine.context->code_font, fontSize);
-        m_editorContext.Render("TextEdit");
-        ImGui::PopFont();
+        if(m_currentFile != nullptr){
+            ImGui::PushFont(jengine.context->code_font, fontSize);
+            m_editorContext.Render("TextEdit");
+            ImGui::PopFont();
+        }
     }
 
     void JViewScript::DrawMiddleHandle(){
