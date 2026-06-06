@@ -449,6 +449,11 @@ namespace January::Engine::View {
                     folder_handle->Open();
                 }
             }else{
+                if(_path.extension().string() == ".as"){
+                    if (ImGui::MenuItem(("Run Script##" + popup_id).c_str())){
+                        PushCommand(*jengine.context, "run_script " + _path.string());
+                    }
+                }
                 if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
                 }
             }

@@ -15,6 +15,7 @@
 #include "../engine.h"
 #include "../struct/config.h"
 #include "../struct/context.h"
+#include "../script/vm.h"
 
 namespace fs = std::filesystem;
 
@@ -174,6 +175,15 @@ namespace January::Engine {
             std::string r_path = GetPath(cmds);
             jsystem.engine->manager->create_script->RegisterFolder(r_path);
             jsystem.engine->manager->create_script->SetEnable(true);
+        }
+        //
+        // run_script <path>
+        //
+        else if(cmds.size() >= 2 && cmds.at(0) == "run_script"){
+            std::string r_path = GetPath(cmds);
+            if(fs::exists(r_path)){
+                jsystem.engine->context->vm->RunEditorScript(r_path);
+            }
         }
     }
 

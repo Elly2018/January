@@ -17,6 +17,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_definitions(VK_PROTOTYPES)
 
+if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_options(january PRIVATE -O3 -ffunction-sections -fdata-sections)
+    target_link_options(january PRIVATE -Wl,--gc-sections -Wl,-s)
+else()
+    target_compile_options(january PRIVATE -O0)
+    target_link_options(january PRIVATE -g)
+endif()
+
 # Libraries
 find_package(Vulkan REQUIRED)
 
@@ -30,6 +38,7 @@ set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "Skip shaderc copyright check" FO
 set(DISABLE_RTTI ON CACHE BOOL "Disable RTTI for shaderc dependencies" FORCE)
 set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "Use shared CRT" FORCE)
 set(SHADERC_DIR third-party/shaderc)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 add_subdirectory(${SHADERC_DIR})
 
 # clip

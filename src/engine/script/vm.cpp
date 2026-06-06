@@ -42,6 +42,55 @@ namespace January::Engine {
         return compiling;
     }
 
+    void AngelVM::RunEditorScript(std::string path) {
+        if(!fs::exists(path)){
+            spdlog::error("Module not found in the path: {}", path);
+            return;
+        }
+        std::string rela = fs::relative(path, jengine.context->project_path).string();
+        asIScriptModule* mod = engine->GetModule(rela.c_str(), asGM_ONLY_IF_EXISTS);
+        if(mod == nullptr){
+            spdlog::info("Module not found. Compiling fresh: {}", path);
+            CompileSingle(path);
+            mod = engine->GetModule(rela.c_str(), asGM_ONLY_IF_EXISTS);
+        }
+
+        if(mod == nullptr) {
+            spdlog::error("Error happen during compile stage", path);
+            return;
+        }
+
+        asIScriptFunction* func = mod->GetFunctionByDecl("void Main()");
+        if (func == nullptr) {
+            spdlog::warn("Function 'void Main()' not found in script: {}", path);
+            return;
+        }
+
+        asIScriptContext* ctx = engine->CreateContext();
+        if (ctx == nullptr) {
+            spdlog::error("Failed to allocate an execution context thread.");
+            return;
+        }
+
+        ctx->Prepare(func);
+        int32_t executionResult = ctx->Execute();
+
+        if (executionResult != asEXECUTION_FINISHED) {
+            if (executionResult == asEXECUTION_EXCEPTION) {
+                spdlog::error("Script runtime exception in [{}]: line {}: {}", 
+                            path,
+                            ctx->GetExceptionLineNumber(), 
+                            ctx->GetExceptionString());
+            } else {
+                spdlog::error("Script execution failed with status internal code: {}", executionResult);
+            }
+        } else {
+            spdlog::info("Script [{}] executed flawlessly.", path);
+        }
+
+        ctx->Release();
+    }
+
     void AngelVM::UpdateVMContent() {
         if(compiling){
             spdlog::error("It is compiling currently, Please wait...");
@@ -81,6 +130,39 @@ namespace January::Engine {
             modules.clear();
         }
         std::vector<fs::path> files = GetAllScriptPath();
+        for(auto& file : files){
+            CompileSingle(file);
+        }
+    }
+
+    void AngelVM::CompileSingle(fs::path file) {
+        CScriptBuilder builder;
+        std::string file_path = file.string();
+        std::string rela = fs::relative(file, jengine.context->project_path).string();
+        int32_t r = builder.StartNewModule(engine.get(), rela.c_str());
+        if (r < 0) {
+            spdlog::error("Failed to allocate fresh script module shell. {}", file_path);
+            return;
+        }
+
+        r = builder.AddSectionFromFile(file_path.c_str());
+        if (r < 0) {
+            spdlog::error("Failed to read script entry file: {}", file_path);
+            return;
+        }
+
+        r = builder.BuildModule();
+        if (r < 0) {
+            spdlog::error("Hot-reload compilation failed! Keeping engine state empty. {}", file_path);
+            return;
+        }
+
+        spdlog::info("Script environment re-allocated and compiled successfully. {}", file_path);
+
+        {
+            JLOCK(modules, 1)
+            modules.push_back(rela);
+        }
     }
 
     std::vector<fs::path> AngelVM::GetAllScriptPath(){

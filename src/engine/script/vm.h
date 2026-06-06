@@ -53,10 +53,12 @@ namespace January {
             virtual ~AngelVM();
 
             bool IsCompiling();
+            void RunEditorScript(std::string path);
             void UpdateVMContent();
 
         protected:
             void Compile();
+            void CompileSingle(fs::path file);
             /**
              * @brief Deep search project assets file to get all the .as files
              * 

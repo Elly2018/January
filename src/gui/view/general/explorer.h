@@ -27,11 +27,11 @@ SOFTWARE.
 #include <vector>
 #include <stack>
 #include <string>
-#include <mutex>
 #include <filesystem>
 #include <uuid_v4.h>
 #include <FileWatch.hpp>
 #include "../viewbase.h"
+#include "../../../engine/utility/mutex.h"
 
 namespace fs = std::filesystem;
 
@@ -338,18 +338,18 @@ namespace January::Engine::View {
          * @brief Right side files data
          */
         std::vector<JFileContent> files = std::vector<JFileContent>();
-        std::mutex files_mtx;
+        JMUTEX(files)
         /**
          * @brief The left side folder tree structure
          */
         JFolderContent folder_node = JFolderContent();
-        std::mutex folder_node_mtx;
+        JMUTEX(folder_node)
         /**
          * @brief Remember the travel history
          * In order to make return last history button works
          */
         std::stack<std::string> travel_record;
-        std::mutex travel_record_mtx;
+        JMUTEX(travel_record)
     };
 }
 #endif
