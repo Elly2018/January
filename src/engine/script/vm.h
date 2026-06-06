@@ -57,6 +57,12 @@ namespace January {
 
         protected:
             void Compile();
+            /**
+             * @brief Deep search project assets file to get all the .as files
+             * 
+             * @return all the .as files path
+             */
+            std::vector<fs::path> GetAllScriptPath();
             void ScriptMessageCallback(const asSMessageInfo* msg);
             
         protected:

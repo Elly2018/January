@@ -72,10 +72,31 @@ namespace January::Engine {
         {
             JLOCK(modules, 1)
             for(auto& m : modules){
-                engine->DiscardModule(m.c_str());
+                asIScriptModule* oldMod = engine->GetModule(m.c_str(), asGM_ONLY_IF_EXISTS);
+                if (oldMod) {
+                    oldMod->Discard(); 
+                    spdlog::debug("Stale script module discarded successfully.");
+                }
             }
             modules.clear();
         }
+        std::vector<fs::path> files = GetAllScriptPath();
+    }
+
+    std::vector<fs::path> AngelVM::GetAllScriptPath(){
+        std::vector<fs::path> r;
+        fs::path root = jengine.context->project_path;
+        root /= "Assets";
+        if (!fs::exists(root) || !fs::is_directory(root)) {
+            return r;
+        }
+        auto iterOptions = fs::directory_options::skip_permission_denied;
+        for (const auto& entry : fs::recursive_directory_iterator(root, iterOptions)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".as") {
+                r.push_back(entry.path());
+            }
+        }
+        return r;
     }
 
     void AngelVM::ScriptMessageCallback(const asSMessageInfo* msg) {
