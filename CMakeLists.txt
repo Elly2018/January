@@ -28,14 +28,11 @@ set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "Skip shaderc examples" FORCE)
 set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "Skip shaderc copyright check" FORCE)
 set(DISABLE_RTTI ON CACHE BOOL "Disable RTTI for shaderc dependencies" FORCE)
 set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "Use shared CRT" FORCE)
-
-# FIX 1: Stop SPIRV-Tools from building its executables (spirv-as, spirv-dis, spirv-opt, etc.)
 set(SPIRV_SKIP_EXECUTABLES ON CACHE BOOL "Skip building SPIRV-Tools executables" FORCE)
 set(SPIRV_SKIP_TESTS ON CACHE BOOL "Skip SPIRV-Tools tests" FORCE)
-
-# FIX 2: Stop glslang from building its standalone compilers (glslang, glslangValidator)
 set(GLSLANG_ENABLE_INSTALL OFF CACHE BOOL "Disable glslang installation" FORCE)
 set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "Disable building glslang binaries" FORCE)
+set(SHADERC_SKIP_GLSLC_EXE ON CACHE BOOL "Skip building glslc executable" FORCE)
 
 set(SHADERC_DIR third-party/shaderc)
 add_subdirectory(${SHADERC_DIR})
@@ -113,8 +110,8 @@ include_directories(${Notify_DIR})
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
 file(GLOB_RECURSE angel_sources 
-    ${ANGEL_DIR}/add_on/scriptbuilder/**.c ${ANGEL_DIR}/add_on/scriptbuilder/**.cpp
-    ${ANGEL_DIR}/add_on/scriptstdstring/**.c ${ANGEL_DIR}/add_on/scriptstdstring/**.cpp
+    ${ANGEL_DIR}/add_on/scriptbuilder/scriptbuilder.h ${ANGEL_DIR}/add_on/scriptbuilder/scriptbuilder.cpp
+    ${ANGEL_DIR}/add_on/scriptstdstring/scriptstdstring.h ${ANGEL_DIR}/add_on/scriptstdstring/scriptstdstring.cpp
 )
 
 add_executable(january
