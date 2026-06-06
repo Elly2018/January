@@ -35,6 +35,7 @@ namespace January::Engine::View {
         spdlog::info("Loaded View: Script");
         m_editorContext.SetText(m_text);
         m_editorContext.SetLanguage(TextEditor::Language::AngelScript());
+        window_flag |= ImGuiWindowFlags_MenuBar;
     }
 
     void JViewScript::Update() {
@@ -106,7 +107,7 @@ namespace January::Engine::View {
     }
 
     void JViewScript::DrawBottomBar(){
-        if(ImGui::BeginChild("Statu_bar##Script_Status_Bar", ImVec2(0, 30), ImGuiChildFlags_NavFlattened)){
+        if(ImGui::BeginChild("Statu_bar##Script_Status_Bar", ImVec2(0, 36), ImGuiChildFlags_NavFlattened, ImGuiWindowFlags_NoScrollbar)){
             ImGui::Text("Line: %i, Col: %i", line.load(), column.load());
             ImGui::EndChild();
         }
