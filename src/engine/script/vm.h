@@ -42,6 +42,12 @@ namespace January {
 
         namespace fs = std::filesystem;
 
+        namespace VM {
+            void LogInfo(const std::string& msg);
+            void LogWarning(const std::string& msg);
+            void LogError(const std::string& msg);
+        }
+
         struct ASEngineDeleter {
             void operator()(asIScriptEngine* engine) const {
                 if (engine) {
@@ -49,7 +55,7 @@ namespace January {
                 }
             }
         };
-        
+
         class AngelVM {
         public:
             AngelVM(System::JWindow& _win, JEngine& _engine);
@@ -60,6 +66,7 @@ namespace January {
             void UpdateVMContent();
 
         protected:
+            void PrepareGlobal();
             void Compile();
             void CompileSingle(fs::path file);
             /**
@@ -69,7 +76,12 @@ namespace January {
              */
             std::vector<fs::path> GetAllScriptPath();
             void ScriptMessageCallback(const asSMessageInfo* msg);
-            
+
+        public:
+            void LogInfo(const std::string& msg);
+            void LogWarning(const std::string& msg);
+            void LogError(const std::string& msg);
+
         protected:
             bool compiling = false;
             System::JWindow&    jwindow;

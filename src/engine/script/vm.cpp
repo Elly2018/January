@@ -25,17 +25,40 @@ SOFTWARE.
 #include <spdlog/spdlog.h>
 #include "../engine.h"
 #include "../struct/context.h"
+#include "../utility/logger.h"
 #include "../utility/command.h"
 #include <scriptbuilder/scriptbuilder.h>
+#include <scriptstdstring/scriptstdstring.h>
+
+January::Engine::AngelVM* avm = nullptr;
 
 namespace January::Engine {
+    namespace VM {
+        void LogInfo(const std::string& msg){
+            if(avm == nullptr) return;
+            avm->LogInfo(msg);
+        }
+
+        void LogWarning(const std::string& msg){
+            if(avm == nullptr) return;
+            avm->LogWarning(msg);
+        }
+
+        void LogError(const std::string& msg){
+            if(avm == nullptr) return;
+            avm->LogError(msg);
+        }
+    }
     AngelVM::AngelVM(System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine){
         engine = std::unique_ptr<asIScriptEngine, ASEngineDeleter>(asCreateScriptEngine(ANGELSCRIPT_VERSION));
         engine->SetMessageCallback(asMETHOD(AngelVM, ScriptMessageCallback), this, asCALL_THISCALL);
+        RegisterStdString(engine.get());
+        avm = this;
     }
 
     AngelVM::~AngelVM(){
         engine.release();
+        avm = nullptr;
     }
 
     bool AngelVM::IsCompiling() {
@@ -51,6 +74,7 @@ namespace January::Engine {
         asIScriptModule* mod = engine->GetModule(rela.c_str(), asGM_ONLY_IF_EXISTS);
         if(mod == nullptr){
             spdlog::info("Module not found. Compiling fresh: {}", path);
+            PrepareGlobal();
             CompileSingle(path);
             mod = engine->GetModule(rela.c_str(), asGM_ONLY_IF_EXISTS);
         }
@@ -117,6 +141,15 @@ namespace January::Engine {
         }).detach();
     }
 
+    void AngelVM::PrepareGlobal() {
+        int32_t r = engine->RegisterGlobalFunction("void LogInfo(const string &in msg)", asFUNCTION(VM::LogInfo), asCALL_CDECL);
+        if (r < 0) spdlog::error("Failed to register global function 'LogInfo'.");
+        r = engine->RegisterGlobalFunction("void LogWarning(const string &in msg)", asFUNCTION(VM::LogWarning), asCALL_CDECL);
+        if (r < 0) spdlog::error("Failed to register global function 'LogWarning'.");
+        r = engine->RegisterGlobalFunction("void LogError(const string &in msg)", asFUNCTION(VM::LogError), asCALL_CDECL);
+        if (r < 0) spdlog::error("Failed to register global function 'LogError'.");
+    }
+
     void AngelVM::Compile() {
         {
             JLOCK(modules, 1)
@@ -130,6 +163,7 @@ namespace January::Engine {
             modules.clear();
         }
         std::vector<fs::path> files = GetAllScriptPath();
+        PrepareGlobal();
         for(auto& file : files){
             CompileSingle(file);
         }
@@ -195,5 +229,17 @@ namespace January::Engine {
         else {
             spdlog::info("[AngelScript Compiler Trace] {} : {}", location, msg->message);
         }
+    }
+
+    void AngelVM::LogInfo(const std::string& msg){
+        jengine.context->logger->script_logger->logger->info(msg);
+    }
+
+    void AngelVM::LogWarning(const std::string& msg){
+        jengine.context->logger->script_logger->logger->warn(msg);
+    }
+
+    void AngelVM::LogError(const std::string& msg){
+        jengine.context->logger->script_logger->logger->error(msg);
     }
 }
