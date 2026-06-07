@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "create_resource.h"
+#include <filesystem>
+#include <thread>
+#include <spdlog/spdlog.h>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 
@@ -31,7 +34,9 @@ namespace January::Engine::View {
     }
 
     void JPopupCreateResource::Init(){
-        SetPopupSize(ImVec2(0.8f, 0.8f), true, true, false);
+        SetPopupSize(ImVec2(0.5f, 140), true, false, false);
+        spdlog::info("Loaded Popup: Create Resource");
+        window_flag |= ImGuiWindowFlags_NoScrollbar;
     }
 
     void JPopupCreateResource::Update() {
