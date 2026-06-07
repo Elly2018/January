@@ -29,10 +29,10 @@ SOFTWARE.
 /**
  * @brief Simply create mutex match it's target name with _mtx at the end
  */
-#define JMUTEX(name) std::mutex name##_mtx;
+#define j_mutex(name) std::mutex name##_mtx;
 /**
  * @brief Quick use lock_guard for target name
  */
-#define JLOCK(name, level) std::lock_guard<std::mutex> lock##level(name##_mtx);
+#define j_lock(name, level) std::lock_guard<std::mutex> lock##level(name##_mtx);
 
 #endif

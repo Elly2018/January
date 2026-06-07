@@ -61,7 +61,7 @@ namespace January::Engine
         ~AppContext() = default;
         
         std::string project_path = "";
-        JMUTEX(project_path)
+        j_mutex(project_path)
         // Does application needs load project right now
         std::atomic_bool load_project = false;
         // Application global time
@@ -77,7 +77,7 @@ namespace January::Engine
         // In order to use this in thread-safe
         // Please lock_guard "commands_mtx" before add item or pop item to it
         std::queue<std::string> commands = std::queue<std::string>();
-        JMUTEX(commands)
+        j_mutex(commands)
         // Imgui defualt text
         ImFont* text_font;
         // Imgui font with icon like graph
@@ -94,10 +94,10 @@ namespace January::Engine
         std::unique_ptr<AngelVM> vm;
         // Select assets
         Assets asset_selection;
-        JMUTEX(asset_selection)
+        j_mutex(asset_selection)
         // Clipboard assets
         Assets asset_clipboard;
-        JMUTEX(asset_clipboard)
+        j_mutex(asset_clipboard)
     };
 }
 #endif

@@ -29,6 +29,7 @@ SOFTWARE.
 #include <string>
 #include <mutex>
 #include <memory>
+#include <atomic>
 #include <filesystem>
 #include <angelscript.h>
 #include "../utility/mutex.h"
@@ -61,13 +62,38 @@ namespace January {
             AngelVM(System::JWindow& _win, JEngine& _engine);
             virtual ~AngelVM();
 
+            /**
+             * @brief Check current compile state
+             * 
+             * @return Is it compiling right now
+             */
             bool IsCompiling();
+            /**
+             * @brief Running a single script in the asset browser
+             * 
+             * @param path The file path
+             */
             void RunEditorScript(std::string path);
+            /**
+             * @brief When code is change or user want update VM.
+             * This will rebuild the VM
+             */
             void UpdateVMContent();
 
         protected:
+            /**
+             * @brief Register all the global variable and function and object into VM
+             */
             void PrepareGlobal();
+            /**
+             * @brief Compile thread function, Put all the code into VM
+             */
             void Compile();
+            /**
+             * @brief Given a file path, and read it and put it into the VM
+             * 
+             * @param file The path of that file
+             */
             void CompileSingle(fs::path file);
             /**
              * @brief Deep search project assets file to get all the .as files
@@ -75,6 +101,11 @@ namespace January {
              * @return all the .as files path
              */
             std::vector<fs::path> GetAllScriptPath();
+            /**
+             * @brief The message feedback of the VM
+             * 
+             * @param msg VM message feedback object
+             */
             void ScriptMessageCallback(const asSMessageInfo* msg);
 
         public:
@@ -83,13 +114,22 @@ namespace January {
             void LogError(const std::string& msg);
 
         protected:
-            bool compiling = false;
             System::JWindow&    jwindow;
             JEngine&            jengine;
-            std::unique_ptr<asIScriptEngine, ASEngineDeleter> engine;
 
+            /**
+             * @brief Compiling state, Show if the VM is compiling right now or not
+             */
+            std::atomic_bool compiling = false;
+            /**
+             * @brief The VM handle
+             */
+            std::unique_ptr<asIScriptEngine, ASEngineDeleter> engine;
+            /**
+             * @brief The module, The string is the relative path to the file
+             */
             std::vector<std::string> modules;
-            JMUTEX(modules)
+            j_mutex(modules)
         };
     }
 }

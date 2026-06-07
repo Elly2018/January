@@ -122,7 +122,7 @@ namespace January::Engine {
         }
         fs::path p_path = "";
         {
-            JLOCK(jengine.context->project_path, 1)
+            j_lock(jengine.context->project_path, 1)
             p_path = jengine.context->project_path;
         }
         if(!fs::exists(p_path)){
@@ -152,7 +152,7 @@ namespace January::Engine {
 
     void AngelVM::Compile() {
         {
-            JLOCK(modules, 1)
+            j_lock(modules, 1)
             for(auto& m : modules){
                 asIScriptModule* oldMod = engine->GetModule(m.c_str(), asGM_ONLY_IF_EXISTS);
                 if (oldMod) {
@@ -194,7 +194,7 @@ namespace January::Engine {
         spdlog::info("Script environment re-allocated and compiled successfully. {}", file_path);
 
         {
-            JLOCK(modules, 1)
+            j_lock(modules, 1)
             modules.push_back(rela);
         }
     }

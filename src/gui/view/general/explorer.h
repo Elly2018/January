@@ -338,18 +338,18 @@ namespace January::Engine::View {
          * @brief Right side files data
          */
         std::vector<JFileContent> files = std::vector<JFileContent>();
-        JMUTEX(files)
+        j_mutex(files)
         /**
          * @brief The left side folder tree structure
          */
         JFolderContent folder_node = JFolderContent();
-        JMUTEX(folder_node)
+        j_mutex(folder_node)
         /**
          * @brief Remember the travel history
          * In order to make return last history button works
          */
         std::stack<std::string> travel_record;
-        JMUTEX(travel_record)
+        j_mutex(travel_record)
     };
 }
 #endif
