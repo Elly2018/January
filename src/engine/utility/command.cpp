@@ -3,7 +3,7 @@
 #include <sstream>
 #include <mutex>
 #include <filesystem>
-#include <nfd.h>
+#include <SDL3/SDL.h>
 #include "imgui.h"
 #include "imgui_notify.h"
 #include "spdlog/spdlog.h"
@@ -11,14 +11,77 @@
 #include "../../system/system.h"
 #include "../../system/window.h"
 #include "../../gui/manager.h"
-#include "../../gui/popup/project_dashboard.h"
+#include "../../gui/popup/allpopup.h"
 #include "../engine.h"
 #include "../struct/config.h"
 #include "../struct/context.h"
+#include "../script/vm.h"
 
 namespace fs = std::filesystem;
 
 namespace January::Engine {
+    void MyFolderCallback(void *userdata, const char *const *filelist, int filter) {
+        System::JSystem* jsystem = (System::JSystem*)userdata;
+        if (filelist == NULL || *filelist == NULL) {
+            // User canceled the dialog or an error occurred
+            SDL_Log("Dialog canceled or failed: %s", SDL_GetError());
+        } else {
+            // filelist[0] contains the path to the selected folder
+            SDL_Log("Selected folder: %s", filelist[0]);
+        }
+
+        if (!(filelist == NULL || *filelist == NULL)) {
+            std::string target_path = filelist[0];
+            spdlog::info("Trying open path: {}", target_path);
+            if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
+                std::string t = std::format("Project path does not exist: {}", target_path.c_str());
+                spdlog::error(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
+                return;
+            }
+            if(!is_project_path_vaild(target_path)){
+                std::string t = std::format("Project path vaildation check failed: {}", target_path.c_str());
+                spdlog::error(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
+                return;
+            }
+            jsystem->engine->context->project_path = target_path;
+            jsystem->engine->context->load_project = true;
+            jsystem->engine->manager->project_dashboard->SetEnable(false);
+            std::string t = std::format("Project path successfully load: {}", target_path.c_str());
+            spdlog::info(t);
+            ImGuiToast toast = ImGuiToast(ImGuiToastType_Success, 3000);
+            toast.set_title("Project Load");
+            toast.set_content(t.c_str());
+            ImGui::InsertNotification(toast);
+            AddRecent(*jsystem->engine, target_path);
+        } else {
+            std::string t = "Project path file dialog: cancel";
+            spdlog::warn(t);
+            ImGuiToast toast = ImGuiToast(ImGuiToastType_Warning, 3000);
+            toast.set_title("Project Load");
+            toast.set_content(t.c_str());
+            ImGui::InsertNotification(toast);
+            return;
+        }
+    }
+
+    std::string GetPath(std::vector<std::string>& cmds){
+        std::string r_path = "";
+        for(int32_t i = 1; i < cmds.size(); i++){
+            r_path += cmds.at(i);
+            r_path += " ";
+        }
+        r_path.pop_back();
+        return r_path;
+    }
+
     std::vector<std::string> split_string_by_space(const std::string& str) {
         std::vector<std::string> words;
         std::stringstream ss(str); // Turn the string into a stream
@@ -33,19 +96,42 @@ namespace January::Engine {
     }
 
     void multi_command(struct System::JSystem& jsystem, std::vector<std::string> cmds){
+        //
+        // open_recent <path>
+        //
         if(cmds.size() >= 2 && cmds.at(0) == "open_recent"){
-            std::string r_path = "";
-            for(int32_t i = 1; i < cmds.size(); i++){
-                r_path += cmds.at(i);
-                r_path += " ";
+            std::string r_path = GetPath(cmds);
+            bool exist = true;
+
+            if(!fs::exists(r_path) || !fs::is_directory(r_path)) {
+                std::string t = std::format("Project path does not exist: {}", r_path.c_str());
+                spdlog::error(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
+                exist = false;
             }
-            r_path.pop_back();
+            if(!is_project_path_vaild(r_path)){
+                std::string t = std::format("Project path vaildation check failed: {}", r_path.c_str());
+                spdlog::error(t);
+                ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
+                toast.set_title("Project Load");
+                toast.set_content(t.c_str());
+                ImGui::InsertNotification(toast);
+                exist = false;
+            }
+
             int32_t search = -1;
             for(int32_t i = 0; i < jsystem.engine->config->j_recent.size(); i++){
                 if(jsystem.engine->config->j_recent.at(i).j_path == r_path){
                     search = i;
                     break;
                 }
+            }
+            if(!exist) {
+                RemoveRecent(*jsystem.engine, r_path);
+                return;
             }
             if(search != -1){
                 jsystem.engine->config->j_recent[search].j_last_open = sc::system_clock::to_time_t(sc::system_clock::now());
@@ -66,6 +152,39 @@ namespace January::Engine {
             ImGui::InsertNotification(toast);
             AddRecent(*jsystem.engine, r_path);
         }
+        //
+        // create_folder <path>
+        //
+        else if(cmds.size() >= 2 && cmds.at(0) == "create_folder"){
+            std::string r_path = GetPath(cmds);
+            jsystem.engine->manager->create_folder->RegisterFolder(r_path);
+            jsystem.engine->manager->create_folder->SetEnable(true);
+        }
+        //
+        // create_resource <path>
+        //
+        else if(cmds.size() >= 2 && cmds.at(0) == "create_resource"){
+            std::string r_path = GetPath(cmds);
+            jsystem.engine->manager->create_resource->RegisterFolder(r_path);
+            jsystem.engine->manager->create_resource->SetEnable(true);
+        }
+        //
+        // create_script <path>
+        //
+        else if(cmds.size() >= 2 && cmds.at(0) == "create_script"){
+            std::string r_path = GetPath(cmds);
+            jsystem.engine->manager->create_script->RegisterFolder(r_path);
+            jsystem.engine->manager->create_script->SetEnable(true);
+        }
+        //
+        // run_script <path>
+        //
+        else if(cmds.size() >= 2 && cmds.at(0) == "run_script"){
+            std::string r_path = GetPath(cmds);
+            if(fs::exists(r_path)){
+                jsystem.engine->context->vm->RunEditorScript(r_path);
+            }
+        }
     }
 
     void single_command(struct System::JSystem& jsystem, std::string cmd){
@@ -78,49 +197,7 @@ namespace January::Engine {
             jsystem.engine->manager->project_dashboard->SetEnable(true);
         }
         else if(cmd == "open_project"){
-            nfdchar_t* outPath;
-            nfdresult_t result = NFD_PickFolder(&outPath, NULL);
-            if (result == NFD_OKAY){
-                std::string target_path = outPath;
-                if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
-                    std::string t = std::format("Project path does not exist: {}", target_path.c_str());
-                    spdlog::error(t);
-                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
-                    toast.set_title("Project Load");
-                    toast.set_content(t.c_str());
-                    ImGui::InsertNotification(toast);
-                    return;
-                }
-                if(!is_project_path_vaild(target_path)){
-                    std::string t = std::format("Project path vaildation check failed: {}", target_path.c_str());
-                    spdlog::error(t);
-                    ImGuiToast toast = ImGuiToast(ImGuiToastType_Error, 3000);
-                    toast.set_title("Project Load");
-                    toast.set_content(t.c_str());
-                    ImGui::InsertNotification(toast);
-                    return;
-                }
-                jsystem.engine->context->project_path = target_path;
-                jsystem.engine->context->load_project = true;
-                jsystem.engine->manager->project_dashboard->SetEnable(false);
-                std::string t = std::format("Project path successfully load: {}", target_path.c_str());
-                spdlog::info(t);
-                ImGuiToast toast = ImGuiToast(ImGuiToastType_Success, 3000);
-                toast.set_title("Project Load");
-                toast.set_content(t.c_str());
-                ImGui::InsertNotification(toast);
-                AddRecent(*jsystem.engine, target_path);
-            } else if (result == NFD_CANCEL) {
-                std::string t = "Project path file dialog: cancel";
-                spdlog::warn(t);
-                ImGuiToast toast = ImGuiToast(ImGuiToastType_Warning, 3000);
-                toast.set_title("Project Load");
-                toast.set_content(t.c_str());
-                ImGui::InsertNotification(toast);
-                return;
-            } else {
-                printf("Error: %s\n", NFD_GetError());
-            }
+            SDL_ShowOpenFolderDialog(MyFolderCallback, &jsystem, jsystem.window->g_window, NULL, false);            
         }
         else if(cmd == "save_project"){
 

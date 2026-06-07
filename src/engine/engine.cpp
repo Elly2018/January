@@ -24,6 +24,8 @@ SOFTWARE.
 #include "engine.h"
 #include <iostream>
 #include <fstream>
+#include <chrono>
+#include <thread>
 #include <imgui.h>
 #include <imgui_notify.h>
 #include <tahoma.h>
@@ -35,25 +37,40 @@ SOFTWARE.
 #include "../system/cli.h"
 #include "../system/window.h"
 #include "../gui/manager.h"
+#include "../engine/utility/logger.h"
+#include "../engine/assets/asset.h"
+#include "../engine/script/vm.h"
 
 using json = nlohmann::json;
 
 namespace January::Engine {
 
-    fs::path get_config_path(const char* path){
+    std::chrono::steady_clock::time_point clock_start;
+    std::chrono::steady_clock::time_point clock_now;
+    std::chrono::steady_clock::time_point clock_last;
+
+    std::chrono::steady_clock::time_point clock_runtime_start;
+    std::chrono::steady_clock::time_point clock_runtime_now;
+    std::chrono::steady_clock::time_point clock_runtime_last;
+
+    fs::path GetConfigDirPath() {
         fs::path p = get_home_directory();
         p = p.append("january");
-        spdlog::debug("Try Load AppConfig: {}", p.string());
         if(!fs::exists(p)){
             spdlog::warn("[home]/january not exist, create one right now");
             fs::create_directory(p);
         }
-        p = p.append(path);
+        return p;
+    }
+
+    fs::path GetConfigPath(const char* filename){
+        fs::path p = GetConfigDirPath();
+        p = p.append(filename);
         return p;
     }
 
     void SaveAppConfig(struct AppConfig& target){
-        fs::path p = get_config_path("config.json");
+        fs::path p = GetConfigPath("config.json");
         json data = json::object();
         data["j_FPS"] = target.j_FPS;
         data["j_last_open"] = target.j_last_open;
@@ -73,17 +90,19 @@ namespace January::Engine {
         }
         std::string dataString = data.dump(4) + "\n";
         std::ofstream outputFile(p);
+        spdlog::debug("SaveAppConfig: {}", p.string());
         outputFile.write(dataString.c_str(), dataString.size());
         outputFile.close();
     }
 
     void LoadAppConfig(struct AppConfig& config){
-        fs::path p = get_config_path("config.json");
+        fs::path p = GetConfigPath("config.json");
         if(!fs::exists(p)){
             spdlog::warn("Detect config.json not exist, create default one right now");
             SaveAppConfig(config);
         }else{
             std::fstream i(p);
+            spdlog::debug("LoadAppConfig: {}", p.string());
             json data = json::parse(i);
             if(data["j_FPS"].is_number_integer()){
                 config.j_FPS = data["j_FPS"].get<int32_t>();
@@ -136,22 +155,38 @@ namespace January::Engine {
         }
     }
 
+    void RuntimeStart(struct AppContext& ctx) {
+        clock_runtime_start = std::chrono::steady_clock::now();
+        clock_runtime_last = clock_runtime_start;
+    }
+
+    JEngine::JEngine() = default;
+    JEngine::~JEngine() = default;
+
     int32_t EngineInit(JEngine& jengine, struct System::JWindow& jwindow, struct System::JSystem& system){
         spdlog::debug("Engine Init");
-        jengine.config = new AppConfig(); 
-        jengine.context = new AppContext();
-        jengine.manager = new View::ViewManager();
+        jengine.config = std::make_unique<AppConfig>(); 
+        jengine.context = std::make_unique<AppContext>();
+        jengine.manager = std::make_unique<View::ViewManager>();
+        jengine.context->logger = std::make_unique<JLogger>();
+        jengine.context->asset = std::make_unique<JAssetWorker>(jwindow, jengine);
+        jengine.context->vm = std::make_unique<AngelVM>(jwindow, jengine);
         LoadAppConfig(*jengine.config);
         GenerateAppContext(*jengine.context);
 
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         ImFontConfig font_cfg;
         font_cfg.FontDataOwnedByAtlas = false;
+        font_cfg.GlyphExtraAdvanceX = 0.0f;
+        std::string save_path = Engine::GetConfigPath("imgui.ini").string();
+        io.IniFilename = save_path.c_str();
         jengine.context->text_font = io.Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
         jengine.context->icon_font = io.Fonts->AddFontFromFileTTF("icons.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
         jengine.context->emoji_font = io.Fonts->AddFontFromFileTTF("NotoEmoji-VariableFont_wght.ttf", 16.0f, &font_cfg);
+        ImGui::MergeIconsWithLatestFont(16.f, false);
+        jengine.context->code_font = io.Fonts->AddFontFromFileTTF("JetBrainsMono-Regular.ttf", 16.0f, &font_cfg);
         ImGui::MergeIconsWithLatestFont(16.f, false);
 #ifdef _WIN32
         io.Fonts->AddFontFromFileTTF("SourceHanSans-Medium.otf", 0.0f, NULL, io.Fonts->GetGlyphRangesDefault());
@@ -186,7 +221,7 @@ namespace January::Engine {
         ImGui::InsertNotification(toast);
 
         VInit(*jengine.manager, system);
-        jengine.context->logger->info("Views init finished");
+        spdlog::info("Views init finished");
 
         if(fs::exists(jengine.context->project_path)){
             std::string title = jengine.context->project_path;
@@ -196,6 +231,9 @@ namespace January::Engine {
             std::string title = "January: a real-time interactive multimedia content creator";
             SDL_SetWindowTitle(jwindow.g_window, title.c_str());
         }
+
+        clock_start = std::chrono::steady_clock::now();
+        clock_last = clock_start;
         return 0;
     }
 
@@ -205,16 +243,32 @@ namespace January::Engine {
         System::SavePreference();
 
         VDeInit(*jengine.manager);
-        delete jengine.config;
-        delete jengine.context;
-        delete jengine.manager;
     }
 
     void EngineUpdate(JEngine& jengine){
-        double current = ImGui::GetTime();
-        jengine.context->delta = current - jengine.context->time;
-        jengine.context->time = current;
+        clock_now = std::chrono::steady_clock::now();
+        std::chrono::duration<double, std::milli> total = clock_now - clock_start;
+        std::chrono::duration<double, std::milli> elapsed = clock_now - clock_last;
+        clock_last = clock_now;
+
+        jengine.context->delta.store(elapsed.count(), std::memory_order_release);
+        jengine.context->time.store(total.count(), std::memory_order_release);
+
+        if(jengine.context->runtime_state){
+            clock_runtime_now = std::chrono::steady_clock::now();
+            std::chrono::duration<double, std::milli> total = clock_runtime_now - clock_runtime_start;
+            std::chrono::duration<double, std::milli> elapsed = clock_runtime_now - clock_runtime_last;
+            clock_runtime_last = clock_runtime_now;
+
+            jengine.context->runtime_delta.store(elapsed.count(), std::memory_order_release);
+            jengine.context->runtime_time.store(total.count(), std::memory_order_release);
+        }else{
+            jengine.context->runtime_delta.store(0.0, std::memory_order_release);
+            jengine.context->runtime_time.store(0.0, std::memory_order_release);
+        }
+
         VUpdate(*jengine.manager);
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 
     void AddRecent(JEngine& jengine, std::string& path){
@@ -237,5 +291,18 @@ namespace January::Engine {
             jengine.config->j_recent.insert(jengine.config->j_recent.begin(), acr);
         }
         SaveAppConfig(*jengine.config);
+    }
+    void RemoveRecent(JEngine& jengine, std::string& path){
+        int32_t exist = -1;
+        for(int32_t i = 0; i < jengine.config->j_recent.size(); i++){
+            if(jengine.config->j_recent.at(i).j_path == path){
+                exist = i;
+                break;
+            }
+        }
+        if(exist != -1){
+            jengine.config->j_recent.erase(jengine.config->j_recent.begin() + exist);
+            SaveAppConfig(*jengine.config);
+        }
     }
 }

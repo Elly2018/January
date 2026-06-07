@@ -34,6 +34,9 @@ SOFTWARE.
 namespace January::System {
     using namespace Engine;
 
+    JSystem::JSystem() = default;
+    JSystem::~JSystem() = default;
+
     void UpdateLoop(JSystem& jsystem){
         while(!jsystem.window->g_done){
             EngineUpdate(*jsystem.engine);
@@ -41,7 +44,7 @@ namespace January::System {
     }
 
     int32_t SInit(JSystem& jsystem){
-        jsystem.window = new JWindow();
+        jsystem.window = std::make_unique<JWindow>();
         jsystem.engine = new Engine::JEngine();
         int32_t err = JInit(*jsystem.window, JRWindowInit());
         assert(err == 0 && "Vulkan Init Error");
@@ -55,6 +58,12 @@ namespace January::System {
 
     void SRun(JSystem& jsystem){
         spdlog::debug("Enter Application Mainloop");
+
+        //
+        // You will see DrawLoop and UpdateLoop in different file
+        // This is because Draw contains ImGui drawing
+        // Update only push engine update, the logical part
+        //
         std::thread draw_thread([&jsystem]() {
             DrawLoop(jsystem);
         });
@@ -107,8 +116,5 @@ namespace January::System {
         if(update_thread.joinable()) update_thread.join();
         EngineDeInit(*jsystem.engine);
         JDeInit(*jsystem.window);
-
-        delete jsystem.engine;
-        delete jsystem.window;
     }
 }

@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef CONFIG_H
 #define CONFIG_H
 
-//#define _DEBUG
+//#define _APP_USE_VULKAN_DEBUG_REPORT
+#define CR_HOST
 
 #endif

@@ -1,12 +1,16 @@
+@echo off
+
 REM Create build directory
+mkdir bin
 mkdir build
-cd build
+cd bin
 
 xcopy ../res/*.ttf . /Y
 xcopy ../res/*.otf . /Y
 
+cd ../build
 REM Configure CMake
 cmake .. -DCMAKE_BUILD_TYPE=Release
 
 REM Build
-cmake --build . -j 8
+cmake --build .

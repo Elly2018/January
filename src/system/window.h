@@ -32,19 +32,8 @@ SOFTWARE.
 #include <stdlib.h>         // abort
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
+#include "../core/graphics.h"
 #include "../config.h"
-
-// Volk headers
-#ifdef IMGUI_IMPL_VULKAN_USE_VOLK
-#define VOLK_IMPLEMENTATION
-#include <volk.h>
-#endif
-
-//#define APP_USE_UNLIMITED_FRAME_RATE
-#ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
-static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
-#endif
 
 namespace January {
 
@@ -54,9 +43,12 @@ namespace January {
 
     namespace System {
         struct JSystem;
-        // Pure render window struct
-        // This should be generate by engine or editor
+        /**
+         * @brief Pure render window struct 
+         * This should be generate by engine or editor
+         */
         struct JWindowRender {
+            ~JWindowRender() = default;
             // SDL window flag, you can define fullscreen or hidden or no background etc flags here
             SDL_WindowFlags          g_windowFlags;
             // The instance of SDL window
@@ -84,11 +76,13 @@ namespace January {
         // Main window struct
         // This handles the editor window
         struct JWindow : JWindowRender {
+            ~JWindow() = default;
             ImGui_ImplVulkanH_Window g_MainWindowData;
             ImGuiID                  g_dockerspace = 0;
         };
         // The init config for the window
         struct JRWindowInit {
+            ~JRWindowInit() = default;
             SDL_WindowFlags          g_flags = 0;
             int32_t                  g_width = 800;
             int32_t                  g_height = 600;

@@ -59,6 +59,13 @@ namespace January::Engine::View {
                 DrawRecent();
                 ImGui::EndChild();
             }
+            ImGui::BeginDisabled(p_selection.size() == 0);
+            if(ImGui::Button("Confirm##project_dashboard")){
+                PushCommand(*jengine.context, "open_recent " + p_selection);
+                SetEnable(false);
+            }
+            ImGui::EndDisabled();
+            ImGui::SameLine();
             if(ImGui::Button("Cancel##project_dashboard")){
                 SetEnable(false);
             }
@@ -88,10 +95,16 @@ namespace January::Engine::View {
     void JPopupProjectDashboard::DrawRecent(){
         for(auto& r : jengine.config->j_recent){
             if(ImGui::Selectable((r.j_path + "##project_dashboard_recent").c_str())){
-
+                if(p_selection == r.j_path){
+                    p_selection = "";
+                }else{
+                    p_selection = r.j_path;
+                }
             }
-            if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered()){
-
+            if(ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
+                p_selection = r.j_path;
+                PushCommand(*jengine.context, "open_recent " + p_selection);
+                SetEnable(false);
             }
         }
     }
@@ -101,7 +114,7 @@ namespace January::Engine::View {
         ImGui::InputText("Save Path##project_dashboard_new", &p_path);
         fs::path r = p_path;
         r /= p_name;
-        ImGui::LabelText("Result Path##project_dashboard_new", r.c_str());
+        ImGui::LabelText("Result Path##project_dashboard_new", "%s", r.c_str());
         if(ImGui::BeginCombo("Template##project_dashboard_new", GetTemplateName(temp).c_str())){
             for(int32_t i = 0; i < 6; i++){
                 if(ImGui::Selectable((GetTemplateName((TEMPLATE)i) + "##project_dashboard_temps").c_str())){
@@ -138,7 +151,10 @@ namespace January::Engine::View {
             ini["header"]["description"] = p_text.c_str();
             ini["header"]["version"] = "0.0.1";
 
-            file.generate(ini, true);
+            if (!file.generate(ini, true)) {
+                spdlog::error("Failed to generate project manifest INI file!");
+                spdlog::error("\tPath: {}", mani.string());
+            }
         }else{
             spdlog::error("Project path is already exist: {}", r.c_str());
             return;

@@ -34,10 +34,16 @@ static argh::parser cmd;
 void configure_parser() {
     cmd.add_params({"-p", "--path"});
     cmd.add_params({"-v", "--verbose"});
+    cmd.add_params({"-b", "--batch"});
 
     bool par_v = January::CLI::GetCMDFlag("v", "verbose");
+    bool par_vv = January::CLI::GetCMDFlag("vv", "very-verbose");
+    bool par_b = January::CLI::GetCMDFlag("b", "batch");
     if(par_v){
         spdlog::set_level(spdlog::level::debug);
+    }
+    else if(par_vv){
+        spdlog::set_level(spdlog::level::trace);
     }
 
     spdlog::debug("Verbose enable");
@@ -57,6 +63,7 @@ void configure_parser() {
         std::printf("\t\t -p, --path \t - Define where the project path location in your machine. \n");
         std::printf("\t - Flags: \n");
         std::printf("\t\t -v, --verbose \t - Print all the debug detail out. \n");
+        std::printf("\t\t -vv, --very-verbose \t - Print all the trace detail out. \n");
         exit(0);
     }
 }

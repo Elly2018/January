@@ -28,17 +28,15 @@ SOFTWARE.
 #include <string>
 #include <mutex>
 #include <spdlog/spdlog.h>
-#include <spdlog/sinks/callback_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include "../../../engine/utility/logger.h"
 
 struct ImVec4;
 
 namespace January::Engine::View {
-    struct ConsoleLog {
-        spdlog::level::level_enum level;
-        std::string messages;
-    };
-
+    /**
+     * @brief The console view
+     * Handle viewer for background logger informations
+     */
     class JViewConsole : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewConsole){}
@@ -49,25 +47,83 @@ namespace January::Engine::View {
         void Draw() override;
         void Update() override;
 
-        void RenderBar();
-        void RenderContent();
-
-        const struct ImVec4 GetColor(spdlog::level::level_enum col);
-        std::string GetName(spdlog::level::level_enum col);
-
     protected:
+        void DrawMenu();
+        /**
+         * @brief Render top toolbar
+         */
+        void DrawBar();
+        void DrawTab();
+        void DrawTabContent();
+        /**
+         * @brief Render bottom content area
+         */
+        void DrawContent();
+        void DrawDetail();
+        void DrawMiddleHandle(float total_window_height, float splitterHeight);
+
+        /**
+         * @brief Get the Color objectGet logger level color
+         * 
+         * @param col Log level
+         * @return Color vector result
+         */
+        const struct ImVec4 GetColor(spdlog::level::level_enum col);
+        /**
+         * @brief Get the Name objectGet logger level prefix
+         * 
+         * @param col Log level
+         * @return log level string
+         */
+        std::string GetName(spdlog::level::level_enum col);
+        /**
+         * @brief Get filtered data into "buffer" variable
+         */
         void GetFilteredResult();
+        /**
+         * @brief Clear the logger list
+         * This will clear the logger record in the global state as well
+         */
         void Clear();
+        /**
+         * @brief Get current logger instance
+         * 
+         * @return The logger handler
+         */
+        JLoggerWorker* GetLogger();
 
     private:
+        std::atomic_bool show_line_count = false;
+        std::atomic_bool show_id = false;
+        /**
+         * @brief Current logger selection
+         * 0: Engine logger
+         * 1: Runtime logger
+         * 2: Script logger
+         */
+        int32_t logger_index = -1;
+        /**
+         * @brief Init will be the trigger
+         * Define if the first event call is on.
+         */
+        std::atomic_bool init = false;
+        /**
+         * @brief Check user have change the filter or change the logger to view or not
+         * When it's true, the update get called at next frame
+         */
+        std::atomic_bool change_page = false;
+        std::atomic_bool change_content = false;
+        /**
+         * @brief The toggle which when new log added
+         * Scroll the list view to the very bottom
+         */
+        std::atomic_bool auto_scroll_next = false;
+        std::atomic_int32_t open_bottom = -1;
         std::string search = "";
-        spdlog::level::level_enum level_filter = spdlog::level::level_enum::info;
-        std::vector<ConsoleLog> logs = std::vector<ConsoleLog>();
-        std::vector<ConsoleLog> buffer = std::vector<ConsoleLog>();
+        std::atomic<float> topHeight = 0;
+        std::vector<JConsoleLog> buffer = std::vector<JConsoleLog>();
+        enum spdlog::level::level_enum level_filter = spdlog::level::level_enum::info;
         std::mutex buffer_mtx;
-        bool changed = false;
-        std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
-        std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink;
     };
 }
 #endif

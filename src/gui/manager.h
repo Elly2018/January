@@ -26,6 +26,7 @@ SOFTWARE.
 #define GUI_MANAGER_H
 #include <cinttypes>
 #include <vector>
+#include <memory>
 
 namespace January {
     namespace System {
@@ -40,18 +41,22 @@ namespace January {
         struct JViewBase;
         struct JPopupBase;
 
-        struct JViewAction;
+        struct JViewApplication;
         struct JViewBlueprint;
         struct JViewConsole;
         struct JViewExplorer;
+        struct JViewHierarchy;
         struct JViewInspector;
         struct JViewPreview;
+        struct JViewProfiler;
         struct JViewProfile;
         struct JViewScript;
         struct JViewTimeline;
         struct JViewVolumn;
 
-        struct JPopupFileDialog;
+        struct JPopupCreateFolder;
+        struct JPopupCreateResource;
+        struct JPopupCreateScript;
         struct JPopupProjectDashboard;
 
         enum class JanuaryViewTypeFlag {
@@ -106,30 +111,37 @@ namespace January {
 
         enum class JanuaryViewGeneralPopupFlag {
             NONE = 0,
-            FILE_DIALOG = 1,
-            PROJECT_DASHBOARD = 2,
-            PREFERENCE = 3,
-            SETTING = 4,
+            PROJECT_DASHBOARD = 1,
+            PREFERENCE = 2,
+            SETTING = 3,
+            CREATE_FOLDER = 10,
+            CREATE_RESOURCE = 11,
+            CREATE_SCRIPT = 12,
         };
 
+        /**
+         * @brief A list of the view and popup object
+         */
         struct ViewManager {
-            struct JViewApplication*        application;
-            struct JViewBlueprint*          blueprint;
-            struct JViewConsole*            console;
-            struct JViewExplorer*           explorer;
-            struct JViewHierarchy*          hierarchy;
-            struct JViewInspector*          inspector;
-            struct JViewPreview*            preview;
-            struct JViewProfiler*           profiler;
-            struct JViewScript*             script;
-            struct JViewTimeline*           timeline;
-            struct JViewVolumn*             volumn;
+            std::shared_ptr<JViewApplication>        application;
+            std::shared_ptr<JViewBlueprint>          blueprint;
+            std::shared_ptr<JViewConsole>            console;
+            std::shared_ptr<JViewExplorer>           explorer;
+            std::shared_ptr<JViewHierarchy>          hierarchy;
+            std::shared_ptr<JViewInspector>          inspector;
+            std::shared_ptr<JViewPreview>            preview;
+            std::shared_ptr<JViewProfiler>           profiler;
+            std::shared_ptr<JViewScript>             script;
+            std::shared_ptr<JViewTimeline>           timeline;
+            std::shared_ptr<JViewVolumn>             volumn;
 
-            struct JPopupFileDialog*        file_dialog;
-            struct JPopupProjectDashboard*  project_dashboard;
+            std::shared_ptr<JPopupCreateFolder>      create_folder;
+            std::shared_ptr<JPopupCreateResource>    create_resource;
+            std::shared_ptr<JPopupCreateScript>      create_script;
+            std::shared_ptr<JPopupProjectDashboard>  project_dashboard;
 
-            std::vector<struct JViewBase*>  views;
-            std::vector<struct JPopupBase*>  popups;
+            std::vector<std::shared_ptr<JViewBase>>  views;
+            std::vector<std::shared_ptr<JPopupBase>> popups;
             std::vector<int32_t> popup_orders;
         };
 

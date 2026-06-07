@@ -22,32 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "manager.h"
-#include <nfd.h>
 #include "view/allview.h"
-#include "popup/project_dashboard.h"
+#include "popup/allpopup.h"
 #include "../engine/engine.h"
 #include "../engine/struct/config.h"
 #include "../engine/struct/context.h"
+#include "../engine/script/vm.h"
 #include "../engine/utility/command.h"
 #include "../system/system.h"
 #include "../system/window.h"
 
 namespace January::Engine::View {
     void VInit(ViewManager& vm, struct System::JSystem& jsystem){
-        NFD_Init();
-        vm.application = new JViewApplication(std::string("Application##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::APPLICATION, *jsystem.window, *jsystem.engine);
-        vm.blueprint = new JViewBlueprint(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
-        vm.console = new JViewConsole(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
-        vm.explorer = new JViewExplorer(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
-        vm.hierarchy = new JViewHierarchy(std::string("Hierarchy##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::HIERARCHY, *jsystem.window, *jsystem.engine);
-        vm.inspector = new JViewInspector(std::string("Inspector##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::INSPECTOR, *jsystem.window, *jsystem.engine);
-        vm.preview = new JViewPreview(std::string("Preview##view"), (int32_t)JanuaryViewTypeFlag::RENDER, (int32_t)JanuaryViewRenderFlag::PREVIEW, *jsystem.window, *jsystem.engine);
-        vm.profiler = new JViewProfiler(std::string("Profiler##view"), (int32_t)JanuaryViewTypeFlag::DEBUG, (int32_t)JanuaryViewDebugFlag::PROFILER, *jsystem.window, *jsystem.engine);
-        vm.script = new JViewScript(std::string("Script##view"), (int32_t)JanuaryViewTypeFlag::SCRIPT, (int32_t)JanuaryViewScriptFlag::SCRIPT, *jsystem.window, *jsystem.engine);
-        vm.timeline = new JViewTimeline(std::string("Timeline##view"), (int32_t)JanuaryViewTypeFlag::ANIMATION, (int32_t)JanuaryViewAnimationFlag::TIMELINE, *jsystem.window, *jsystem.engine);
-        vm.volumn = new JViewVolumn(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::AUDIO, (int32_t)JanuaryViewAudioFlag::VOLUMN, *jsystem.window, *jsystem.engine);
+        vm.application = std::make_shared<JViewApplication>(std::string("Application##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::APPLICATION, *jsystem.window, *jsystem.engine);
+        vm.blueprint = std::make_shared<JViewBlueprint>(std::string("Blueprint##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::BLUEPRINT, *jsystem.window, *jsystem.engine);
+        vm.console = std::make_shared<JViewConsole>(std::string("Console##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::CONSOLE, *jsystem.window, *jsystem.engine);
+        vm.explorer = std::make_shared<JViewExplorer>(std::string("Explorer##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::EXPLORER, *jsystem.window, *jsystem.engine);
+        vm.hierarchy = std::make_shared<JViewHierarchy>(std::string("Hierarchy##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::HIERARCHY, *jsystem.window, *jsystem.engine);
+        vm.inspector = std::make_shared<JViewInspector>(std::string("Inspector##view"), (int32_t)JanuaryViewTypeFlag::GENERAL, (int32_t)JanuaryViewGeneralFlag::INSPECTOR, *jsystem.window, *jsystem.engine);
+        vm.preview = std::make_shared<JViewPreview>(std::string("Preview##view"), (int32_t)JanuaryViewTypeFlag::RENDER, (int32_t)JanuaryViewRenderFlag::PREVIEW, *jsystem.window, *jsystem.engine);
+        vm.profiler = std::make_shared<JViewProfiler>(std::string("Profiler##view"), (int32_t)JanuaryViewTypeFlag::DEBUG, (int32_t)JanuaryViewDebugFlag::PROFILER, *jsystem.window, *jsystem.engine);
+        vm.script = std::make_shared<JViewScript>(std::string("Script##view"), (int32_t)JanuaryViewTypeFlag::SCRIPT, (int32_t)JanuaryViewScriptFlag::SCRIPT, *jsystem.window, *jsystem.engine);
+        vm.timeline = std::make_shared<JViewTimeline>(std::string("Timeline##view"), (int32_t)JanuaryViewTypeFlag::ANIMATION, (int32_t)JanuaryViewAnimationFlag::TIMELINE, *jsystem.window, *jsystem.engine);
+        vm.volumn = std::make_shared<JViewVolumn>(std::string("Volumn##view"), (int32_t)JanuaryViewTypeFlag::AUDIO, (int32_t)JanuaryViewAudioFlag::VOLUMN, *jsystem.window, *jsystem.engine);
 
-        vm.project_dashboard = new JPopupProjectDashboard(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
+        vm.project_dashboard = std::make_shared<JPopupProjectDashboard>(std::string("Project Dashboard##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::PROJECT_DASHBOARD, *jsystem.window, *jsystem.engine);
+        vm.create_folder = std::make_shared<JPopupCreateFolder>(std::string("Create Folder##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::CREATE_FOLDER, *jsystem.window, *jsystem.engine);
+        vm.create_resource = std::make_shared<JPopupCreateResource>(std::string("Create Resource##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::CREATE_RESOURCE, *jsystem.window, *jsystem.engine);
+        vm.create_script = std::make_shared<JPopupCreateScript>(std::string("Create Script##popup"), (int32_t)JanuaryViewTypeFlag::GENERAL | (int32_t)JanuaryViewTypeFlag::POPUP, (int32_t)JanuaryViewGeneralPopupFlag::CREATE_SCRIPT, *jsystem.window, *jsystem.engine);
         
         vm.views.push_back(vm.application);
         vm.views.push_back(vm.blueprint);
@@ -62,23 +64,28 @@ namespace January::Engine::View {
         vm.views.push_back(vm.volumn);
 
         vm.popups.push_back(vm.project_dashboard);
+        vm.popups.push_back(vm.create_folder);
+        vm.popups.push_back(vm.create_resource);
+        vm.popups.push_back(vm.create_script);
 
         for(auto& c : vm.views){
             c->Init();
         }
         for(auto& c : vm.popups){
             c->Init();
+        }
+
+        if(!fs::exists(jsystem.engine->context->project_path)){
+            PushCommand(*jsystem.engine->context, "new_project");
         }
     }
 
     void VDeInit(ViewManager& vm){
         for(auto& c : vm.views){
             c->DeInit();
-            delete c;
         }
         for(auto& c : vm.popups){
             c->DeInit();
-            delete c;
         }
         vm.views.clear();
         vm.popups.clear();
@@ -213,7 +220,7 @@ namespace January::Engine::View {
                 }
                 if(ImGui::BeginMenu("Render##MainMenuBar_View")){
                     if(ImGui::MenuItem("Preview##MainMenuBar_View_Render", NULL, vm.inspector->IsEnable())){
-                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        //
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     if(ImGui::MenuItem("Material##MainMenuBar_View_Render", NULL, vm.inspector->IsEnable())){
@@ -228,7 +235,7 @@ namespace January::Engine::View {
                 }
                 if(ImGui::BeginMenu("Script##MainMenuBar_View")){
                     if(ImGui::MenuItem("Script##MainMenuBar_View_Script", NULL, vm.inspector->IsEnable())){
-                        //vm.inspector->SetEnable(!vm.inspector->IsEnable());
+                        vm.script->SetEnable(!vm.script->IsEnable());
                         PushCommand(*jengine.context, "config_dirty");
                     }
                     if(ImGui::MenuItem("Plugin Manager##MainMenuBar_View_Script", NULL, vm.inspector->IsEnable())){
@@ -259,6 +266,15 @@ namespace January::Engine::View {
                     }
                     ImGui::EndMenu();
                 }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Action##MainMenuBar")) {
+                if(ImGui::MenuItem("Compile")){
+                    jengine.context->vm->UpdateVMContent();
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Tool##MainMenuBar")) {
                 ImGui::EndMenu();
             }
             if(ImGui::BeginMenu("Help##MainMenuBar")){

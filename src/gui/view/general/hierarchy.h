@@ -31,6 +31,12 @@ namespace January::Engine::View {
     public:
         DEFAULT_VIEW_CTOR(JViewHierarchy) {}
         DEFAULT_VIEW_DECTOR(JViewHierarchy) {}
+
+        void Init() override;
+        void Update() override;
+        void Draw() override;
+        void DeInit() override;
+        void Focus(bool value) override;
     };
 }
 #endif

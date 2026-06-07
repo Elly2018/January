@@ -1,0 +1,3 @@
+void PrintTest(){
+    LogInfo("PrintTest");
+}

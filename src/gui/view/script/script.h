@@ -25,12 +25,70 @@ SOFTWARE.
 #ifndef GUI_VIEW_SCRIPT_H
 #define GUI_VIEW_SCRIPT_H
 #include "../viewbase.h"
+#include <atomic>
+#include <string>
+#include <memory>
+#include <mutex>
+#include <filesystem>
+#include <TextEditor.h>
+
+namespace fs = std::filesystem;
 
 namespace January::Engine::View {
+
+    struct ScriptContent {
+        std::string uuid;
+        fs::path path;
+        bool dirty;
+        std::string text = "";
+    };
+
     class JViewScript : public JViewBase {
     public:
         DEFAULT_VIEW_CTOR(JViewScript) {}
         DEFAULT_VIEW_DECTOR(JViewScript) {}
+
+        void Init() override;
+        void Update() override;
+        void Draw() override;
+        void DeInit() override;
+        void Focus(bool value) override;
+
+    protected:
+        void DrawTopBar();
+        void DrawBottomBar();
+        void DrawLeftList();
+        void DrawRightContent();
+        /**
+         * @brief Left panel and right panel require splitter
+         * And this function is that splitter
+         * ImGui::SameLine is included, no need to write it
+         */
+        void DrawMiddleHandle();
+
+        void OnChanged();
+        void OnTransaction(std::vector<TextEditor::Change>& changed);
+    private:
+        /**
+         * @brief Init will be the trigger
+         * Define if the first event call is on.
+         */
+        std::atomic_bool init = false;
+        /**
+         * @brief Because left right panel is using splitter
+         * The left width is dynamic which required a variable to record it
+         */
+        std::atomic<float> leftWidth = 0;
+        TextEditor m_editorContext;
+        bool m_isOpen = true;
+        ScriptContent* m_currentFile = nullptr;
+        std::atomic<float> fontSize = 17.0f;
+        std::atomic<size_t> version = 0;
+        std::vector<ScriptContent> files_buffer;
+        std::mutex files_buffer_mtx;
+        std::atomic_int32_t line;
+        std::atomic_int32_t column;
+        std::atomic_bool should_load = false;
     };
 }
 #endif
