@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "explorer.h"
+#include <cstdlib>
 #include <algorithm>
 #include <filesystem>
 #include <thread>
@@ -33,30 +34,13 @@ SOFTWARE.
 #include "../../../engine/engine.h"
 #include "../../../engine/struct/config.h"
 #include "../../../engine/struct/context.h"
+#include "../../../engine/utility/command.h"
 #include "../../../engine/utility/format.h"
+#include "../../../engine/assets/asset.h"
 
 namespace fs = std::filesystem;
 
 namespace January::Engine::View {
-
-    void openFolder(const std::string& path) {
-        std::string command;
-
-        #if defined(_WIN32) || defined(_WIN64)
-            // Windows: use "explorer" command
-            command = "explorer \"" + path + "\"";
-        #elif defined(__APPLE__)
-            // macOS: use "open" command
-            command = "open \"" + path + "\"";
-        #elif defined(__linux__)
-            // Linux: use "xdg-open" (standard for most desktops)
-            command = "xdg-open \"" + path + "\"";
-        #else
-            #error "Unsupported platform"
-        #endif
-
-        std::system(command.c_str());
-    }
 
     void JFolderContent::CleanChildren(){
         for(auto c : children){
@@ -89,7 +73,7 @@ namespace January::Engine::View {
             init = true;
             leftWidth = w * (1.f / 3.f);
         }
-        AppContext* context = jengine.context;
+        AppContext* context = jengine.context.get();
         if(context == nullptr){
             spdlog::error("context is nullptr");
         }
@@ -145,8 +129,10 @@ namespace January::Engine::View {
         ImGuiStyle& style = ImGui::GetStyle();
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
+        ImVec2 padding = ImVec2(5, 5);
         
         ImU32 white_color = IM_COL32(255, 255, 255, 255);
+        ImU32 light_grey_color = IM_COL32(200, 200, 200, 255);
 
         std::string icon_text = "";
         if(target.is_dir){
@@ -160,11 +146,11 @@ namespace January::Engine::View {
             size * 0.7f,
             0, icon_text.c_str()
         );
-
+        // Drawing the icon
         draw_list->AddText(
             jengine.context->icon_font, 
-            size * 0.7f, 
-            ImVec2(canvas_pos.x + (size * 0.15f), canvas_pos.y), 
+            size * 0.7f,
+            ImVec2(canvas_pos.x + (size * 0.15f) + padding.x, canvas_pos.y + padding.y),
             white_color, 
             icon_text.c_str()
         );
@@ -186,15 +172,22 @@ namespace January::Engine::View {
             text_starter = (size - text_size.x) / 2.0f;
         }
 
+        // Drawing the text
         draw_list->AddText(
-            ImVec2(canvas_pos.x + text_starter, canvas_pos.y + (size * 0.7f)),
+            ImVec2(canvas_pos.x + text_starter + padding.x, canvas_pos.y + (size * 0.7f) + padding.y),
             white_color,
             text_display.c_str()
         );
         
-        ImGui::Dummy(ImVec2(size, size));
-        if(ImGui::IsItemHovered()){
-            draw_list->AddRect(canvas_pos, canvas_pos + ImVec2(size, size), white_color, 5.0f);
+        ImGui::Dummy(ImVec2(size, size) + padding);
+
+        bool hovered = ImGui::IsItemHovered();
+        bool selection = CheckSelection(target);
+        if(hovered && !selection){
+            draw_list->AddRect(canvas_pos, canvas_pos + ImVec2(size, size) + padding, white_color, 5.0f);
+        }
+        else if(selection){
+            draw_list->AddRect(canvas_pos, canvas_pos + ImVec2(size, size) + padding, light_grey_color, 5.0f);
         }
 
         DrawItemTooltip(target.path, target.is_dir, target.filesize);
@@ -452,24 +445,32 @@ namespace January::Engine::View {
         if(ImGui::BeginPopupContextItem(popup_id.c_str())){
             if(is_dir){
                 if (ImGui::MenuItem(("Open File Explorer Here##" + popup_id).c_str())){
-                    openFolder(_path);
+                    auto folder_handle = jengine.context->asset->GetJAssetHandler(_path.string());
+                    folder_handle->Open();
                 }
             }else{
+                if(_path.extension().string() == ".as"){
+                    if (ImGui::MenuItem(("Run Script##" + popup_id).c_str())){
+                        PushCommand(*jengine.context, "run_script " + _path.string());
+                    }
+                }
                 if (ImGui::MenuItem(("Find Reference In Scene##" + popup_id).c_str())){
                 }
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Delete##" + popup_id).c_str())){
-                
+                auto asset = jengine.context->asset->GetJAssetHandler(_path);
+                asset->Delete();
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Cut##" + popup_id).c_str())){
+
             }
             if (ImGui::MenuItem(("Copy##" + popup_id).c_str())){
 
             }
             if (ImGui::MenuItem(("Paste##" + popup_id).c_str())){
-
+                
             }
             ImGui::Separator();
             if (ImGui::MenuItem(("Copy Path##" + popup_id).c_str())){
@@ -480,9 +481,13 @@ namespace January::Engine::View {
             }
             ImGui::EndPopup();
         }
-        bool tree_node_single = tree_node && ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left);
-        bool none_tree_double = !tree_node && is_dir && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
-        if(tree_node_single || none_tree_double){
+        bool single_click = ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left);
+        bool double_click = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+        bool tree_node_single = tree_node && single_click;
+        bool none_tree_double_dir = !tree_node && is_dir && double_click;
+        bool none_tree_double_file = !tree_node && !is_dir && double_click;
+        bool select_single = !tree_node && single_click;
+        if(tree_node_single || none_tree_double_dir){ // Enter or trigger
             std::lock_guard<std::mutex> guard(travel_record_mtx);
             travel_record.push(path);
             path = fs::relative(_path, root).string();
@@ -493,6 +498,18 @@ namespace January::Engine::View {
             UpdatePathNode();
             changed = true;
         }
+        if(none_tree_double_file){ // Open the file by double click
+            auto file_handle = jengine.context->asset->GetJAssetHandler(_path.string());
+            file_handle->Open();
+        }
+        if(select_single){ // Selection
+            std::lock_guard<std::mutex> lock(jengine.context->asset_selection_mtx);
+            jengine.context->asset_selection.clear();
+            jengine.context->asset_selection.push_back(
+                jengine.context->asset->GetJAssetHandler(_path)
+            );
+            spdlog::debug("Asset select: {}", _path.string());
+        }
     }
 
     void JViewExplorer::DrawRightSide_Event(){
@@ -500,17 +517,18 @@ namespace January::Engine::View {
 
         if(ImGui::BeginPopupContextWindow("ViewExplorer_Right_ContextItem", background_flags)){
             if (ImGui::MenuItem("Create Folder##ViewExplorer_Right_ContextItem")){
-                
+                PushCommand(*jengine.context, "create_folder " + CurrentFolder().string());
             }
             if (ImGui::MenuItem("Create Resource##ViewExplorer_Right_ContextItem")){
-                
+                PushCommand(*jengine.context, "create_resource " + CurrentFolder().string());
             }
             if (ImGui::MenuItem("Create Script##ViewExplorer_Right_ContextItem")){
-                
+                PushCommand(*jengine.context, "create_script " + CurrentFolder().string());
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Open File Explorer Here##ViewExplorer_Right_ContextItem")){
-                openFolder(CurrentFolder().string());
+                auto folder_handle = jengine.context->asset->GetJAssetHandler(CurrentFolder().string());
+                folder_handle->Open();
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Cut##ViewExplorer_Right_ContextItem")){
@@ -623,6 +641,16 @@ namespace January::Engine::View {
             path_node.push_back("Assets");
         }
         changed = false;
+    }
+
+    bool JViewExplorer::CheckSelection(JFileContent& target) {
+        Assets assets = jengine.context->asset_selection;
+        if(assets.size() == 0) return false;
+
+        for(auto& i : assets){
+            if(i->target == target.path) return true;
+        }
+        return false;
     }
 
     void JViewExplorer::ReloadProject(){

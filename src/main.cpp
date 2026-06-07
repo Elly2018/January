@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "config.h"
+#include <memory>
 #include <spdlog/spdlog.h>
 #include "system/cli.h"
 #include "system/system.h"
@@ -36,8 +37,8 @@ int main(int argc, char** argv){
     spdlog::set_level(spdlog::level::info);
 #endif
     InitCMD(argc, argv);
-    JSystem jsystem;
-    err = SInit(jsystem);
+    auto jsystem = std::make_unique<JSystem>();
+    err = SInit(*jsystem);
     assert(err != -1 && "SInit failed");
-    SRun(jsystem);
+    SRun(*jsystem);
 }

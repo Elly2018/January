@@ -22,3 +22,46 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "inspector.h"
+#include <mutex>
+#include <spdlog/spdlog.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui.h>
+#include "../../../engine/engine.h"
+#include "../../../engine/struct/context.h"
+#include "../../../engine/utility/logger.h"
+#include "../../../engine/assets/asset.h"
+
+namespace January::Engine::View {
+    void JViewInspector::Init() {
+        JViewBase::Init();
+        spdlog::info("Loaded View: Inspector");
+    }
+
+    void JViewInspector::Update() {
+
+    }
+
+    void JViewInspector::Draw() {
+        std::shared_ptr<JAssetBase> select = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(jengine.context->asset_selection_mtx);
+            if(jengine.context->asset_selection.size() > 0){
+                select = jengine.context->asset_selection.at(0);
+            }
+        }
+        
+        if(select != nullptr){
+            ImGui::Text("UUID: %s", select->uuid.c_str());
+            ImGui::Text("Target: %s", select->target.string().c_str());
+            ImGui::Text("Meta Target: %s", select->meta_target.string().c_str());
+        }
+    }
+
+    void JViewInspector::DeInit() {
+
+    }
+
+    void JViewInspector::Focus(bool value) {
+
+    }
+}

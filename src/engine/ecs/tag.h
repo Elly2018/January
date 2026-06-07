@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_NODE_COMMON_TAG_H
-#define ENGINE_NODE_COMMON_TAG_H
+#ifndef ENGINE_ECS_TAG_H
+#define ENGINE_ECS_TAG_H
 #include <string>
 #include <glm/glm.hpp>
 
-namespace January::Engine::Node {
+namespace January::Engine::ECS {
     struct tag_component {
-        char tag[128];
+        char tag[512];
     };
 }
 

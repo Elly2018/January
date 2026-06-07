@@ -22,17 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#ifndef ENGINE_NODE_COMMON_SCRIPT_RUNNER_H
-#define ENGINE_NODE_COMMON_SCRIPT_RUNNER_H
+#ifndef ENGINE_ECS_SCRIPT_RUNNER_H
+#define ENGINE_ECS_SCRIPT_RUNNER_H
 #include <string>
 
-namespace January::Engine::Node {
+namespace January::Engine::ECS {
     struct script_runner_component {
         int32_t priority;
         // A relative path to the gravity script
-        char script_path[128];
+        char script_path[512];
         // A relative path to data bank
-        char data_bank[128];
+        char data_bank[512];
     };
 }
 

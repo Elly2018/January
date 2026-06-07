@@ -28,6 +28,12 @@ set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "Skip shaderc examples" FORCE)
 set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "Skip shaderc copyright check" FORCE)
 set(DISABLE_RTTI ON CACHE BOOL "Disable RTTI for shaderc dependencies" FORCE)
 set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "Use shared CRT" FORCE)
+set(SPIRV_SKIP_EXECUTABLES ON CACHE BOOL "Skip building SPIRV-Tools executables" FORCE)
+set(SPIRV_SKIP_TESTS ON CACHE BOOL "Skip SPIRV-Tools tests" FORCE)
+set(GLSLANG_ENABLE_INSTALL OFF CACHE BOOL "Disable glslang installation" FORCE)
+set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "Disable building glslang binaries" FORCE)
+set(SHADERC_SKIP_EXECUTABLES ON CACHE BOOL "Skip building shaderc executables" FORCE)
+
 set(SHADERC_DIR third-party/shaderc)
 add_subdirectory(${SHADERC_DIR})
 
@@ -44,6 +50,11 @@ add_subdirectory(${LIBCURL_DIR} EXCLUDE_FROM_ALL)
 # entt
 set(ENTT_DIR third-party/entt)
 add_subdirectory(${ENTT_DIR} EXCLUDE_FROM_ALL)
+
+# angel script
+set(ANGEL_DIR third-party/angelscript)
+add_subdirectory(${ANGEL_DIR}/angelscript/projects/cmake EXCLUDE_FROM_ALL)
+include_directories(${ANGEL_DIR}/add_on)
 
 # Dear ImGui
 set(IMGUI_DIR third-party/imgui)
@@ -81,6 +92,10 @@ include_directories(${JSON_DIR})
 set(INI_DIR third-party/mINI)
 include_directories(${INI_DIR}/src/mini)
 
+# text-edit
+set(TEXTEDIT_DIR third-party/imgui-textedit)
+include_directories(${TEXTEDIT_DIR})
+
 # spdlog
 set(LOG_DIR third-party/spdlog)
 include_directories(${LOG_DIR}/include)
@@ -94,9 +109,14 @@ set(Notify_DIR third-party/notify/include)
 include_directories(${Notify_DIR})
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
+file(GLOB_RECURSE angel_sources 
+    ${ANGEL_DIR}/add_on/scriptbuilder/scriptbuilder.h ${ANGEL_DIR}/add_on/scriptbuilder/scriptbuilder.cpp
+    ${ANGEL_DIR}/add_on/scriptstdstring/scriptstdstring.h ${ANGEL_DIR}/add_on/scriptstdstring/scriptstdstring.cpp
+)
 
 add_executable(january
     ${sources}
+    ${angel_sources}
     ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
     ${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp
@@ -109,7 +129,17 @@ add_executable(january
     ${Node_DIR}/imgui_canvas.cpp
     ${Node_DIR}/imgui_node_editor.cpp
     ${Node_DIR}/imgui_node_editor_api.cpp
+    ${TEXTEDIT_DIR}/TextDiff.cpp
+    ${TEXTEDIT_DIR}/TextEditor.cpp
 )
+
+if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_options(january PRIVATE -O3 -ffunction-sections -fdata-sections)
+    target_link_options(january PRIVATE -Wl,--gc-sections -Wl,-s)
+else()
+    target_compile_options(january PRIVATE -O0)
+    target_link_options(january PRIVATE -g)
+endif()
 
 target_compile_options(january PRIVATE -mavx2)
 
@@ -119,6 +149,7 @@ target_include_directories(january PUBLIC
     ${LIBCURL_DIR}/include
     ${CLIP_DIR}
     ${SHADERC_DIR}/libshaderc/include
+    ${ANGEL_DIR}/angelscript/include
 )
 
 target_link_libraries(january PRIVATE
@@ -129,6 +160,7 @@ target_link_libraries(january PRIVATE
     SDL3::SDL3
     CURL::libcurl
     shaderc
+    angelscript
 )
 
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)

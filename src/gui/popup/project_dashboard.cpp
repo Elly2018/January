@@ -114,7 +114,7 @@ namespace January::Engine::View {
         ImGui::InputText("Save Path##project_dashboard_new", &p_path);
         fs::path r = p_path;
         r /= p_name;
-        ImGui::LabelText("Result Path##project_dashboard_new", r.c_str());
+        ImGui::LabelText("Result Path##project_dashboard_new", "%s", r.c_str());
         if(ImGui::BeginCombo("Template##project_dashboard_new", GetTemplateName(temp).c_str())){
             for(int32_t i = 0; i < 6; i++){
                 if(ImGui::Selectable((GetTemplateName((TEMPLATE)i) + "##project_dashboard_temps").c_str())){
@@ -151,7 +151,10 @@ namespace January::Engine::View {
             ini["header"]["description"] = p_text.c_str();
             ini["header"]["version"] = "0.0.1";
 
-            file.generate(ini, true);
+            if (!file.generate(ini, true)) {
+                spdlog::error("Failed to generate project manifest INI file!");
+                spdlog::error("\tPath: {}", mani.string());
+            }
         }else{
             spdlog::error("Project path is already exist: {}", r.c_str());
             return;

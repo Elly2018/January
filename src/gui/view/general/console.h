@@ -48,6 +48,7 @@ namespace January::Engine::View {
         void Update() override;
 
     protected:
+        void DrawMenu();
         /**
          * @brief Render top toolbar
          */

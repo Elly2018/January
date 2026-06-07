@@ -22,9 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "create_resource.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui.h>
 
 namespace January::Engine::View {
     void JPopupCreateResource::RegisterFolder(std::string _folder){
         folder = _folder;
+    }
+
+    void JPopupCreateResource::Init(){
+        SetPopupSize(ImVec2(0.8f, 0.8f), true, true, false);
+    }
+
+    void JPopupCreateResource::Update() {
+
+    }
+
+    void JPopupCreateResource::Draw() {
+        
     }
 }

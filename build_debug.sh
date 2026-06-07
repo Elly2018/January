@@ -12,5 +12,9 @@ cd ../build
 # Configure CMake
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 
+echo "Compile core: $(($(nproc) - 1))"
+
+sleep 3
+
 # Build
-cmake --build . -j 8
+cmake --build . -j $(($(nproc) - 1))

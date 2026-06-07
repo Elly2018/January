@@ -30,14 +30,20 @@ SOFTWARE.
 using json = nlohmann::json;
 
 namespace January::Engine {
-    //
-    // The serialized data will be store in project/config.json
-    //
+    /**
+     * @brief The serialized data will be store in project/config.json
+     */
     struct ProjectConfig {
+        /**
+         * @brief Project use FPS limit
+         * 
+         * @param 0 means unlimited
+         */
         int32_t j_FPS                                            = 60;
-        // Local project setting
-        // If you're looking for format detail, go check config.h
-        json j_project_setting                                   = json::object();
+        /**
+         * @brief Local project setting path
+         */
+        std::string j_project_game_mode                          = "";
     };
 }
 #endif

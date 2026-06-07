@@ -24,4 +24,29 @@ SOFTWARE.
 #pragma once
 #ifndef ENGINE_ASSETS_TEXT_ASSET_H
 #define ENGINE_ASSETS_TEXT_ASSET_H
+#include "asset.h"
+
+namespace January::Engine {
+    /**
+     * @brief The handle for the text asset
+     */
+    struct JTextAssetBase : public JAssetBase {
+    public:
+        DEFAULT_ASSET_CTOR(JTextAssetBase) {}
+
+        bool Load_Data() override;
+        bool Save_Data() override;
+
+        std::string text;
+    };
+
+    class JTextAssetFactory : public JAssetFactory {
+    public:
+        DEFAULT_ASSET_FACTORY_CTOR(JTextAssetFactory, ".txt") {}
+
+        std::shared_ptr<JAssetBase> CreateAsset(fs::path path) override;
+        std::string GetResourceName() override;
+    };
+}
+
 #endif

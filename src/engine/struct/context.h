@@ -25,42 +25,79 @@ SOFTWARE.
 #ifndef ENGINE_STRUCT_CONTEXT_H
 #define ENGINE_STRUCT_CONTEXT_H
 #include <unordered_map>
+#include <atomic>
+#include <memory>
 #include <string>
 #include <queue>
 #include <mutex>
+#include "../utility/mutex.h"
 
 struct ImFont;
 
-namespace spdlog {
+namespace spdlog
+{
     struct logger;
 }
 
-namespace January::Engine {
-    // Current application context
-    // This data cannot be store in disk, This is the memory only data
-    struct AppContext {
-        std::string                 project_path                  = "";
+namespace January::Engine
+{
+    class JAssetWorker;
+    class JLogger;
+    struct JAssetBase;
+    class AngelVM;
+
+    using Assets = std::vector<std::shared_ptr<JAssetBase>>;
+
+    /**
+     * @brief Current application context
+     * This data cannot be store in disk, This is the memory only data
+     * 
+     * Content could be access by Update and Render at the same time. in order to avoid
+     * memory issue, We have atomic and mutex everywhere in this struct
+     */
+    struct AppContext
+    {
+        AppContext() = default;
+        ~AppContext() = default;
+        
+        std::string project_path = "";
+        j_mutex(project_path)
         // Does application needs load project right now
-        bool                        load_project                  = false;
+        std::atomic_bool load_project = false;
         // Application global time
-        double                      time                          = 0;
+        std::atomic<double> time = 0;
+        std::atomic<double> runtime_time = 0;
         // Application delta time
-        double                      delta                         = 0;
+        std::atomic<double> delta = 0;
+        std::atomic<double> runtime_delta = 0;
+        std::atomic_bool runtime_state = false;
         // Application end signal
-        bool                        done                          = false;
+        std::atomic_bool done = false;
         // Command buffer, execute next frame
         // In order to use this in thread-safe
         // Please lock_guard "commands_mtx" before add item or pop item to it
-        std::queue<std::string>     commands                      = std::queue<std::string>();
-        std::mutex                  commands_mtx;
+        std::queue<std::string> commands = std::queue<std::string>();
+        j_mutex(commands)
         // Imgui defualt text
-        struct ImFont*              text_font;
+        ImFont* text_font;
         // Imgui font with icon like graph
-        struct ImFont*              icon_font;
+        ImFont* icon_font;
         // Imgui font with emoji like graph
-        struct ImFont*              emoji_font;
-        // Logger 
-        struct JLogger*             logger;
+        ImFont* emoji_font;
+        // Imgui code text
+        ImFont* code_font;
+        // Logger
+        std::unique_ptr<JLogger> logger;
+        // Asset
+        std::unique_ptr<JAssetWorker> asset;
+        // VM
+        std::unique_ptr<AngelVM> vm;
+        // Select assets
+        Assets asset_selection;
+        j_mutex(asset_selection)
+        // Clipboard assets
+        Assets asset_clipboard;
+        j_mutex(asset_clipboard)
     };
 }
 #endif

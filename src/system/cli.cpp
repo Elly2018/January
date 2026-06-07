@@ -34,9 +34,11 @@ static argh::parser cmd;
 void configure_parser() {
     cmd.add_params({"-p", "--path"});
     cmd.add_params({"-v", "--verbose"});
+    cmd.add_params({"-b", "--batch"});
 
     bool par_v = January::CLI::GetCMDFlag("v", "verbose");
     bool par_vv = January::CLI::GetCMDFlag("vv", "very-verbose");
+    bool par_b = January::CLI::GetCMDFlag("b", "batch");
     if(par_v){
         spdlog::set_level(spdlog::level::debug);
     }

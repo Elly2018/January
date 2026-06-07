@@ -366,13 +366,13 @@ namespace January::System {
     }
 
     void SavePreference(){
-        std::string save_path = Engine::get_config_path("imgui.ini").string();
+        std::string save_path = Engine::GetConfigPath("imgui.ini").string();
         ImGui::SaveIniSettingsToDisk(save_path.c_str());
         spdlog::debug("SaveIniSettingsToDisk: {}", save_path);
     }
 
     void LoadPreference(){
-        std::string save_path = Engine::get_config_path("imgui.ini").string();
+        std::string save_path = Engine::GetConfigPath("imgui.ini").string();
         ImGui::LoadIniSettingsFromDisk(save_path.c_str());
         spdlog::debug("LoadIniSettingsFromDisk: {}", save_path);
     }
@@ -423,8 +423,8 @@ namespace January::System {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
-        io.IniFilename = Engine::get_config_path("imgui.ini").c_str();
-        io.LogFilename = Engine::get_config_path("imgui.log").c_str();
+        io.IniFilename = Engine::GetConfigPath("imgui.ini").c_str();
+        io.LogFilename = Engine::GetConfigPath("imgui.log").c_str();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking

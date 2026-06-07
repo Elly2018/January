@@ -22,16 +22,66 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "asset.h"
+#include <iostream>
+#include <filesystem>
+#include <fstream>
+#include <thread>
+#include <spdlog/spdlog.h>
+#include <uuid_v4.h>
+#include "allasset.h"
 
 namespace January::Engine {
-    std::string JAssetBase::Encode(bool pretty){
-        json buffer = json::object();
-        buffer["uuid"] = uuid;
-        return buffer.dump(pretty ? 4 : -1);
+    JAssetWorker::JAssetWorker(System::JWindow& _win, JEngine& _engine) : jwindow(_win), jengine(_engine) {
+        loadedFactory.push_back(std::make_shared<JAssetFactory>(jwindow, jengine));
+        loadedFactory.push_back(std::make_shared<JTextAssetFactory>(jwindow, jengine));
+        loadedFactory.push_back(std::make_shared<JScriptAssetFactory>(jwindow, jengine));
     }
-    void JAssetBase::Decode(json json){
-        if(json["uuid"].is_string()){
-            uuid = json.get<std::string>();
+
+    JAssetWorker::~JAssetWorker(){
+        std::lock_guard<std::mutex> lock(lf_mtx);
+        std::lock_guard<std::mutex> lock2(la_mtx);
+        loadedFactory.clear();
+        loadedAssets.clear();
+    }
+
+    std::shared_ptr<JAssetBase> JAssetWorker::GetJAssetHandler(fs::path target){
+        if(loadedFactory.size() == 0) return nullptr;
+        std::string ext = target.extension().string();
+        for(auto& f : loadedFactory){
+            if(f->CheckExtension(ext)){
+                return f->CreateAsset(target);
+            }
         }
+        return loadedFactory.at(0)->CreateAsset(target);
+    }
+
+    bool JAssetWorker::GetJAssetHandlerByUUID(std::string uuid, std::shared_ptr<JAssetBase>& asset){
+        if(!IsJAssetHandlerLoaded(uuid)) return false;
+        std::lock_guard<std::mutex> lock(la_mtx);
+        asset = loadedAssets.at(uuid);
+        return true;
+    }
+
+    bool JAssetWorker::IsJAssetHandlerLoaded(std::string uuid){
+        std::lock_guard<std::mutex> lock(la_mtx);
+        return loadedAssets.count(uuid);
+    }
+
+    void JAssetWorker::CleanLoadAsset(){
+        std::lock_guard<std::mutex> lock(la_mtx);
+        loadedAssets.clear();
+    }
+
+    std::vector<std::string> JAssetWorker::GetAllResourceName() {
+        std::lock_guard<std::mutex> lock(lf_mtx);
+        std::vector<std::string> f;
+        for(auto& i : loadedFactory){
+            f.push_back(i->GetResourceName());
+        }
+        return f;
+    }
+
+    size_t JAssetWorker::GetResourceTypeLength() {
+        return loadedFactory.size();
     }
 }

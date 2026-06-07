@@ -1,6 +1,7 @@
 #include "console.h"
 #include <functional>
 #include <memory>
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <imgui_stdlib.h>
 #include "../../../engine/engine.h"
@@ -19,18 +20,7 @@ namespace January::Engine::View {
     }
 
     void JViewConsole::Draw() {
-        if(ImGui::BeginMenuBar()){
-            if(ImGui::BeginMenu("Debug##Console_Log_View_Menu_Debug")){
-                if(ImGui::MenuItem("MSG_COUNT", NULL, show_line_count.load())){
-                    show_line_count.store(!show_line_count.load());
-                }
-                if(ImGui::MenuItem("MSG_ID", NULL, show_id.load())){
-                    show_id.store(!show_id.load());
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
+        DrawMenu();
         DrawBar();
         ImGui::Separator();
 
@@ -100,6 +90,21 @@ namespace January::Engine::View {
             }
             GetFilteredResult();
             change_page.store(false);
+        }
+    }
+
+    void JViewConsole::DrawMenu(){
+        if(ImGui::BeginMenuBar()){
+            if(ImGui::BeginMenu("Debug##Console_Log_View_Menu_Debug")){
+                if(ImGui::MenuItem("MSG_COUNT", NULL, show_line_count.load())){
+                    show_line_count.store(!show_line_count.load());
+                }
+                if(ImGui::MenuItem("MSG_ID", NULL, show_id.load())){
+                    show_id.store(!show_id.load());
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
         }
     }
 
