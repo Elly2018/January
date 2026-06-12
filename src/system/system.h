@@ -49,6 +49,7 @@ namespace January {
             // Engine instance for backgroud calculation
             struct Engine::JEngine*             engine;
         };
+
         // Main logic goes here
         void UpdateLoop(JSystem& jsystem);
         // System init
