@@ -4,16 +4,219 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="22" type="long" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="january" targetName="curl_uninstall" />
+      <config projectName="january" targetName="curl-example-pop3-list" />
+      <config projectName="january" targetName="curl-example-localport" />
+      <config projectName="january" targetName="curl-example-synctime" />
+      <config projectName="january" targetName="SPIRV-Tools-lint" folderName="SPIRV-Tools libraries" />
+      <config projectName="january" targetName="glslang-default-resource-limits" folderName="glslang" />
+      <config projectName="january" targetName="shaderc-pkg-config" />
+      <config projectName="january" targetName="curl-example-ftpgetinfo" />
+      <config projectName="january" targetName="curl-ca-bundle" />
+      <config projectName="january" targetName="curl-generate-mk-ca-bundle.1" />
+      <config projectName="january" targetName="curl-example-multi-app" />
+      <config projectName="january" targetName="curl-example-unixsocket" />
+      <config projectName="january" targetName="spirv-tools-header-DebugInfo" folderName="SPIRV-Tools build" />
+      <config projectName="january" targetName="extinst_tables" />
+      <config projectName="january" targetName="curl-example-getinfo" />
+      <config projectName="january" targetName="curl-example-multi-post" />
+      <config projectName="january" targetName="spirv-tools-tables" />
+      <config projectName="january" targetName="curl-example-ftpuploadfrommem" />
+      <config projectName="january" targetName="curl-example-imap-examine" />
+      <config projectName="january" targetName="curl-example-hsts-preload" />
+      <config projectName="january" targetName="curl-example-http3-present" />
+      <config projectName="january" targetName="curl-example-ftp-wildcard" />
+      <config projectName="january" targetName="curl-example-sepheaders" />
+      <config projectName="january" targetName="curl-example-http3" />
+      <config projectName="january" targetName="curltool" />
+      <config projectName="january" targetName="curl-example-pop3-uidl" />
+      <config projectName="january" targetName="SDL3_test" />
+      <config projectName="january" targetName="curl-example-imap-copy" />
+      <config projectName="january" targetName="SPIRV-Tools-static" folderName="SPIRV-Tools libraries" />
+      <config projectName="january" targetName="glslang" folderName="glslang" />
+      <config projectName="january" targetName="curl-example-smtp-expn" />
+      <config projectName="january" targetName="curl-example-smtp-mime" />
+      <config projectName="january" targetName="curl-example-imap-multi" />
+      <config projectName="january" targetName="SDL3-shared" />
+      <config projectName="january" targetName="build-certs" />
+      <config projectName="january" targetName="curl-example-certinfo" />
+      <config projectName="january" targetName="curl-example-ftpget" />
+      <config projectName="january" targetName="generate-curl.1" />
+      <config projectName="january" targetName="shaderc_combined" />
+      <config projectName="january" targetName="curl-example-anyauthput" />
+      <config projectName="january" targetName="curl-example-pop3-tls" />
+      <config projectName="january" targetName="curl-example-protofeats" />
+      <config projectName="january" targetName="spirv-tools-header-OpenCLDebugInfo100" folderName="SPIRV-Tools build" />
+      <config projectName="january" targetName="SPIRV" folderName="glslang" />
+      <config projectName="january" targetName="curl-example-address-scope" />
+      <config projectName="january" targetName="curl-example-httpcustomheader" />
+      <config projectName="january" targetName="testdeps" />
+      <config projectName="january" targetName="test-full" />
+      <config projectName="january" targetName="curl-example-externalsocket" />
+      <config projectName="january" targetName="curl-example-smtp-ssl" />
+      <config projectName="january" targetName="SPIRV-Tools-reduce" folderName="SPIRV-Tools libraries" />
+      <config projectName="january" targetName="libtests" />
+      <config projectName="january" targetName="curl-example-cacertinmem" />
+      <config projectName="january" targetName="curl-optiontable" />
+      <config projectName="january" targetName="curl-examples" />
+      <config projectName="january" targetName="curl-man" />
+      <config projectName="january" targetName="curl-example-http2-download" />
+      <config projectName="january" targetName="curl-example-httpput" />
+      <config projectName="january" targetName="curl-pytest" />
+      <config projectName="january" targetName="testdata" />
+      <config projectName="january" targetName="curl-example-imap-lsub" />
+      <config projectName="january" targetName="curl-example-block_ip" />
+      <config projectName="january" targetName="curl-example-ftpuploadresume" />
+      <config projectName="january" targetName="shaderc_combined-pkg-config" />
+      <config projectName="january" targetName="SPIRV-Tools-shared" folderName="SPIRV-Tools libraries" />
+      <config projectName="january" targetName="GenericCodeGen" folderName="glslang" />
+      <config projectName="january" targetName="curl-example-parseurl" />
+      <config projectName="january" targetName="curl-example-multi-legacy" />
+      <config projectName="january" targetName="servers" />
+      <config projectName="january" targetName="SDL_uclibc" />
+      <config projectName="january" targetName="curl-example-simplepost" />
+      <config projectName="january" targetName="curl-example-ftpgetresp" />
+      <config projectName="january" targetName="curl-example-all" />
+      <config projectName="january" targetName="curl-example-postinmemory" />
+      <config projectName="january" targetName="spirv-tools-vimsyntax" folderName="SPIRV-Tools utilities" />
+      <config projectName="january" targetName="curl-example-multi-debugcallback" />
+      <config projectName="january" targetName="spirv-tools-check-python-types" />
+      <config projectName="january" targetName="curl-example-altsvc" />
+      <config projectName="january" targetName="curl-example-ftpupload" />
+      <config projectName="january" targetName="build-version" />
+      <config projectName="january" targetName="curl-example-sendrecv" />
+      <config projectName="january" targetName="curl-listcats" />
+      <config projectName="january" targetName="curl-example-sftpuploadresume" />
+      <config projectName="january" targetName="curl-example-simple" />
+      <config projectName="january" targetName="tunits" />
+      <config projectName="january" targetName="curl-example-smtp-vrfy" />
+      <config projectName="january" targetName="curl-example-imap-ssl" />
+      <config projectName="january" targetName="curl-example-imap-fetch" />
+      <config projectName="january" targetName="curl-example-http2-pushinmemory" />
+      <config projectName="january" targetName="test-ci" />
+      <config projectName="january" targetName="SPIRV-Tools-diff" folderName="SPIRV-Tools libraries" />
+      <config projectName="january" targetName="curl-example-getredirect" />
+      <config projectName="january" targetName="curl-example-progressfunc" />
+      <config projectName="january" targetName="curl-example-cookie_interface" />
+      <config projectName="january" targetName="core_tables" />
+      <config projectName="january" targetName="angelscript" />
+      <config projectName="january" targetName="test-nonflaky" />
+      <config projectName="january" targetName="curl-ca-firefox" />
+      <config projectName="january" targetName="curl-example-sslbackend" />
+      <config projectName="january" targetName="clip" />
+      <config projectName="january" targetName="units" />
+      <config projectName="january" targetName="curl-example-imap-search" />
+      <config projectName="january" targetName="spirv-tools-check-python-tests" />
+      <config projectName="january" targetName="curlu-unitprotos" />
+      <config projectName="january" targetName="curl-example-getinmemory" />
+      <config projectName="january" targetName="curl-example-imap-append" />
+      <config projectName="january" targetName="curl-example-pop3-multi" />
+      <config projectName="january" targetName="curl-example-shared-connection-cache" />
+      <config projectName="january" targetName="curl-example-simplessl" />
+      <config projectName="january" targetName="curl-example-url2file" />
+      <config projectName="january" targetName="curl-example-multi-double" />
+      <config projectName="january" targetName="curl-generate-testcurl.1" />
+      <config projectName="january" targetName="curl-example-ipv6" />
+      <config projectName="january" targetName="curl-example-debug" />
+      <config projectName="january" targetName="curl-example-maxconnects" />
+      <config projectName="january" targetName="curlu" />
+      <config projectName="january" targetName="shaderc" />
+      <config projectName="january" targetName="curl-example-persistent" />
+      <config projectName="january" targetName="curl-example-pop3-ssl" />
+      <config projectName="january" targetName="curl-example-httpput-postfields" />
+      <config projectName="january" targetName="curl-example-urlapi" />
+      <config projectName="january" targetName="curl-example-imap-store" />
+      <config projectName="january" targetName="add-copyright" />
+      <config projectName="january" targetName="curl-example-getreferrer" />
+      <config projectName="january" targetName="curl-example-websocket" />
+      <config projectName="january" targetName="SPIRV-Tools-link" folderName="SPIRV-Tools libraries" />
+      <config projectName="january" targetName="clean-certs" />
+      <config projectName="january" targetName="curl-example-http2-serverpush" />
+      <config projectName="january" targetName="curl-example-log_failed_transfers" />
+      <config projectName="january" targetName="curl-example-websocket-updown" />
+      <config projectName="january" targetName="curl-example-pop3-retr" />
+      <config projectName="january" targetName="curl-example-resolve" />
+      <config projectName="january" targetName="curl-example-postit2" />
+      <config projectName="january" targetName="curl-examples-build" />
+      <config projectName="january" targetName="spirv-tools-pkg-config" />
+      <config projectName="january" targetName="curl-example-ftp-delete" />
+      <config projectName="january" targetName="curl" />
+      <config projectName="january" targetName="january" />
+      <config projectName="january" targetName="curl-example-pop3-authzid" />
+      <config projectName="january" targetName="curl-example-multi-formadd" />
+      <config projectName="january" targetName="curl-pytest-ci" />
+      <config projectName="january" targetName="curl-generate-runtests.1" />
+      <config projectName="january" targetName="SPIRV-Tools-opt" folderName="SPIRV-Tools libraries" />
+      <config projectName="january" targetName="curl-example-default-scheme" />
+      <config projectName="january" targetName="curl-example-imap-delete" />
+      <config projectName="january" targetName="curl-example-pop3-stat" />
+      <config projectName="january" targetName="curl-example-headerapi" />
+      <config projectName="january" targetName="tests" />
+      <config projectName="january" targetName="curl-example-imap-noop" />
+      <config projectName="january" targetName="curl-example-smtp-tls" />
+      <config projectName="january" targetName="curl-example-pop3-top" />
+      <config projectName="january" targetName="test-event" />
+      <config projectName="january" targetName="curl-example-chkspeed" />
+      <config projectName="january" targetName="curl-example-multi-single" />
+      <config projectName="january" targetName="shaderc_static-pkg-config" />
+      <config projectName="january" targetName="curl-generate-curl-config.1" />
+      <config projectName="january" targetName="curl-example-fileupload" />
+      <config projectName="january" targetName="curl-example-threaded" />
+      <config projectName="january" targetName="test-torture" />
+      <config projectName="january" targetName="MachineIndependent" folderName="glslang" />
+      <config projectName="january" targetName="OSDependent" folderName="glslang" />
+      <config projectName="january" targetName="curl-opts-man" />
+      <config projectName="january" targetName="tt" />
+      <config projectName="january" targetName="curl-example-imap-authzid" />
+      <config projectName="january" targetName="curl-example-postit2-formadd" />
+      <config projectName="january" targetName="curlinfo" />
+      <config projectName="january" targetName="curl-lint" />
+      <config projectName="january" targetName="curl-example-sftpget" />
+      <config projectName="january" targetName="curl-example-rtsp-options" />
+      <config projectName="january" targetName="curl-generate-wcurl.1" />
+      <config projectName="january" targetName="curl-example-http-options" />
+      <config projectName="january" targetName="curl-example-imap-list" />
+      <config projectName="january" targetName="curl-example-smtp-authzid" />
+      <config projectName="january" targetName="curl-example-connect-to" />
+      <config projectName="january" targetName="test-quiet" />
+      <config projectName="january" targetName="curl-example-range" />
+      <config projectName="january" targetName="curl-example-websocket-cb" />
+      <config projectName="january" targetName="curl-example-interface" />
+      <config projectName="january" targetName="curl-example-imap-create" />
+      <config projectName="january" targetName="curl-example-10-at-a-time" />
+      <config projectName="january" targetName="curl-example-keepalive" />
+      <config projectName="january" targetName="curl-example-usercertinmem" />
+      <config projectName="january" targetName="curl-example-imap-tls" />
+      <config projectName="january" targetName="curl-example-netrc" />
+      <config projectName="january" targetName="curl-example-http2-upload" />
+      <config projectName="january" targetName="curl-example-smtp-mail" />
+      <config projectName="january" targetName="test-am" />
+      <config projectName="january" targetName="curl-example-pop3-noop" />
+      <config projectName="january" targetName="curl-example-post-callback" />
+      <config projectName="january" targetName="curl-example-ftpsget" />
+      <config projectName="january" targetName="curl-example-smtp-multi" />
+      <config projectName="january" targetName="curl-example-pop3-dele" />
+      <config projectName="january" targetName="shaderc_shared" />
+      <config projectName="january" targetName="curl-example-http-post" />
+      <config projectName="january" targetName="libcurl_static" />
+      <config projectName="january" targetName="curl-example-https" />
+      <config projectName="january" targetName="curl-listhelp" />
+      <config projectName="january" targetName="shaderc_util" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -22,8 +225,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e7413ba-42a9-4d07-804e-4cc1dfc89561" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,6 +235,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -43,10 +245,10 @@
     <option name="minorVersion" value="3.3" />
     <option name="productBranch" value="Classic" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="3F2RjbW8tpgQGNgGMNwkleLqg9r" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -54,6 +256,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -62,10 +265,15 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "v0.0.4",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "CMakeSettings",
     "vue.rearranger.settings.migration": "true"
@@ -138,11 +346,6 @@
       </method>
     </configuration>
     <configuration name="SPIRV" type="CMakeRunConfiguration" factoryName="Application" folderName="glslang" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="january" TARGET_NAME="SPIRV" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -912,7 +1115,7 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="january" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="january" TARGET_NAME="january" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="january" RUN_TARGET_NAME="january">
+    <configuration name="january" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://bin" PASS_PARENT_ENVS_2="true" PROJECT_NAME="january" TARGET_NAME="january" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="january" RUN_TARGET_NAME="january">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1275,11 +1478,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1781271314683</updated>
-      <workItem from="1781271316835" duration="139000" />
+      <workItem from="1781271316835" duration="282000" />
+      <workItem from="1781271631082" duration="381000" />
     </task>
+    <task id="LOCAL-00001" summary="Update idea setting">
+      <option name="closed" value="true" />
+      <created>1781271482246</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1781271482246</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Update idea setting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update idea setting" />
   </component>
 </project>
