@@ -24,91 +24,93 @@ SOFTWARE.
 #pragma once
 #ifndef GUI_VIEW_VIEWBASE_H
 #define GUI_VIEW_VIEWBASE_H
-#include <cinttypes>
 #include <string>
 
 // Quick way to create view subclass constructor
-#define DEFAULT_VIEW_CTOR(x) \
-x (std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) :  \
-JViewBase(_title, _type, _subtype, _win, _engine) \
+#define DEFAULT_VIEW_CTOR(x)                                                   \
+  x(std::string _title, int32_t _type, int32_t _subtype,                       \
+    System::JWindow &_win, JEngine &_engine)                                   \
+      : JViewBase(_title, _type, _subtype, _win, _engine)
 
 // Quick way to create view subclass deconstructor
-#define DEFAULT_VIEW_DECTOR(x) \
-    virtual ~x() \
+#define DEFAULT_VIEW_DECTOR(x) virtual ~x()
 
 namespace January {
-    namespace System {
-        struct JWindow;
-    }
-    namespace Engine{
-        struct JEngine;
-        namespace View {
-            /**
-             * @brief The base class for editor view
-             */
-            class JViewBase {
-            public:
-                JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine);
-                virtual ~JViewBase();
-                /**
-                 * @brief When view is shows up
-                 */
-                virtual void OnEnable() {};
-                /**
-                 * @brief When view is closes down
-                 */
-                virtual void OnDisable() {};
-                /**
-                 * @brief Constrctor called, when engine is up
-                 */
-                virtual void Init() {}
-                /**
-                 * @brief Release resource, when engine is down
-                 */
-                virtual void DeInit() {}
-                /**
-                 * @brief Application editor window focus event call
-                 * 
-                 * @param value Unfocus or focus event
-                 */
-                virtual void Focus(bool value) {}
-                /**
-                 * @brief Every frame update
-                 */
-                virtual void Update() {}
-                // Editor view before content draw
-                virtual bool PreDraw();
-                // The content of this view
-                virtual void Draw() {}
-                // Editor view after content draw
-                virtual void PostDraw();
-
-                // Runtime event: Play
-                virtual void OnPlay() {}
-                // Runtime event: Pause
-                virtual void OnPause() {}
-                // Runtime event: UnPause
-                virtual void OnUnPause() {}
-                // Runtime event: Stop
-                virtual void OnStop() {}
-
-                // Check view is show up currently or not
-                bool IsEnable() { return enable; }
-                // Get category ID, (type + subtype)
-                int64_t GetID();
-                // View show call
-                void SetEnable(bool value);
-            public:
-                std::string         title           = "";
-                int32_t             type            = 0;
-                int32_t             subtype         = 0;
-            protected:
-                System::JWindow&    jwindow;
-                JEngine&            jengine;
-                bool                enable          = false;
-                int32_t             window_flag     = 0;
-            };
-        }
-    }
+namespace System {
+struct JWindow;
 }
+namespace Engine {
+struct JEngine;
+namespace View {
+/**
+ * @brief The base class for editor view
+ */
+class JViewBase {
+public:
+  JViewBase(std::string _title, int32_t _type, int32_t _subtype,
+            System::JWindow &_win, JEngine &_engine);
+  virtual ~JViewBase();
+  /**
+   * @brief When view is shows up
+   */
+  virtual void OnEnable() {};
+  /**
+   * @brief When view is closes down
+   */
+  virtual void OnDisable() {};
+  /**
+   * @brief Constrctor called, when engine is up
+   */
+  virtual void Init() {}
+  /**
+   * @brief Release resource, when engine is down
+   */
+  virtual void DeInit() {}
+  /**
+   * @brief Application editor window focus event call
+   *
+   * @param value Unfocus or focus event
+   */
+  virtual void Focus(bool value) {}
+  /**
+   * @brief Every frame update
+   */
+  virtual void Update() {}
+  // Editor view before content draw
+  virtual bool PreDraw();
+  // The content of this view
+  virtual void Draw() {}
+  // Editor view after content draw
+  virtual void PostDraw();
+
+  // Runtime event: Play
+  virtual void OnPlay() {}
+  // Runtime event: Pause
+  virtual void OnPause() {}
+  // Runtime event: UnPause
+  virtual void OnUnPause() {}
+  // Runtime event: Stop
+  virtual void OnStop() {}
+
+  // Check view is show up currently or not
+  bool IsEnable() { return enable; }
+  // Get category ID, (type + subtype)
+  int64_t GetID();
+  // View show call
+  void SetEnable(bool value);
+
+public:
+  std::string title = "";
+  int32_t type = 0;
+  int32_t subtype = 0;
+
+protected:
+  System::JWindow &jwindow;
+  JEngine &jengine;
+  bool enable = false;
+  int32_t window_flag = 0;
+};
+} // namespace View
+} // namespace Engine
+} // namespace January
 #endif

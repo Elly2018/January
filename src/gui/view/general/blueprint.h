@@ -25,46 +25,48 @@ SOFTWARE.
 #ifndef GUI_VIEW_BLUEPRINT_H
 #define GUI_VIEW_BLUEPRINT_H
 #include "../viewbase.h"
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace ax::NodeEditor {
-    struct EditorContext;
-    struct Config;
-}
+struct EditorContext;
+struct Config;
+} // namespace ax::NodeEditor
 
 namespace January::Engine {
 
-    namespace Node {
-        struct NodeBase;
-        struct EdgeBase;
-    }
+namespace Node {
+struct NodeBase;
+struct EdgeBase;
+} // namespace Node
 
-    namespace View {
-        struct BlueprintObject {
-            bool dirty;
-            std::string file;
-            std::string path;
-            struct ax::NodeEditor::EditorContext* ctx;
-            struct ax::NodeEditor::Config* config;
-            std::vector<struct Node::NodeBase*> nodes;
-            std::vector<struct Node::EdgeBase*> edges;
-        };
+namespace View {
+struct BlueprintObject {
+  bool dirty;
+  std::string file;
+  std::string path;
+  struct ax::NodeEditor::EditorContext *ctx;
+  struct ax::NodeEditor::Config *config;
+  std::vector<struct Node::NodeBase *> nodes;
+  std::vector<struct Node::EdgeBase *> edges;
+};
 
-        class JViewBlueprint : public JViewBase {
-        public:
-            DEFAULT_VIEW_CTOR(JViewBlueprint) {}
-            DEFAULT_VIEW_DECTOR(JViewBlueprint) {}
-            void Init() override;
-            void Update() override;
-            void Draw() override;
-            void DeInit() override;
-        protected:
-            virtual void DrawBlueprint(BlueprintObject& bo);
-            virtual void CreateTempConfig();
-        private:
-            std::vector<BlueprintObject*> blueprints;
-        };
-    }
-}
+class JViewBlueprint : public JViewBase {
+public:
+  DEFAULT_VIEW_CTOR(JViewBlueprint) {}
+  DEFAULT_VIEW_DECTOR(JViewBlueprint) {}
+  void Init() override;
+  void Update() override;
+  void Draw() override;
+  void DeInit() override;
+
+protected:
+  virtual void DrawBlueprint(BlueprintObject &bo);
+  virtual void CreateTempConfig();
+
+private:
+  std::vector<BlueprintObject *> blueprints;
+};
+} // namespace View
+} // namespace January::Engine
 #endif
