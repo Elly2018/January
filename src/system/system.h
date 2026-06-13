@@ -24,39 +24,38 @@ SOFTWARE.
 #pragma once
 #ifndef SYSTEM_SYSTEM_H
 #define SYSTEM_SYSTEM_H
-#include <cinttypes>
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace January {
-    namespace Engine {
-        struct JEngine;
-    }
-    namespace System {
-        struct JWindow;
-        struct JWindowRender;
-        using JWR = std::unique_ptr<JWindowRender>;
-
-        // System context
-        // Contain all window objects
-        struct JSystem {
-            JSystem();
-            ~JSystem();
-            // Editor window instance
-            std::unique_ptr<JWindow>            window;
-            // Extra pure windows
-            std::vector<JWR>                    windows;
-            // Engine instance for backgroud calculation
-            struct Engine::JEngine*             engine;
-        };
-
-        // Main logic goes here
-        void UpdateLoop(JSystem& jsystem);
-        // System init
-        // This will create the editor context and return it
-        int32_t SInit(JSystem& jsystem);
-        // January system running entry point
-        void SRun(JSystem& jsystem);
-    }
+namespace Engine {
+struct JEngine;
 }
+namespace System {
+struct JWindow;
+struct JWindowRender;
+using JWR = std::unique_ptr<JWindowRender>;
+
+// System context
+// Contain all window objects
+struct JSystem {
+  JSystem();
+  ~JSystem();
+  // Editor window instance
+  std::unique_ptr<JWindow> window;
+  // Extra pure windows
+  std::vector<JWR> windows;
+  // Engine instance for backgroud calculation
+  struct Engine::JEngine *engine;
+};
+
+// Main logic goes here
+void UpdateLoop(JSystem &jsystem);
+// System init
+// This will create the editor context and return it
+int32_t SInit(JSystem &jsystem);
+// January system running entry point
+void SRun(JSystem &jsystem);
+} // namespace System
+} // namespace January
 #endif

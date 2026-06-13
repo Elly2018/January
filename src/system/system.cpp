@@ -22,99 +22,102 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "system.h"
-#include <thread>
-#include <spdlog/spdlog.h>
-#include "window.h"
 #include "../engine/engine.h"
 #include "../engine/struct/context.h"
 #include "../engine/utility/command.h"
 #include "../gui/manager.h"
-#include "../gui/view/general/explorer.h"
+#include "../gui/view/allview.h"
+#include "window.h"
+#include <spdlog/spdlog.h>
+#include <thread>
 
 namespace January::System {
-    using namespace Engine;
+using namespace Engine;
 
-    JSystem::JSystem() = default;
-    JSystem::~JSystem() = default;
+JSystem::JSystem() = default;
+JSystem::~JSystem() = default;
 
-    void UpdateLoop(JSystem& jsystem){
-        while(!jsystem.window->g_done){
-            EngineUpdate(*jsystem.engine);
-        }
-    }
-
-    int32_t SInit(JSystem& jsystem){
-        jsystem.window = std::make_unique<JWindow>();
-        jsystem.engine = new Engine::JEngine();
-        int32_t err = JInit(*jsystem.window, JRWindowInit());
-        assert(err == 0 && "Vulkan Init Error");
-        err = EngineInit(*jsystem.engine, *jsystem.window, jsystem);
-        assert(err == 0 && "Engine Init Error");
-        LoadAppConfig(*jsystem.engine->config);
-        ApplyEnableConfig(*jsystem.engine->manager, *jsystem.engine->config);
-        LoadPreference();
-        return 0;
-    }
-
-    void SRun(JSystem& jsystem){
-        spdlog::debug("Enter Application Mainloop");
-
-        //
-        // You will see DrawLoop and UpdateLoop in different file
-        // This is because Draw contains ImGui drawing
-        // Update only push engine update, the logical part
-        //
-        std::thread draw_thread([&jsystem]() {
-            DrawLoop(jsystem);
-        });
-        std::thread update_thread([&jsystem](){
-            UpdateLoop(jsystem);
-        });
-
-        while(!jsystem.engine->context->done){
-            // Poll and handle events (inputs, window resize, etc.)
-            // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-            // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-            // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-            // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-            // [If using SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your SDL_AppEvent() function]
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
-            {
-                ImGui_ImplSDL3_ProcessEvent(&event);
-                if (event.type == SDL_EVENT_QUIT)
-                    jsystem.window->g_done = true;
-                if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(jsystem.window->g_window))
-                    jsystem.window->g_done = true;
-                if (event.type == SDL_EVENT_WINDOW_FOCUS_GAINED) {
-                    FocusEvent(*jsystem.engine->manager, true);
-                }
-                if (event.type == SDL_EVENT_WINDOW_FOCUS_LOST) {
-                    FocusEvent(*jsystem.engine->manager, false);
-                }
-            }
-
-            {
-                std::lock_guard<std::mutex> lock(jsystem.engine->context->commands_mtx);
-                std::queue<std::string>& cb = jsystem.engine->context->commands;
-                while(cb.size() > 0){
-                    std::string command = cb.front();
-                    cb.pop();
-                    ApplyCommand(jsystem, command);
-                }
-            }
-            if(jsystem.engine->context->load_project){
-                jsystem.engine->manager->explorer->ReloadProject();
-                jsystem.engine->context->load_project = false;
-            }
-            if(jsystem.window->g_done){
-                jsystem.engine->context->done = true;
-            }
-        }
-        jsystem.window->g_done = true;
-        if(draw_thread.joinable()) draw_thread.join();
-        if(update_thread.joinable()) update_thread.join();
-        EngineDeInit(*jsystem.engine);
-        JDeInit(*jsystem.window);
-    }
+void UpdateLoop(JSystem &jsystem) {
+  while (!jsystem.window->g_done) {
+    EngineUpdate(*jsystem.engine);
+  }
 }
+
+int32_t SInit(JSystem &jsystem) {
+  jsystem.window = std::make_unique<JWindow>();
+  jsystem.engine = new Engine::JEngine();
+  int32_t err = JInit(*jsystem.window, JRWindowInit());
+  assert(err == 0 && "Vulkan Init Error");
+  err = EngineInit(*jsystem.engine, *jsystem.window, jsystem);
+  assert(err == 0 && "Engine Init Error");
+  LoadAppConfig(*jsystem.engine->config);
+  ApplyEnableConfig(*jsystem.engine->manager, *jsystem.engine->config);
+  LoadPreference();
+  return 0;
+}
+
+void SRun(JSystem &jsystem) {
+  spdlog::debug("Enter Application Mainloop");
+
+  //
+  // You will see DrawLoop and UpdateLoop in different file
+  // This is because Draw contains ImGui drawing
+  // Update only push engine update, the logical part
+  //
+  std::thread draw_thread([&jsystem]() { DrawLoop(jsystem); });
+  std::thread update_thread([&jsystem]() { UpdateLoop(jsystem); });
+
+  while (!jsystem.engine->context->done) {
+    // Poll and handle events (inputs, window resize, etc.)
+    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to
+    // tell if dear imgui wants to use your inputs.
+    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to
+    // your main application, or clear/overwrite your copy of the mouse data.
+    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input
+    // data to your main application, or clear/overwrite your copy of the
+    // keyboard data. Generally you may always pass all inputs to dear imgui,
+    // and hide them from your application based on those two flags. [If using
+    // SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your
+    // SDL_AppEvent() function]
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      ImGui_ImplSDL3_ProcessEvent(&event);
+      if (event.type == SDL_EVENT_QUIT)
+        jsystem.window->g_done = true;
+      if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED &&
+          event.window.windowID == SDL_GetWindowID(jsystem.window->g_window))
+        jsystem.window->g_done = true;
+      if (event.type == SDL_EVENT_WINDOW_FOCUS_GAINED) {
+        FocusEvent(*jsystem.engine->manager, true);
+      }
+      if (event.type == SDL_EVENT_WINDOW_FOCUS_LOST) {
+        FocusEvent(*jsystem.engine->manager, false);
+      }
+    }
+
+    {
+      std::lock_guard<std::mutex> lock(jsystem.engine->context->commands_mtx);
+      std::queue<std::string> &cb = jsystem.engine->context->commands;
+      while (cb.size() > 0) {
+        std::string command = cb.front();
+        cb.pop();
+        ApplyCommand(jsystem, command);
+      }
+    }
+    if (jsystem.engine->context->load_project) {
+      jsystem.engine->manager->explorer->ReloadProject();
+      jsystem.engine->context->load_project = false;
+    }
+    if (jsystem.window->g_done) {
+      jsystem.engine->context->done = true;
+    }
+  }
+  jsystem.window->g_done = true;
+  if (draw_thread.joinable())
+    draw_thread.join();
+  if (update_thread.joinable())
+    update_thread.join();
+  EngineDeInit(*jsystem.engine);
+  JDeInit(*jsystem.window);
+}
+} // namespace January::System

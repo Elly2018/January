@@ -24,22 +24,21 @@ SOFTWARE.
 #pragma once
 #ifndef SYSTEM_CLI_H
 #define SYSTEM_CLI_H
-#include <memory>
-#include <optional>
 #include <argh.h>
+#include <optional>
 
 namespace January::CLI {
-    // Store CMD into memory
-    void InitCMD(int argc, char** argv);
-    // Get the parser from memory
-    argh::parser& GetCMD();
+// Store CMD into memory
+void InitCMD(int argc, char **argv);
+// Get the parser from memory
+argh::parser &GetCMD();
 
-    bool GetCMDFlag(std::string title);
+bool GetCMDFlag(std::string title);
 
-    bool GetCMDFlag(std::string title, std::string second);
+bool GetCMDFlag(std::string title, std::string second);
 
-    std::optional<std::string> GetCMDParam(std::string title);
+std::optional<std::string> GetCMDParam(std::string title);
 
-    std::optional<std::string> GetCMDParam(std::string title, std::string second);
-}
+std::optional<std::string> GetCMDParam(std::string title, std::string second);
+} // namespace January::CLI
 #endif

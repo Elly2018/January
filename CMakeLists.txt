@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 4.1)
 project(january C CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
 endif()
 
 set(CMAKE_CXX_STANDARD 23)
@@ -109,7 +110,7 @@ set(Notify_DIR third-party/notify/include)
 include_directories(${Notify_DIR})
 
 file(GLOB_RECURSE sources src/**.cpp src/**.h)
-file(GLOB_RECURSE angel_sources 
+file(GLOB_RECURSE angel_sources
     ${ANGEL_DIR}/add_on/scriptbuilder/scriptbuilder.h ${ANGEL_DIR}/add_on/scriptbuilder/scriptbuilder.cpp
     ${ANGEL_DIR}/add_on/scriptstdstring/scriptstdstring.h ${ANGEL_DIR}/add_on/scriptstdstring/scriptstdstring.cpp
 )
@@ -134,11 +135,11 @@ add_executable(january
 )
 
 if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_options(january PRIVATE -O3 -ffunction-sections -fdata-sections)
-    target_link_options(january PRIVATE -Wl,--gc-sections -Wl,-s)
+  target_compile_options(january PRIVATE -O3 -ffunction-sections -fdata-sections)
+  target_link_options(january PRIVATE -Wl,--gc-sections -Wl,-s)
 else()
-    target_compile_options(january PRIVATE -O0)
-    target_link_options(january PRIVATE -g)
+  target_compile_options(january PRIVATE -O0)
+  target_link_options(january PRIVATE -g)
 endif()
 
 target_compile_options(january PRIVATE -mavx2)
@@ -166,17 +167,17 @@ target_link_libraries(january PRIVATE
 target_compile_definitions(january PRIVATE SDL_MAIN_USE_CALLBACKS)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(january PRIVATE DEBUG_MODE)
+  target_compile_definitions(january PRIVATE DEBUG_MODE)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_compile_definitions(january PRIVATE RELEASE_MODE)
+  target_compile_definitions(january PRIVATE RELEASE_MODE)
 endif()
 
 file(GLOB_RECURSE FONT_OTF "${CMAKE_SOURCE_DIR}/*.otf")
 
 if(WIN32)
-    add_custom_command(TARGET january POST_BUILD
+  add_custom_command(TARGET january POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${FONT_OTF}
         $<TARGET_FILE_DIR:january>
