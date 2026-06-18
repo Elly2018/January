@@ -24,19 +24,15 @@ SOFTWARE.
 #pragma once
 #ifndef ENGINE_STRUCT_SCENE_H
 #define ENGINE_STRUCT_SCENE_H
-#include <cinttypes>
-#include <vector>
-#include <unordered_map>
-#include <string>
 #include <entt/entt.hpp>
 
 namespace January::Engine {
-    //
-    // The scene structure
-    //
-    struct JScene {
-        entt::registry registry;
-    };
-}
+//
+// The scene structure
+//
+struct JScene {
+  entt::registry registry;
+};
+} // namespace January::Engine
 
 #endif

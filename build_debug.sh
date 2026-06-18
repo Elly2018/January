@@ -18,4 +18,3 @@ sleep 3
 
 # Build
 cmake --build . -j $(($(nproc) - 1))
-

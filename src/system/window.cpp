@@ -425,7 +425,8 @@ int32_t JInit(JWindow &jwindow, JRWindowInit init) {
   float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
   spdlog::debug("\tmain_scale: {}", main_scale);
   jwindow.g_windowFlags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE |
-                          SDL_WINDOW_HIGH_PIXEL_DENSITY | init.g_flags;
+                          // SDL_WINDOW_HIGH_PIXEL_DENSITY |
+                          init.g_flags;
   jwindow.g_window = SDL_CreateWindow(
       "Dear ImGui SDL3+Vulkan example", (int)(init.g_width * main_scale),
       (int)(init.g_height * main_scale), jwindow.g_windowFlags);
