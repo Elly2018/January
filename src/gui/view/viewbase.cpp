@@ -22,42 +22,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "viewbase.h"
-#include <imgui.h>
 #include "../../engine/engine.h"
 #include "../../engine/struct/context.h"
 #include "../../engine/utility/command.h"
+#include <imgui.h>
 
 namespace January::Engine::View {
-    JViewBase::JViewBase(std::string _title, int32_t _type, int32_t _subtype, System::JWindow& _win, JEngine& _engine) : 
-        title(_title), type(_type), subtype(_subtype), jwindow(_win), jengine(_engine) {}
-    JViewBase::~JViewBase() {
-    }
+JViewBase::JViewBase(std::string _title, int32_t _type, int32_t _subtype,
+                     System::JWindow &_win, JEngine &_engine)
+    : title(_title), type(_type), subtype(_subtype), jwindow(_win),
+      jengine(_engine) {}
+JViewBase::~JViewBase() {}
 
-    bool JViewBase::PreDraw(){
-        return ImGui::Begin(title.c_str(), &enable, window_flag);
-    }
-
-    void JViewBase::PostDraw(){
-        ImGui::End();
-        if(!enable){
-            PushCommand(*jengine.context, "config_dirty");
-        }
-    }
-
-    int64_t JViewBase::GetID(){
-        int64_t p = 0;
-        int32_t* pt = (int32_t*)(&p);
-        pt[0] = type;
-        pt[1] = subtype;
-        return p;
-    }
-
-    void JViewBase::SetEnable(bool value) {
-        bool diff = value != enable;
-        if(diff){
-            enable = value;
-            if(enable) OnEnable();
-            else OnDisable();
-        }
-    }
+bool JViewBase::PreDraw() {
+  return ImGui::Begin(title.c_str(), &enable, window_flag);
 }
+
+void JViewBase::PostDraw() {
+  ImGui::End();
+  if (!enable) {
+    PushCommand(*jengine.context, "config_dirty");
+  }
+}
+
+int64_t JViewBase::GetID() {
+  int64_t p = 0;
+  int32_t *pt = (int32_t *)(&p);
+  pt[0] = type;
+  pt[1] = subtype;
+  return p;
+}
+
+void JViewBase::SetEnable(bool value) {
+  bool diff = value != enable;
+  if (diff) {
+    enable = value;
+    if (enable)
+      OnEnable();
+    else
+      OnDisable();
+  }
+}
+} // namespace January::Engine::View
